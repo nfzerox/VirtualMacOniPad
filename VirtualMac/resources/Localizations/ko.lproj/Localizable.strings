@@ -170,6 +170,7 @@
 "On My iPhone" = "나의 iPhone";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "현재 약 %lluGB만 사용할 수 있습니다. 디스크 이미지는 희소 이미지이지만 저장 공간이 가득 차면 설치 또는 이후 사용이 실패할 수 있습니다.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "제어 센터를 열고 화면 기록을 시작한 다음 문제를 재현하십시오.";
+"Open Gamepad Script Folder" = "게임패드 스크립트 폴더 열기";
 "OpenGL Acceleration" = "OpenGL 가속";
 "OpenGL Acceleration Is Off" = "OpenGL 가속이 꺼져 있음";
 "OpenGL Acceleration requires macOS Sonoma or later." = "OpenGL 가속을 사용하려면 macOS Sonoma 이후 버전이 필요합니다.";

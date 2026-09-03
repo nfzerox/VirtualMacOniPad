@@ -170,6 +170,7 @@
 "On My iPhone" = "मेरे iPhone पर";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "अभी केवल लगभग %llu GB उपलब्ध है। डिस्क इमेज डायनेमिक है, लेकिन स्टोरेज भरने पर इंस्टॉलेशन या बाद का उपयोग विफल हो सकता है।";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "कंट्रोल सेंटर खोलें, स्क्रीन रिकॉर्डिंग शुरू करें, फिर समस्या को दोबारा उत्पन्न करें।";
+"Open Gamepad Script Folder" = "गेमपैड स्क्रिप्ट फ़ोल्डर खोलें";
 "OpenGL Acceleration" = "OpenGL एक्सेलेरेशन";
 "OpenGL Acceleration Is Off" = "OpenGL एक्सेलेरेशन बंद है";
 "OpenGL Acceleration requires macOS Sonoma or later." = "OpenGL एक्सेलेरेशन के लिए macOS Sonoma या बाद का संस्करण आवश्यक है।";

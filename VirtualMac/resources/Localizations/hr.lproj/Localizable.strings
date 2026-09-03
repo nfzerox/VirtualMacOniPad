@@ -170,6 +170,7 @@
 "On My iPhone" = "Na mom iPhoneu";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "Trenutačno je dostupno samo oko %llu GB. Slika diska je dinamična, ali instalacija ili kasnija uporaba mogu biti neuspješne ako se pohrana napuni.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "Otvorite Kontrolni centar, pokrenite snimanje zaslona, a zatim ponovite problem.";
+"Open Gamepad Script Folder" = "Otvori mapu skripte za kontroler";
 "OpenGL Acceleration" = "Ubrzanje OpenGL-a";
 "OpenGL Acceleration Is Off" = "Ubrzanje OpenGL-a je isključeno";
 "OpenGL Acceleration requires macOS Sonoma or later." = "Ubrzanje OpenGL-a zahtijeva macOS Sonoma ili noviji.";

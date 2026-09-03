@@ -10,6 +10,7 @@
 #import "VZAppSettings.h"
 #import "VZDiagnostics.h"
 #import "VZFailureDetailsViewController.h"
+#import "VZGamepadBridge.h"
 #import "VZProgressViewController.h"
 #import "VZSettingsViewController.h"
 #import "VZLocalization.h"
@@ -136,6 +137,7 @@ static NSUInteger gPendingScrollDeviceCategory;
 static CADisplayLink *gScrollDisplayLink;
 static uint64_t gLastHealthReceivedCount;
 static BOOL gDebugLogging;
+static VZGamepadBridge *gGamepadBridge;
 static BOOL gFixExternalDisplayScrollDirection;
 static CGFloat gScrollingSpeed = 0.25;
 static BOOL gShowCursorWhenUsingTouch = YES;
@@ -4138,6 +4140,7 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
 {
     setVMJetsamProtection(NO);
     gSoftwareKeyboardRequested = NO;
+    [gGamepadBridge detachFromVirtualMachine];
     pencilVsockReset();
     disconnectExternalDisplay();
     [gDisplayLayer removeFromSuperlayer];
@@ -5000,14 +5003,24 @@ static id makeConfiguration(NSString *bundlePath, NSDictionary *options,
     if (guestToolsEnabled || guestToolsRemovalPending)
         VZGuestToolsConfigureDevice(configuration);
 
-    if ([options[VZApplePencilPressureTiltEnabledKey] boolValue]) {
-        // Do not add a socket device for the default configuration. The
-        // Pencil relay and its host/guest input path are entirely opt-in.
-        id socketDevice = (guestToolsEnabled || guestToolsRemovalPending)
-            ? nil : NEW("VZVirtioSocketDeviceConfiguration");
+    BOOL pencilVsock = [options[VZApplePencilPressureTiltEnabledKey] boolValue];
+    BOOL gamepadRelayEnabled = [VZAppSettings.sharedSettings boolForKey:
+        VZGamepadRelayEnabledKey];
+    NSString *gamepadTransport = [VZAppSettings.sharedSettings stringForKey:
+        VZGamepadTransportKey];
+    BOOL gamepadVsock = gamepadRelayEnabled &&
+        ![gamepadTransport isEqualToString:VZGamepadTransportUDP];
+    if (pencilVsock || gamepadVsock) {
+        // Guest Tools, Pencil and gamepad relay share one Virtio socket device
+        // and distinguish services by port. Never publish duplicate devices.
+        NSArray *socketDevices = [configuration respondsToSelector:
+            S("socketDevices")] ? m0(configuration, "socketDevices") : nil;
+        id socketDevice = socketDevices.count ? nil
+            : NEW("VZVirtioSocketDeviceConfiguration");
         if (socketDevice) {
             setObj(configuration, "setSocketDevices:", @[socketDevice]);
-            printf("[VirtualMac] configured Pencil vsock device\n");
+            printf("[VirtualMac] configured shared vsock device pencil=%d gamepad=%d\n",
+                   pencilVsock, gamepadVsock);
         }
     }
 
@@ -5160,6 +5173,7 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
                                       NSDictionary *options) {
     setVMJetsamProtection(YES);
     gShiftPressedMask = 0;
+    [gGamepadBridge detachFromVirtualMachine];
     pencilVsockReset();
     VZGuestToolsReset();
     __atomic_store_n(&gPencilRelayEnabled,
@@ -5300,6 +5314,7 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
         dumpRPCHandlers(gVirtualMachine, "after-start");
         setStatus(VZL(@"Virtual Mac running — preparing native PVG display"));
         pencilVsockSetup();
+        [gGamepadBridge attachToVirtualMachine:gVirtualMachine];
         VZGuestToolsStartProvisioning(bundlePath, guestToolsEnabled,
                                       openGLAcceleration,
             [options[VZApplePencilPressureTiltEnabledKey] boolValue],
@@ -5780,6 +5795,8 @@ static void disconnectExternalDisplay(void) {
     gLastInputWasDirectTouch = NO;
     gCursorSuppressedForDirectTouch = NO;
     installGCMouse();
+    gGamepadBridge = [VZGamepadBridge sharedBridge];
+    [gGamepadBridge start];
     startHealthMonitor();
     startControlMonitor();
     printf("[VirtualMac] VM picker ready inputWindow=%p\n", inputView.window);
@@ -5886,12 +5903,14 @@ static void disconnectExternalDisplay(void) {
 {
     (void)application;
     resetPointerSession(YES);
+    [gGamepadBridge setForegroundActive:NO];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     (void)application;
     resetPointerSession(YES);
+    [gGamepadBridge setForegroundActive:YES];
     if (gInputView) {
         for (id interaction in gInputView.interactions)
             if ([interaction respondsToSelector:@selector(invalidate)])

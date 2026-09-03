@@ -170,6 +170,7 @@
 "On My iPhone" = "A saját iPhone-omon";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "Jelenleg csak körülbelül %llu GB érhető el. A lemezkép dinamikus, de a telepítés vagy a későbbi használat sikertelen lehet, ha elfogy a tárhely.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "Nyissa meg a Vezérlőközpontot, indítson képernyőfelvételt, majd idézze elő újra a problémát.";
+"Open Gamepad Script Folder" = "Gamepad-szkript mappájának megnyitása";
 "OpenGL Acceleration" = "OpenGL-gyorsítás";
 "OpenGL Acceleration Is Off" = "Az OpenGL-gyorsítás ki van kapcsolva";
 "OpenGL Acceleration requires macOS Sonoma or later." = "Az OpenGL-gyorsításhoz macOS Sonoma vagy újabb szükséges.";

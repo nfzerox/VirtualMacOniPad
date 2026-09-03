@@ -24,6 +24,11 @@ NSString * const VZExternalDisplayScrollFixKey = @"ExternalDisplayScrollFix";
 NSString * const VZScrollingSpeedKey = @"ScrollingSpeed";
 NSString * const VZHUDOpacityKey = @"HUDOpacity";
 NSString * const VZDebugLoggingKey = @"DebugLogging";
+NSString * const VZGamepadRelayEnabledKey = @"GamepadRelayEnabled";
+NSString * const VZGamepadDestinationKey = @"GamepadDestination";
+NSString * const VZGamepadTransportKey = @"GamepadTransport";
+NSString * const VZGamepadTransportVirtioSocket = @"vsock";
+NSString * const VZGamepadTransportUDP = @"udp";
 NSString * const VZDebugLoggingModeOff = @"off";
 NSString * const VZDebugLoggingModeNextBoot = @"next";
 NSString * const VZDebugLoggingModeAlways = @"always";
@@ -107,6 +112,9 @@ BOOL VZIsRootHideEnvironment(void)
         VZScrollingSpeedKey: @"0.25",
         VZHUDOpacityKey: @"0.55",
         VZDebugLoggingKey: VZDebugLoggingModeOff,
+        VZGamepadRelayEnabledKey: @NO,
+        VZGamepadDestinationKey: @"",
+        VZGamepadTransportKey: VZGamepadTransportVirtioSocket,
     };
 }
 

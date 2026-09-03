@@ -170,6 +170,7 @@
 "On My iPhone" = "Trên iPhone của tôi";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "Hiện chỉ có khoảng %llu GB khả dụng. Ảnh đĩa là dạng động, nhưng cài đặt hoặc sử dụng sau này có thể thất bại nếu hết dung lượng.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "Mở Trung tâm điều khiển, bắt đầu Ghi màn hình rồi tái hiện sự cố.";
+"Open Gamepad Script Folder" = "Mở thư mục tập lệnh tay cầm";
 "OpenGL Acceleration" = "Tăng tốc OpenGL";
 "OpenGL Acceleration Is Off" = "Tăng tốc OpenGL đang tắt";
 "OpenGL Acceleration requires macOS Sonoma or later." = "Tăng tốc OpenGL yêu cầu macOS Sonoma trở lên.";

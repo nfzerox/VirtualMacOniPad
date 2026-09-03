@@ -10,6 +10,8 @@ static NSString * const VMHostConfiguration =
     @"/Library/VirtualMac/HostConfiguration.plist";
 static NSString * const VMReadyTokenKey = @"LastHostReadyToken";
 static NSString * const VMReadyPath = @"/tmp/VirtualMacGuestTools.ready";
+static NSString * const VMGamepadScriptPath =
+    @"/Library/VirtualMac/Gamepad/Start VirtualMac Gamepad.command";
 
 static NSString *VML(NSString *key)
 {
@@ -20,6 +22,7 @@ static NSString *VML(NSString *key)
 @property(nonatomic, retain) NSStatusItem *statusItem;
 @property(nonatomic, retain) NSMenuItem *statusMenuItem;
 @property(nonatomic, retain) NSMenuItem *openGLMenuItem;
+@property(nonatomic, retain) NSMenuItem *gamepadScriptMenuItem;
 @property(nonatomic, copy) NSString *readyToken;
 @end
 
@@ -185,6 +188,8 @@ static NSString *VML(NSString *key)
     self.openGLMenuItem.state = enabled ? NSControlStateValueOn
                                         : NSControlStateValueOff;
     self.openGLMenuItem.enabled = [self guestSupportsOpenGL];
+    self.gamepadScriptMenuItem.enabled =
+        [NSFileManager.defaultManager fileExistsAtPath:VMGamepadScriptPath];
     self.statusItem.button.image = [self statusImageNamed:enabled
         ? @"vm.laptopcomputer.badge.checkmark" : @"vm.laptopcomputer"];
     self.statusItem.button.imageScaling = NSImageScaleProportionallyDown;
@@ -223,6 +228,13 @@ static NSString *VML(NSString *key)
     [self.preferences setBool:enabled forKey:VMOpenGLKey];
     [self applyOpenGL];
     [self updateMenu];
+}
+
+- (void)openGamepadScriptFolder:(NSMenuItem *)sender
+{
+    (void)sender;
+    NSURL *script = [NSURL fileURLWithPath:VMGamepadScriptPath];
+    [NSWorkspace.sharedWorkspace activateFileViewerSelectingURLs:@[script]];
 }
 
 - (NSString *)productVersion
@@ -285,6 +297,10 @@ static NSString *VML(NSString *key)
         : VML(@"OpenGL Acceleration requires macOS Sonoma or later.")
         action:@selector(toggleOpenGL:) representedObject:nil];
     [menu addItem:self.openGLMenuItem];
+    self.gamepadScriptMenuItem = [self itemWithTitle:
+        VML(@"Open Gamepad Script Folder")
+        action:@selector(openGamepadScriptFolder:) representedObject:nil];
+    [menu addItem:self.gamepadScriptMenuItem];
     [menu addItem:NSMenuItem.separatorItem];
     [menu addItem:[self itemWithTitle:VML(@"Download Xcode")
         action:@selector(openWebItem:) representedObject:@"xcode"]];

@@ -170,6 +170,7 @@
 "On My iPhone" = "ב-iPhone שלי";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "כרגע זמינים רק כ-%llu GB. תמונת הכונן דינמית, אך ההתקנה או השימוש בהמשך עלולים להיכשל אם האחסון יתמלא.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "פתחו את מרכז הבקרה, התחילו הקלטת מסך ולאחר מכן שחזרו את הבעיה.";
+"Open Gamepad Script Folder" = "פתיחת תיקיית סקריפט הבקר";
 "OpenGL Acceleration" = "האצת OpenGL";
 "OpenGL Acceleration Is Off" = "האצת OpenGL כבויה";
 "OpenGL Acceleration requires macOS Sonoma or later." = "האצת OpenGL דורשת macOS Sonoma ואילך.";

@@ -1,6 +1,8 @@
 #import "VZSettingsViewController.h"
 #import "VZAppSettings.h"
 #import "VZDiagnostics.h"
+#import "VZGamepadBridge.h"
+#import "VZGamepadSettingsViewController.h"
 #import "VZLocalization.h"
 #import "VZSupport.h"
 #import "VZVMLibraryViewController.h"
@@ -233,7 +235,7 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     (void)tableView;
-    return section == 0 ? 4 : section == 1 ? 6 : section == 2 ? 4 :
+    return section == 0 ? 4 : section == 1 ? 6 : section == 2 ? 5 :
         section == 3 ? 3 : section == 4 ? 3 : section == 5 ? 2 :
         section == 6 ? 1 : 4;
 }
@@ -394,7 +396,7 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
             forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = toggle;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row < 4) {
         NSArray *titles = @[
             VZSettingsFittingTitle(tableView,
                 VZDeviceString(VZL(@"Suppress iPadOS System Edge Gestures"),
@@ -419,6 +421,14 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
             forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = toggle;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    } else if (indexPath.section == 2) {
+        cell.textLabel.text = [NSString stringWithUTF8String:
+            "Network Gamepad Relay"];
+        NSDictionary *state = [[VZGamepadBridge sharedBridge] stateSnapshot];
+        cell.detailTextLabel.text = [state[@"controllerConnected"] boolValue]
+            ? [NSString stringWithUTF8String:"Controller Connected"]
+            : [NSString stringWithUTF8String:"No Controller"];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else if (indexPath.section == 3) {
         NSArray *titles = @[VZL(@"Fix Keyboard Crash"),
                             VZL(@"Fix External Display Scroll Direction"),
@@ -728,6 +738,11 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
         [self chooseHUDVisibilityFrom:cell];
     else if (indexPath.section == 3 && indexPath.row == 2)
         [self chooseDebugLoggingFrom:cell];
+    else if (indexPath.section == 2 && indexPath.row == 4) {
+        VZGamepadSettingsViewController *gamepad =
+            [[[VZGamepadSettingsViewController alloc] init] autorelease];
+        [self.navigationController pushViewController:gamepad animated:YES];
+    }
     else if (indexPath.section == 7 && indexPath.row == 0) {
         UIPasteboard.generalPasteboard.string = VZVMLibraryPath();
         UINotificationFeedbackGenerator *feedback = [[[UINotificationFeedbackGenerator alloc] init] autorelease];
