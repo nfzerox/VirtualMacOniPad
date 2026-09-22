@@ -33,6 +33,10 @@ Magic Keyboard is not required because you can also use the touchscreen and virt
 - If the HUD gets in the way, move it to a different corner or hide it from the More menu. To show it again, press and hold the Virtual Mac icon on the iPad Home Screen, then tap Show Virtual Mac Controls.
 - To automatically start up your virtual Mac, enable System Settings > Users & Groups > Automatically log in, and set System Settings > Lock Screen to Never. Then in Virtual Mac's in-app Settings, change Start on Launch from Show Library to the name of your virtual Mac. To show library again, press and hold the Virtual Mac icon on the iPad Home Screen, then tap Show Library.
 - If your Magic Keyboard doesn't have a hardware Escape key, press Command + Period (⌘ + .) instead. You can also map another key to Escape in Settings > General > Keyboard > Hardware Keyboard > Modifier Keys.
+- However, I recommend using a Magic Keyboard for the full experience, but don’t fret, you can still use MacOS even without a Magic Keyboard.
+
+### Does Virtual Mac support Apple Pencil?
+- Yes, Virtual Mac can support an Apple Pencil.
 
 ### Is it possible to support newer versions of iPadOS?
 
@@ -56,6 +60,7 @@ First, open Sileo and update to the latest version of Virtual Mac. If the issue 
 - If you see "[Unexpected device state 'DFU' expected 'RestoreOS' (Probably forced into DFU mode externally)](https://github.com/nfzerox/VirtualMacOniPad/issues/11)", update to the latest version of Virtual Mac. If the issue remains, open Sileo > Packages, search for usbmuxd and [temporarily uninstall it](VirtualMac/screenshots/troubleshooting/troubleshooting-usbmuxd.png).
 - If you see "launcher cannot become root: Operation not permitted" or "Internal Virtualization error. The virtual machine failed to start", and have Choicy installed, open Settings > Choicy > Applications > Virtual Mac, and turn off "Disable Tweak Injection". You can also uninstall Choicy.
 - Virtual Mac may conflict with certain other tweaks. If problems remain, remove other tweaks one at a time to narrow down the conflict.
+- Virtual Mac may have overwhelmed your iPad’s RAM, to fix this, choose a lower version of macOS, I recommend Seqouia.
 
 [Open a GitHub issue](https://github.com/nfzerox/VirtualMacOniPad/issues?q=is%3Aissue) when you encounter a crash, bug, or other problem. Include clear reproduction steps, a screenshot or screen recording, and diagnostics file from Virtual Mac's in app Settings > Export Diagnostics.
 
