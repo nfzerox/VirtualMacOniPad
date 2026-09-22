@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.mac.virtual.network-watchdog</string>
+    <!-- A LaunchDaemon (not a LaunchAgent) so it runs as root from boot,
+         independent of whether anyone is logged in to the guest. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>/Library/VirtualMac/network-watchdog.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/virtualmac-network-watchdog.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/virtualmac-network-watchdog.err.log</string>
+</dict>
+</plist>

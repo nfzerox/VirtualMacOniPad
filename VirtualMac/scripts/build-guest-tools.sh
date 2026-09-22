@@ -25,6 +25,7 @@ rm -f "$OUT/VirtualMacGuestTools.arm64" \
     "$OUT/VirtualMacGuestTools.x86_64" \
     "$OUT/OpenGLPVGCompat.dylib" \
     "$OUT/com.mac.virtual.guest-tools.plist" \
+    "$OUT/com.mac.virtual.network-watchdog.plist" \
     "$OUT/com.mac.virtual.opengl-compat.plist" \
     "$OUT/Virtual Mac OpenGL Acceleration" \
     "$OUT/VirtualMacGuestTools.tar.gz"
@@ -72,12 +73,20 @@ codesign --force --sign - "$APP"
 cp "$OPENGL_OUT/OpenGLPVGCompat.dylib" "$OUT/OpenGLPVGCompat.dylib"
 cp "$VZ_REPO_ROOT/vz/guest/com.mac.virtual.guest-tools.plist" \
     "$OUT/com.mac.virtual.guest-tools.plist"
+cp "$VZ_REPO_ROOT/vz/guest/network-watchdog.sh" \
+    "$OUT/network-watchdog.sh"
+cp "$VZ_REPO_ROOT/vz/guest/com.mac.virtual.network-watchdog.plist" \
+    "$OUT/com.mac.virtual.network-watchdog.plist"
 PAYLOAD="$OUT/payload"
-mkdir -p "$PAYLOAD/Library/VirtualMac" "$PAYLOAD/Library/LaunchAgents"
+mkdir -p "$PAYLOAD/Library/VirtualMac" "$PAYLOAD/Library/LaunchAgents" \
+    "$PAYLOAD/Library/LaunchDaemons"
 cp -R "$APP" "$PAYLOAD/Library/VirtualMac/"
 cp "$OUT/OpenGLPVGCompat.dylib" "$PAYLOAD/Library/VirtualMac/"
+cp "$OUT/network-watchdog.sh" "$PAYLOAD/Library/VirtualMac/"
 cp "$OUT/com.mac.virtual.guest-tools.plist" \
     "$PAYLOAD/Library/LaunchAgents/"
+cp "$OUT/com.mac.virtual.network-watchdog.plist" \
+    "$PAYLOAD/Library/LaunchDaemons/"
 # Do not encode checkout provenance into the guest payload. macOS 27 launchd
 # rejects quarantined LaunchAgents even when their syntax, ownership, and code
 # signature are valid.

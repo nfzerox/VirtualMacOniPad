@@ -55,6 +55,12 @@ remote_check+=$'address=$(ipconfig getifaddr en0)\n'
 remote_check+=$'test -n "$address"\n'
 remote_check+=$'echo "guest IPv4: $address"\n'
 remote_check+=$'route -n get default | grep "gateway:"\n'
+# The watchdog repairs the stale DHCP/ARP state that survives a host network
+# change. Assert the payload shipped it and launchd loaded it; whether it
+# actually repairs is only observable by switching the host network.
+remote_check+=$'test -x /Library/VirtualMac/network-watchdog.sh\n'
+remote_check+=$'launchctl print system/com.mac.virtual.network-watchdog >/dev/null\n'
+remote_check+=$'echo "guest network watchdog: loaded"\n'
 remote_check+=$'for url in https://google.com https://apple.com https://macrumors.com https://9to5mac.com; do\n'
 remote_check+=$'  curl -4 -ILsS --connect-timeout 8 --max-time 25 -o /dev/null -w "$url code=%{http_code} remote=%{remote_ip}\\n" "$url"\n'
 remote_check+=$'done\n'
