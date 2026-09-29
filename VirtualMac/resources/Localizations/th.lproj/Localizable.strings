@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Virtual Mac ที่เสร็จสมบูรณ์และอิมเมจกู้คืนที่อยู่นอก Virtual Mac จะไม่ถูกลบ";
 "Configuration failed: %@" = "กำหนดค่าไม่สำเร็จ: %@";
 "Configure %@" = "กำหนดค่า %@";
+"Consolidate" = "รวม";
+"Consolidate Legacy Library" = "รวมไลบรารีเดิม";
+"Consolidate Legacy Library?" = "รวมไลบรารีเดิม?";
+"Consolidation Complete" = "การรวมเสร็จสมบูรณ์";
+"Consolidation Failed" = "การรวมล้มเหลว";
 "Continue" = "ดำเนินการต่อ";
 "Controls Opacity" = "ความทึบของตัวควบคุม";
 "Copy Library Path" = "คัดลอกเส้นทางไลบรารี";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "การสะท้อนภาพเต็มจอ";
 "General" = "ทั่วไป";
 "Get Help" = "ขอความช่วยเหลือ";
+"Get roothide Package" = "รับแพ็กเกจ roothide";
 "Height" = "ความสูง";
 "Incomplete Installation" = "การติดตั้งไม่เสร็จ";
 "Incomplete Installations" = "การติดตั้งที่ไม่เสร็จ";
@@ -153,6 +159,7 @@
 "Microphone Input" = "สัญญาณไมโครโฟนเข้า";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "ขั้นต่ำ: %llu GB ขีดจำกัดสูงสุดขึ้นอยู่กับระบบไฟล์";
 "Move Controls" = "ย้ายตัวควบคุม";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "ย้าย Virtual Mac จากไลบรารีเดิมไปยังไลบรารีหลัก ชื่อที่มีอยู่แล้วจะได้รับคำต่อท้ายเป็นตัวเลข ปิด Virtual Mac ที่กำลังทำงานทั้งหมดก่อน";
 "Name" = "ชื่อ";
 "Name Already Used" = "ชื่อนี้ถูกใช้แล้ว";
 "NAT: Share %@" = "NAT: แชร์ %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "ไม่พบ Virtual Mac ที่ตรงกับการค้นหา";
 "Off" = "ปิด";
 "OK" = "ตกลง";
+"Older Virtual Macs are stored in %@." = "Virtual Mac เดิมจัดเก็บอยู่ใน %@";
 "On" = "เปิด";
 "On for Next Boot" = "เปิดสำหรับการบูตครั้งถัดไป";
 "On My iPad" = "บน iPad ของฉัน";
@@ -204,6 +212,7 @@
 "Resolution" = "ความละเอียด";
 "Resources" = "ทรัพยากร";
 "Resume" = "ทำงานต่อ";
+"roothide Package Required" = "ต้องการแพ็กเกจ roothide";
 "Save" = "บันทึก";
 "Save a ZIP file containing logs and crash reports." = "บันทึกไฟล์ ZIP ที่มีบันทึกและรายงานข้อขัดข้อง";
 "Save Diagnostics to Files" = "บันทึกข้อมูลวินิจฉัยไปยังไฟล์";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "ปิดกั้นคำสั่งนิ้วมัลติทาสก์";
 "Suppress System Edge Gestures" = "ปิดกั้นคำสั่งนิ้วจากขอบจอ";
 "Switch to Running Virtual Mac" = "สลับไปยัง Virtual Mac ที่กำลังทำงาน";
-"Switch to the Official Version of Dopamine" = "เปลี่ยนไปใช้ Dopamine เวอร์ชันทางการ";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "สลับไปยัง Virtual Mac ที่กำลังทำงานและปิดเครื่องก่อนเริ่มเครื่องอื่น";
 "The diagnostics archive could not be created." = "ไม่สามารถสร้างไฟล์ข้อมูลวินิจฉัยได้";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "ค่าความคืบหน้าแรกอาจใช้เวลาหลายนาทีขณะที่ Virtual Mac เปลี่ยนจาก DFU เป็น RestoreOS iPad จะไม่พักเครื่อง";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "ค่าความคืบหน้าแรกอาจใช้เวลาหลายนาทีขณะที่ Virtual Mac เปลี่ยนจาก DFU เป็น RestoreOS iPhone จะไม่พักเครื่อง";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Virtual Mac ที่ติดตั้งไม่เสร็จและไฟล์ติดตั้งจะถูกลบ";
 "The installer could not be started: %s" = "ไม่สามารถเริ่มโปรแกรมติดตั้งได้: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "ไม่สามารถรวมไลบรารีเดิมได้ ปิด Virtual Mac ที่กำลังทำงานทั้งหมดแล้วลองอีกครั้ง";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Virtual Mac เดิมถูกย้ายไปยังไลบรารีหลักแล้ว การแยกประเภทเดิมหมดไปแล้ว";
 "The new Virtual Mac is ready to use." = "Virtual Mac เครื่องใหม่พร้อมใช้งานแล้ว";
 "The partial restore image will be deleted." = "อิมเมจกู้คืนที่ดาวน์โหลดไม่ครบจะถูกลบ";
 "The Virtual Mac configuration could not be created." = "ไม่สามารถสร้างการกำหนดค่า Virtual Mac ได้";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "ตัวเลือกเหล่านี้มีผลกับ iPadOS เฉพาะเมื่อ Mac เสมือน อยู่ด้านหน้าและ Mac เสมือนกำลังทำงาน";
 "This iPad is incompatible with Virtual Mac" = "iPad เครื่องนี้ไม่รองรับ Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "iPhone เครื่องนี้ไม่รองรับ Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "นี่คือแพ็กเกจ Virtual Mac มาตรฐานที่ทำงานบนเจลเบรก Dopamine-roothide ติดตั้งแพ็กเกจ roothide อย่างเป็นทางการเพื่อพื้นที่จัดเก็บส่วนตัวและความเข้ากันได้สมบูรณ์";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "การดำเนินการนี้จะคืนการตั้งค่า Virtual Mac ทั้งหมดเป็นค่าเริ่มต้น โดยจะไม่ลบ Virtual Mac อิมเมจกู้คืน หรือไฟล์ติดตั้ง";
 "this Virtual Mac" = "Virtual Mac เครื่องนี้";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "หากต้องการเปิดการเร่งความเร็ว OpenGL ให้ปิด Virtual Mac เครื่องนี้ แล้วเปิดการเร่งความเร็ว OpenGL ในตัวเลือก";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "ความทึบของตัวควบคุม Virtual Mac";
 "Virtual Mac devices are stored in %@." = "Mac เสมือนจัดเก็บอยู่ใน %@";
 "Virtual Mac Display" = "จอภาพ Mac เสมือน";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac ไม่รองรับสภาพแวดล้อม Dopamine-roothide ให้นำเจลเบรก roothide ออกใน Dopamine-roothide > การตั้งค่า > นำเจลเบรกออก แล้วเปลี่ยนไปใช้ Dopamine เวอร์ชันทางการ";
 "Virtual Mac Guest Tools" = "เครื่องมือเกสต์ของ Mac เสมือน";
 "Virtual Mac has no published framebuffer" = "Virtual Mac ไม่มีเฟรมบัฟเฟอร์ที่เผยแพร่";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac ต้องใช้ iPad Pro (M1, M2) หรือ iPad Air (M1) ที่ใช้ iPadOS 14–16.3.1 หรือ iPhone 14 Pro และ iPhone 14 Pro Max ที่ใช้ iOS 16–16.3.1";

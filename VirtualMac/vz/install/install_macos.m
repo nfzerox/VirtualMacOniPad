@@ -1,3 +1,4 @@
+#import "../host/VZPaths.h"
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -324,9 +325,9 @@ int main(int argc, const char *argv[])
         gFinalBundlePath = [[NSString alloc] initWithUTF8String:argv[3]];
         if (![gStagingBundlePath hasSuffix:@".bundle.installing"] ||
             ![gStagingBundlePath hasPrefix:
-                @"/var/mobile/Media/VirtualMac/Installations/"] ||
+                @(VZStatePath("Installations/"))] ||
             ![gFinalBundlePath.stringByDeletingLastPathComponent
-                isEqualToString:@"/var/mobile/Media/VirtualMac"] ||
+                isEqualToString:@(VZLibraryRoot)] ||
             ![gFinalBundlePath hasSuffix:@".bundle"] ||
             [[NSFileManager defaultManager]
                 fileExistsAtPath:gStagingBundlePath] ||
@@ -342,7 +343,7 @@ int main(int argc, const char *argv[])
                class_getName(class_getSuperclass([NSView class])),
                class_getInstanceSize([NSView class]));
 
-        NSString *root = @"/var/root/VirtualMac";
+        NSString *root = @(VZRuntimePath(""));
         setenv("VZ_INSTALLATION_BIN", [[root stringByAppendingPathComponent:
             @"payload/Installation.xpc/Contents/MacOS/"
              "com.apple.Virtualization.Installation"] fileSystemRepresentation], 1);

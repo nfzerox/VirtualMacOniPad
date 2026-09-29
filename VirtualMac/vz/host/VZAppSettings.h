@@ -3,6 +3,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT NSString * const VZSettingsDidChangeNotification;
+// Posted when the on-disk machine library changes (e.g. legacy
+// consolidation) so observers can rescan and refresh, not just redraw.
+FOUNDATION_EXPORT NSString * const VZLibraryDidChangeNotification;
 FOUNDATION_EXPORT NSString * const VZLibraryLayoutKey;
 FOUNDATION_EXPORT NSString * const VZAutoBootVMPathKey;
 FOUNDATION_EXPORT NSString * const VZAutoBootVMIdentifierKey;

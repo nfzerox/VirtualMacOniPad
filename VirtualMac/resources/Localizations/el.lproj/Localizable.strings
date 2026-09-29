@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Τα ολοκληρωμένα Εικονικά Mac και τα είδωλα επαναφοράς εκτός της εφαρμογής δεν αφαιρούνται.";
 "Configuration failed: %@" = "Η διαμόρφωση απέτυχε: %@";
 "Configure %@" = "Διαμόρφωση %@";
+"Consolidate" = "Ενοποίηση";
+"Consolidate Legacy Library" = "Ενοποίηση παλαιάς βιβλιοθήκης";
+"Consolidate Legacy Library?" = "Ενοποίηση παλαιάς βιβλιοθήκης;";
+"Consolidation Complete" = "Η ενοποίηση ολοκληρώθηκε";
+"Consolidation Failed" = "Η ενοποίηση απέτυχε";
 "Continue" = "Συνέχεια";
 "Controls Opacity" = "Αδιαφάνεια στοιχείων ελέγχου";
 "Copy Library Path" = "Αντιγραφή διαδρομής βιβλιοθήκης";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Κατοπτρισμός Πλήρους Οθόνης";
 "General" = "Γενικά";
 "Get Help" = "Βοήθεια";
+"Get roothide Package" = "Λήψη πακέτου roothide";
 "Height" = "Ύψος";
 "Incomplete Installation" = "Ημιτελής εγκατάσταση";
 "Incomplete Installations" = "Ημιτελείς εγκαταστάσεις";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Είσοδος μικροφώνου";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Ελάχιστο: %llu GB. Το ανώτατο όριο καθορίζεται από το σύστημα αρχείων.";
 "Move Controls" = "Μετακίνηση χειριστηρίων";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Μετακινήστε τα Virtual Mac από την παλαιά βιβλιοθήκη στην κύρια βιβλιοθήκη. Τα ονόματα που υπάρχουν ήδη παίρνουν αριθμητικό επίθημα. Κλείστε πρώτα όλα τα Virtual Mac που εκτελούνται.";
 "Name" = "Όνομα";
 "Name Already Used" = "Το όνομα χρησιμοποιείται ήδη";
 "NAT: Share %@" = "NAT: Κοινή χρήση %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Κανένα Εικονικό Mac δεν αντιστοιχεί στην αναζήτησή σας.";
 "Off" = "Ανενεργό";
 "OK" = "ΟΚ";
+"Older Virtual Macs are stored in %@." = "Οι παλαιότεροι Virtual Mac αποθηκεύονται στο %@.";
 "On" = "Ενεργό";
 "On for Next Boot" = "Ενεργό στην επόμενη εκκίνηση";
 "On My iPad" = "Στο iPad μου";
@@ -204,6 +212,7 @@
 "Resolution" = "Ανάλυση";
 "Resources" = "Πόροι";
 "Resume" = "Συνέχιση";
+"roothide Package Required" = "Απαιτείται πακέτο roothide";
 "Save" = "Αποθήκευση";
 "Save a ZIP file containing logs and crash reports." = "Αποθηκεύστε ένα αρχείο ZIP που περιέχει αρχεία καταγραφής και αναφορές κατάρρευσης.";
 "Save Diagnostics to Files" = "Αποθήκευση διαγνωστικών στα Αρχεία";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Απενεργοποίηση χειρονομιών πολυδιεργασίας";
 "Suppress System Edge Gestures" = "Απενεργοποίηση χειρονομιών άκρων";
 "Switch to Running Virtual Mac" = "Μετάβαση στο Εικονικό Mac που εκτελείται";
-"Switch to the Official Version of Dopamine" = "Μετάβαση στην επίσημη έκδοση του Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Μεταβείτε στο Εικονικό Mac που εκτελείται και τερματίστε το πριν εκκινήσετε κάποιο άλλο.";
 "The diagnostics archive could not be created." = "Δεν ήταν δυνατή η δημιουργία του αρχείου διαγνωστικών.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Η πρώτη τιμή προόδου μπορεί να χρειαστεί αρκετά λεπτά όσο το Εικονικό Mac μεταβαίνει από το DFU στο RestoreOS. Το iPad σας θα παραμείνει ενεργό.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Η πρώτη τιμή προόδου μπορεί να χρειαστεί αρκετά λεπτά όσο το Εικονικό Mac μεταβαίνει από το DFU στο RestoreOS. Το iPhone σας θα παραμείνει ενεργό.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Το ημιτελές Εικονικό Mac και τα αρχεία εγκατάστασής του θα διαγραφούν.";
 "The installer could not be started: %s" = "Δεν ήταν δυνατή η έναρξη του προγράμματος εγκατάστασης: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Δεν ήταν δυνατή η ενοποίηση της παλαιάς βιβλιοθήκης. Κλείστε όλα τα Virtual Mac που εκτελούνται και δοκιμάστε ξανά.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Τα παλαιά Virtual Mac μετακινήθηκαν στην κύρια βιβλιοθήκη. Η παλαιά διάκριση καταργήθηκε.";
 "The new Virtual Mac is ready to use." = "Το νέο Εικονικό Mac είναι έτοιμο για χρήση.";
 "The partial restore image will be deleted." = "Το μερικώς ληφθέν είδωλο επαναφοράς θα διαγραφεί.";
 "The Virtual Mac configuration could not be created." = "Δεν ήταν δυνατή η δημιουργία της διαμόρφωσης του Εικονικού Mac.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Αυτές οι επιλογές επηρεάζουν το iPadOS μόνο όταν το Εικονικό Mac βρίσκεται στο προσκήνιο και εκτελείται ένα εικονικό Mac.";
 "This iPad is incompatible with Virtual Mac" = "Αυτό το iPad δεν είναι συμβατό με το Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "Αυτό το iPhone δεν είναι συμβατό με το Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Αυτό είναι το τυπικό πακέτο Virtual Mac που εκτελείται σε jailbreak Dopamine-roothide. Εγκαταστήστε το επίσημο πακέτο roothide για ιδιωτικό χώρο αποθήκευσης και πλήρη συμβατότητα.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Αυτό επαναφέρει όλες τις ρυθμίσεις του Εικονικού Mac στις προεπιλογές τους. Τα Εικονικά Mac, τα είδωλα επαναφοράς και τα αρχεία εγκατάστασης δεν θα αφαιρεθούν.";
 "this Virtual Mac" = "αυτό το Εικονικό Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Για να ενεργοποιήσετε την επιτάχυνση OpenGL, τερματίστε αυτό το Virtual Mac και ενεργοποιήστε την στις επιλογές του.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Αδιαφάνεια χειριστηρίων Virtual Mac";
 "Virtual Mac devices are stored in %@." = "Τα Εικονικά Mac αποθηκεύονται στο %@.";
 "Virtual Mac Display" = "Οθόνη Εικονικού Mac";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Το Virtual Mac δεν υποστηρίζει το περιβάλλον Dopamine-roothide. Αφαιρέστε το jailbreak roothide από Dopamine-roothide > Ρυθμίσεις > Αφαίρεση Jailbreak και μετά μεταβείτε στην επίσημη έκδοση του Dopamine.";
 "Virtual Mac Guest Tools" = "Εργαλεία επισκέπτη Εικονικού Mac";
 "Virtual Mac has no published framebuffer" = "Το Εικονικό Mac δεν έχει δημοσιευμένο framebuffer";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Το Virtual Mac απαιτεί iPad Pro (M1, M2) ή iPad Air (M1) με iPadOS 14–16.3.1 ή iPhone 14 Pro και iPhone 14 Pro Max με iOS 16–16.3.1.";

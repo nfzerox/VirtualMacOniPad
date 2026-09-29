@@ -1,3 +1,4 @@
+#import "VZPaths.h"
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
 #import <UIKit/UIKit.h>
@@ -23,6 +24,7 @@
 #include <mach-o/loader.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <pthread.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
@@ -323,6 +325,11 @@ static UIViewController *VZTopPresentedController(UIViewController *controller)
 static void VZContinueAfterRootHideInformation(
     UIViewController *presenter, void (^continuation)(void))
 {
+#if defined(VZ_ROOTHIDE)
+    if (continuation)
+        continuation();
+    return;
+#endif
     if (!VZIsRootHideEnvironment()) {
         if (continuation)
             continuation();
@@ -344,11 +351,22 @@ static void VZContinueAfterRootHideInformation(
         gRootHideInformationVisible = YES;
         UIAlertController *alert = [UIAlertController
             alertControllerWithTitle:
-                VZL(@"Switch to the Official Version of Dopamine")
-            message:VZL(@"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine.")
+                VZL(@"roothide Package Required")
+            message:VZL(@"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility.")
             preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:VZL(@"OK")
+        [alert addAction:[UIAlertAction actionWithTitle:VZL(@"Get roothide Package")
             style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            (void)action;
+            VZOpenSupportURL(@"https://github.com/nfzerox/VirtualMacOniPad");
+            gRootHideInformationVisible = NO;
+            NSArray *callbacks = [[gRootHideInformationCompletions copy]
+                autorelease];
+            [gRootHideInformationCompletions removeAllObjects];
+            for (void (^callback)(void) in callbacks)
+                callback();
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:VZL(@"OK")
+            style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
             (void)action;
             gRootHideInformationVisible = NO;
             NSArray *callbacks = [[gRootHideInformationCompletions copy]
@@ -1152,7 +1170,7 @@ static void installGCMouse(void) {
 }
 
 static void scheduleInputSelfTest(void) {
-    if (unlink("/tmp/vz-input-self-test") != 0)
+    if (unlink(VZTemporaryPath("vz-input-self-test")) != 0)
         return;
     dispatch_after(
         dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC),
@@ -1174,7 +1192,7 @@ static void scheduleInputSelfTest(void) {
 }
 
 static void pollInputCommand(void) {
-    NSString *path = @"/tmp/vz-input-command";
+    NSString *path = @(VZTemporaryPath("vz-input-command"));
     NSString *command = [NSString stringWithContentsOfFile:path
                                                   encoding:NSUTF8StringEncoding
                                                      error:nil];
@@ -1187,6 +1205,13 @@ static void pollInputCommand(void) {
             if (field.length)
                 [tokens addObject:field];
         }
+#if defined(VZ_DEVELOPMENT)
+        if (tokens.count == 1 && [tokens[0] isEqualToString:@"check-guest"]) {
+            VZGuestToolsCheckRuntime();
+        } else if (tokens.count == 1 && [tokens[0] isEqualToString:@"check-shares"]) {
+            VZGuestToolsCheckSharedFolders();
+        } else
+#endif
         if (tokens.count == 2 && [tokens[0] isEqualToString:@"tapkey"]) {
             UIKeyboardHIDUsage usage = (UIKeyboardHIDUsage)tokens[1].intValue;
             printf("[VirtualMac] input command tapkey HID=0x%x\n",
@@ -1256,7 +1281,7 @@ static void pollInputCommand(void) {
             UIImage *hostImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             NSData *png = hostImage ? UIImagePNGRepresentation(hostImage) : nil;
-            BOOL saved = [png writeToFile:@"/tmp/VirtualMac-host.png"
+            BOOL saved = [png writeToFile:@(VZTemporaryPath("VirtualMac-host.png"))
                                atomically:YES];
             printf("[VirtualMac] input command screenshot drew=%d saved=%d "
                    "bytes=%lu\n", drew, saved, (unsigned long)png.length);
@@ -1288,11 +1313,11 @@ static void forceStopVirtualMachine(void) {
     NSInteger state = ((NSInteger(*)(id, SEL))objc_msgSend)(
         gVirtualMachine, S("state"));
     if (state == 0) {
-        writeStopMarker("/tmp/vz-guest-stopped", "already stopped");
+        writeStopMarker(VZTemporaryPath("vz-guest-stopped"), "already stopped");
         return;
     }
     if (![gVirtualMachine respondsToSelector:S("stopWithCompletionHandler:")]) {
-        writeStopMarker("/tmp/vz-force-stop-failed",
+        writeStopMarker(VZTemporaryPath("vz-force-stop-failed"),
                         "stopWithCompletionHandler: unavailable");
         return;
     }
@@ -1304,13 +1329,13 @@ static void forceStopVirtualMachine(void) {
         gForceStopPending = NO;
         if (error) {
             const char *description = [[error description] UTF8String];
-            writeStopMarker("/tmp/vz-force-stop-failed",
+            writeStopMarker(VZTemporaryPath("vz-force-stop-failed"),
                             description ?: "unknown direct stop error");
             printf("[VirtualMac] direct virtual machine stop failed: %s\n",
                    description ?: "unknown error");
             return;
         }
-        writeStopMarker("/tmp/vz-guest-stopped", "direct stop complete");
+        writeStopMarker(VZTemporaryPath("vz-guest-stopped"), "direct stop complete");
         printf("[VirtualMac] direct virtual machine stop complete\n");
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([gVirtualMachineDelegate respondsToSelector:
@@ -1332,9 +1357,9 @@ static void startControlMonitor(void) {
         dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC),
         NSEC_PER_SEC, NSEC_PER_SEC / 10);
     dispatch_source_set_event_handler(gControlTimer, ^{
-        if (unlink("/tmp/vz-request-guest-stop") == 0)
+        if (unlink(VZTemporaryPath("vz-request-guest-stop")) == 0)
             forceStopVirtualMachine();
-        if (unlink("/tmp/vz-request-force-stop") == 0)
+        if (unlink(VZTemporaryPath("vz-request-force-stop")) == 0)
             forceStopVirtualMachine();
     });
     dispatch_resume(gControlTimer);
@@ -1559,7 +1584,7 @@ static void installShellShortcutRelay(void) {
                 @"com.mac.virtual.%@.%@", shortcut, state];
             CFNotificationCenterAddObserver(
                 center, NULL, shellShortcutNotification,
-                (CFStringRef)name, NULL,
+                (CFStringRef)VZNotificationName(name), NULL,
                 CFNotificationSuspensionBehaviorDeliverImmediately);
         }
     }
@@ -1604,7 +1629,7 @@ static void installVideoMemoryWarningRelay(void) {
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), NULL,
         videoMemoryExhaustedNotification,
-        CFSTR("com.mac.virtual.video-memory-exhausted"), NULL,
+        (CFStringRef)VZNotificationName(@"com.mac.virtual.video-memory-exhausted"), NULL,
         CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
@@ -3492,14 +3517,14 @@ static NSString *VZInstallationConsoleText(NSString *installLogPath)
 {
     NSArray *sources = @[
         @[@"INSTALLER", installLogPath ?: @"", @YES],
-        @[@"INSTALLER LAUNCHER", @"/tmp/installation.stderr.log", @NO],
-        @[@"INSTALLATION HOOK", @"/tmp/installationhook.log", @NO],
-        @[@"VIRTUALIZATION FRAMEWORK", @"/tmp/vzxpchook.log", @NO],
-        @[@"MOBILEDEVICE / RESTORE USB", @"/tmp/installation-usb.log", @NO],
-        @[@"USBMUXD", @"/tmp/vz-usbmuxd.log", @NO],
-        @[@"USBMUXD LAUNCHER", @"/tmp/vz-usbmuxd-launch.log", @NO],
-        @[@"RESTORE VMM STDERR", @"/tmp/restore-vmm.stderr.log", @NO],
-        @[@"RESTORE VMM", @"/tmp/vmmhook.log", @NO],
+        @[@"INSTALLER LAUNCHER", @(VZRestorePath("installation.stderr.log")), @NO],
+        @[@"INSTALLATION HOOK", @(VZRestorePath("installationhook.log")), @NO],
+        @[@"VIRTUALIZATION FRAMEWORK", @(VZRestorePath("vzxpchook.log")), @NO],
+        @[@"MOBILEDEVICE / RESTORE USB", @(VZRestorePath("installation-usb.log")), @NO],
+        @[@"USBMUXD", @(VZRestorePath("vz-usbmuxd.log")), @NO],
+        @[@"USBMUXD LAUNCHER", @(VZRestorePath("vz-usbmuxd-launch.log")), @NO],
+        @[@"RESTORE VMM STDERR", @(VZRestorePath("restore-vmm.stderr.log")), @NO],
+        @[@"RESTORE VMM", @(VZRestorePath("vmmhook.log")), @NO],
     ];
     NSMutableString *console = [NSMutableString string];
     for (NSArray *source in sources) {
@@ -3521,6 +3546,11 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     NSMutableDictionary *record = [NSMutableDictionary dictionaryWithDictionary:
         [NSDictionary dictionaryWithContentsOfFile:[attemptPath stringByAppendingPathComponent:@"Attempt.plist"]] ?: @{}];
     [record addEntriesFromDictionary:details ?: @{}];
+#if defined(VZ_ROOTHIDE)
+    for (NSString *key in @[@"RestoreImage", @"Destination"])
+        if ([details[key] isKindOfClass:NSString.class])
+            record[key] = VZStoredPath(details[key]);
+#endif
     record[@"State"] = state;
     record[@"UpdatedAt"] = NSDate.date;
     [record writeToFile:[attemptPath stringByAppendingPathComponent:@"Attempt.plist"] atomically:YES];
@@ -3560,14 +3590,14 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     self.view.backgroundColor = active ? UIColor.blackColor
                                        : UIColor.systemBackgroundColor;
     if (active) {
-        FILE *marker = fopen("/tmp/virtual-mac-vm-active", "w");
+        FILE *marker = fopen(VZTemporaryPath("virtual-mac-vm-active"), "w");
         if (marker) {
             fputs("active\n", marker);
             fclose(marker);
         }
         resetPointerSession(YES);
     } else {
-        unlink("/tmp/virtual-mac-vm-active");
+        unlink(VZTemporaryPath("virtual-mac-vm-active"));
     }
     [self updateImmersivePresentation];
     [self updateHUDVisibility];
@@ -3806,7 +3836,7 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     NSString *memory = [@(restoreMemorySize) stringValue];
     NSString *storage = [options[@"StorageSize"] stringValue];
     const char *launcher =
-        "/var/root/VirtualMac/install/install-launcher";
+        VZRuntimePath("install/install-launcher");
     char *arguments[] = {
         (char *)launcher,
         (char *)url.path.fileSystemRepresentation,
@@ -3908,7 +3938,7 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
             [self.installationTimer invalidate];
             self.installationTimer = nil;
             NSString *pid = [NSString stringWithFormat:@"%d", self.installationProcess];
-            const char *cancelLauncher = "/var/root/VirtualMac/install/install-launcher";
+            const char *cancelLauncher = VZRuntimePath("install/install-launcher");
             char *cancelArguments[] = {(char *)cancelLauncher, "--cancel-install",
                 (char *)pid.UTF8String,
                 (char *)self.installationAttemptPath.fileSystemRepresentation, NULL};
@@ -4531,10 +4561,10 @@ static BOOL loadExtractedFrameworks(void) {
            [hookPath fileSystemRepresentation]);
 
     const char *images[] = {
-        "/var/root/VirtualMac/payload/Frameworks/vmnet.framework/vmnet",
-        "/var/root/VirtualMac/payload/Frameworks/Hypervisor.framework/Hypervisor",
-        "/var/root/VirtualMac/payload/Frameworks/ParavirtualizedGraphics.framework/ParavirtualizedGraphics",
-        "/var/root/VirtualMac/payload/Frameworks/Virtualization.framework/Virtualization",
+        VZRuntimePath("payload/Frameworks/vmnet.framework/vmnet"),
+        VZRuntimePath("payload/Frameworks/Hypervisor.framework/Hypervisor"),
+        VZRuntimePath("payload/Frameworks/ParavirtualizedGraphics.framework/ParavirtualizedGraphics"),
+        VZRuntimePath("payload/Frameworks/Virtualization.framework/Virtualization"),
     };
     for (NSUInteger i = 0; i < sizeof(images) / sizeof(images[0]); i++) {
         if (!dlopen(images[i], RTLD_NOW | RTLD_GLOBAL)) {
@@ -4830,7 +4860,7 @@ static id makeConfiguration(NSString *bundlePath, NSDictionary *options,
         [options[VZGuestToolsRemovalPendingKey] boolValue];
 #if EXPERIMENT_GDB_DEBUG
     BOOL externalKernelDebug = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-external-kernel-debug"];
+        fileExistsAtPath:@(VZTemporaryPath("vz-external-kernel-debug"))];
 #endif
     id platform = NEW("VZMacPlatformConfiguration");
     id auxiliaryStorage = ((id(*)(id, SEL, id))objc_msgSend)(
@@ -5165,14 +5195,14 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
     __atomic_store_n(&gPencilRelayEnabled,
         [options[VZApplePencilPressureTiltEnabledKey] boolValue],
         __ATOMIC_RELEASE);
-    unlink("/tmp/vzxpchook.log");
-    unlink("/tmp/vmmhook.log");
-    unlink("/tmp/vmm.stderr.log");
+    unlink(VZTemporaryPath("vzxpchook.log"));
+    unlink(VZTemporaryPath("vmmhook.log"));
+    unlink(VZTemporaryPath("vmm.stderr.log"));
     setenv("VZ_VMM_BIN",
-           "/var/root/VirtualMac/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+           VZRuntimePath("payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine"),
            1);
     setenv("VZ_AVP_BOOTER",
-           "/var/root/VirtualMac/payload/Frameworks/Virtualization.framework/Resources/AVPBooter.vmapple2.bin",
+           VZRuntimePath("payload/Frameworks/Virtualization.framework/Resources/AVPBooter.vmapple2.bin"),
            1);
     // Consume the one-shot mode at the actual boot boundary. The current boot
     // keeps the captured value while Settings immediately returns to Off.
@@ -5294,7 +5324,7 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
     BOOL runtimePolicyEnabled = openGLAcceleration;
 #if EXPERIMENT_GDB_DEBUG
     BOOL externalKernelDebug = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-external-kernel-debug"];
+        fileExistsAtPath:@(VZTemporaryPath("vz-external-kernel-debug"))];
 #endif
     void (^finishStartedVM)(void) = ^{
         dumpRPCHandlers(gVirtualMachine, "after-start");
@@ -5625,8 +5655,11 @@ static void disconnectExternalDisplay(void) {
     UIApplicationShortcutItem *shortcut = launchOptions[
         UIApplicationLaunchOptionsShortcutItemKey];
     BOOL bypassAutoBoot = [shortcut.type isEqualToString:@"com.mac.virtual.show-library"];
-    freopen("/tmp/VirtualMac.log", "a", stdout);
-    freopen("/tmp/VirtualMac.log", "a", stderr);
+#if defined(VZ_ROOTHIDE)
+    umask(0027);
+#endif
+    freopen(VZTemporaryPath("VirtualMac.log"), "a", stdout);
+    freopen(VZTemporaryPath("VirtualMac.log"), "a", stderr);
     setvbuf(stdout, NULL, _IONBF, 0);
 #if 0
     VZEnableKeyboardRenderingFixAfterCrash();
@@ -5772,7 +5805,7 @@ static void disconnectExternalDisplay(void) {
         initWithType:@"com.mac.virtual.show-controls"
         localizedTitle:VZL(@"Show Virtual Mac Controls") localizedSubtitle:nil
         icon:controlsIcon userInfo:nil] autorelease]];
-    unlink("/tmp/virtual-mac-vm-active");
+    unlink(VZTemporaryPath("virtual-mac-vm-active"));
     gMouseLocation = CGPointMake(CGRectGetMidX(inputView.bounds),
                                  CGRectGetMidY(inputView.bounds));
     gShowCursorWhenUsingTouch = [VZAppSettings.sharedSettings
@@ -5784,7 +5817,7 @@ static void disconnectExternalDisplay(void) {
     startControlMonitor();
     printf("[VirtualMac] VM picker ready inputWindow=%p\n", inputView.window);
     requestMicrophoneAccess(^{
-        NSString *controlPath = @"/tmp/vz-autoboot-path";
+        NSString *controlPath = @(VZTemporaryPath("vz-autoboot-path"));
         NSString *autoBootPath = [NSString
             stringWithContentsOfFile:controlPath
                            encoding:NSUTF8StringEncoding error:nil];
@@ -5816,7 +5849,7 @@ static void disconnectExternalDisplay(void) {
             autoBootPath = persistentAutoBoot;
         if (autoBootPath.length && VZIsValidVMBundle(autoBootPath)) {
             unlink(controlPath.fileSystemRepresentation);
-            [NSUserDefaults.standardUserDefaults setObject:autoBootPath
+            [NSUserDefaults.standardUserDefaults setObject:VZStoredPath(autoBootPath)
                                                     forKey:@"VZSelectedVMPath"];
             printf("[VirtualMac] one-shot auto boot path=%s\n",
                    autoBootPath.UTF8String);
@@ -5836,7 +5869,12 @@ static void disconnectExternalDisplay(void) {
             // can request one real UIKit installation after launching the app.
             // The normal library, visible progress alert, polling timer, and
             // completion handling are all used; this is not a headless helper.
-            NSString *requestPath = [VZVMSupportPath()
+            NSString *requestPath = [
+#if defined(VZ_ROOTHIDE)
+                @(VZStatePath(""))
+#else
+                VZVMSupportPath()
+#endif
                 stringByAppendingPathComponent:@".visible-install-request"];
             NSString *request = [NSString
                 stringWithContentsOfFile:requestPath

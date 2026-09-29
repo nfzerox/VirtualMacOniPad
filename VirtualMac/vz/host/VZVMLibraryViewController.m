@@ -1,3 +1,4 @@
+#import "VZPaths.h"
 #import "VZVMLibraryViewController.h"
 #import "VZAppSettings.h"
 #import "VZSettingsViewController.h"
@@ -123,7 +124,11 @@ static uint64_t GiB(uint64_t value)
 
 NSString *VZVMLibraryPath(void)
 {
+#if defined(VZ_ROOTHIDE)
+    return @(VZLibraryRoot);
+#else
     return VZVMSupportPath();
+#endif
 }
 
 NSString *VZVMSupportPath(void)
@@ -133,12 +138,20 @@ NSString *VZVMSupportPath(void)
 
 NSString *VZRestoreImagesPath(void)
 {
+#if defined(VZ_ROOTHIDE)
+    return @(VZRestoreImagesRoot);
+#else
     return [VZVMSupportPath() stringByAppendingPathComponent:@"Restore Images"];
+#endif
 }
 
 NSString *VZInstallationsPath(void)
 {
+#if defined(VZ_ROOTHIDE)
+    return @(VZInstallationsRoot);
+#else
     return [VZVMSupportPath() stringByAppendingPathComponent:@"Installations"];
+#endif
 }
 
 static uint64_t VZDeviceMemoryLimit(void)
@@ -380,6 +393,16 @@ NSDictionary *VZVMOptionsForBundle(NSString *bundlePath)
         [bundlePath stringByAppendingPathComponent:VZVMConfigurationFileName]];
     if ([saved isKindOfClass:NSDictionary.class])
         [options addEntriesFromDictionary:saved];
+#if defined(VZ_ROOTHIDE)
+    NSMutableArray *shares = [NSMutableArray array];
+    for (NSDictionary *share in options[VZSharedDirectoriesKey]) {
+        NSMutableDictionary *resolved = [[share mutableCopy] autorelease];
+        if ([share[@"Path"] isKindOfClass:NSString.class])
+            resolved[@"Path"] = VZResolvedStoredPath(share[@"Path"]);
+        [shares addObject:resolved];
+    }
+    options[VZSharedDirectoriesKey] = shares;
+#endif
     [options removeObjectForKey:@"EnhancedMetalOpenGLEnabled"];
     if (![saved[VZPointingDeviceKey] isKindOfClass:NSString.class])
         options[VZPointingDeviceKey] =
@@ -401,6 +424,25 @@ NSDictionary *VZVMOptionsForBundle(NSString *bundlePath)
 BOOL VZWriteVMOptions(NSDictionary *options, NSString *bundlePath,
                       NSError **error)
 {
+#if defined(VZ_ROOTHIDE)
+    NSMutableDictionary *stored = [[options mutableCopy] autorelease];
+    NSMutableArray *shares = [NSMutableArray array];
+    NSString *portableBundle = VZStoredPath(bundlePath);
+    BOOL legacyBundle = [portableBundle hasPrefix:@"/var/mobile/Media/VirtualMac/"] ||
+        [portableBundle hasPrefix:@"/rootfs/var/mobile/Media/VirtualMac/"];
+    for (NSDictionary *share in options[VZSharedDirectoriesKey]) {
+        NSMutableDictionary *entry = [[share mutableCopy] autorelease];
+        if ([share[@"Path"] isKindOfClass:NSString.class]) {
+            NSString *path = VZStoredPath(share[@"Path"]);
+            if (legacyBundle && [path hasPrefix:@"/rootfs/"])
+                path = [path substringFromIndex:7];
+            entry[@"Path"] = path;
+        }
+        [shares addObject:entry];
+    }
+    stored[VZSharedDirectoriesKey] = shares;
+    options = stored;
+#endif
     NSString *path =
         [bundlePath stringByAppendingPathComponent:VZVMConfigurationFileName];
     NSData *data = [NSPropertyListSerialization
@@ -483,6 +525,18 @@ NSArray<NSDictionary *> *VZDiscoverVirtualMachines(void)
         NSString *display = name.stringByDeletingPathExtension;
         append(path, display);
     }
+#if defined(VZ_ROOTHIDE)
+    NSString *legacy = VZLegacyLibraryPath();
+    for (NSString *name in [manager contentsOfDirectoryAtPath:legacy error:nil]) {
+        if ([name.pathExtension caseInsensitiveCompare:@"bundle"] == NSOrderedSame) {
+            NSString *path = [legacy stringByAppendingPathComponent:name];
+            if (VZIsValidVMBundle(path) &&
+                ![seen containsObject:path.stringByResolvingSymlinksInPath])
+                [machines addObject:@{@"name": name.stringByDeletingPathExtension,
+                                      @"path": path, @"legacy": @YES}];
+        }
+    }
+#endif
     [machines sortUsingComparator:^NSComparisonResult(NSDictionary *left,
                                                        NSDictionary *right) {
         return [left[@"name"] localizedStandardCompare:right[@"name"]];
@@ -503,11 +557,17 @@ static BOOL VZVMNameIsOccupied(NSString *name)
     NSString *bundleName = [name stringByAppendingPathExtension:@"bundle"];
     NSString *installingName = [bundleName
         stringByAppendingPathExtension:@"installing"];
-    for (NSString *entry in [NSFileManager.defaultManager
-            contentsOfDirectoryAtPath:VZVMLibraryPath() error:nil]) {
-        if ([entry caseInsensitiveCompare:bundleName] == NSOrderedSame ||
-            [entry caseInsensitiveCompare:installingName] == NSOrderedSame)
-            return YES;
+    NSArray *directories = @[VZVMLibraryPath()];
+#if defined(VZ_ROOTHIDE)
+    directories = [directories arrayByAddingObject:VZLegacyLibraryPath()];
+#endif
+    for (NSString *directory in directories) {
+        for (NSString *entry in [NSFileManager.defaultManager
+                contentsOfDirectoryAtPath:directory error:nil]) {
+            if ([entry caseInsensitiveCompare:bundleName] == NSOrderedSame ||
+                [entry caseInsensitiveCompare:installingName] == NSOrderedSame)
+                return YES;
+        }
     }
     return NO;
 }
@@ -589,7 +649,7 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         // files that the UIKit process cannot unlink. The setuid launcher
         // accepts only descendants of the two artifact directories.
         const char *launcher =
-            "/var/root/VirtualMac/install/install-launcher";
+            VZRuntimePath("install/install-launcher");
         char *arguments[] = {(char *)launcher, "--delete-artifact",
             (char *)path.fileSystemRepresentation, NULL};
         pid_t child = 0;
@@ -1960,6 +2020,8 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
     [NSNotificationCenter.defaultCenter addObserver:self
         selector:@selector(settingsChanged:) name:VZSettingsDidChangeNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
+        selector:@selector(libraryDidChange:) name:VZLibraryDidChangeNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
         selector:@selector(keyboardFrameChanged:)
         name:UIKeyboardWillChangeFrameNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
@@ -2065,7 +2127,7 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
                 dictionaryWithContentsOfFile:marker];
             NSString *destination = [metadata[@"Destination"]
                 isKindOfClass:NSString.class]
-                ? [metadata[@"Destination"] stringByStandardizingPath] : nil;
+                ? [VZResolvedStoredPath(metadata[@"Destination"]) stringByStandardizingPath] : nil;
             unsigned long long expected =
                 [metadata[@"ExpectedSize"] unsignedLongLongValue];
             unsigned long long actual = destination.length ? [[manager
@@ -2138,6 +2200,12 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
     self.noResultsView.hidden = !visible;
     if (visible)
         [self.view bringSubviewToFront:self.noResultsView];
+}
+
+- (void)libraryDidChange:(NSNotification *)notification
+{
+    (void)notification;
+    [self reloadLibrary];
 }
 
 - (void)settingsChanged:(NSNotification *)notification
@@ -2252,7 +2320,7 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
-    [NSUserDefaults.standardUserDefaults setObject:machine[@"path"]
+    [NSUserDefaults.standardUserDefaults setObject:VZStoredPath(machine[@"path"])
         forKey:@"VZSelectedVMPath"];
     [self.delegate vmLibrary:self bootBundleAtPath:machine[@"path"]
         options:VZVMOptionsForBundle(machine[@"path"])];
@@ -2902,7 +2970,7 @@ static const CGFloat VZLibraryHorizontalInset = 24.0;
     [@{
         @"Name" : image[@"name"] ?: destination.lastPathComponent,
         @"URL" : remoteURL.absoluteString ?: @"",
-        @"Destination" : destination,
+        @"Destination" : VZStoredPath(destination),
         @"ExpectedSize" : @(expected),
         @"StartedAt" : NSDate.date
     } writeToFile:self.downloadMarkerPath

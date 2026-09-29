@@ -1,3 +1,4 @@
+#include "../host/VZPaths.h"
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -26,10 +27,9 @@ static BOOL gGlobeIsDown;
 static uint8_t gGlobeChordTargets[256];
 static uint64_t gRelayingShortcutUsages;
 static const char *gTargetBundleID = "com.mac.virtual";
-static const char *gOpenAfterRespring =
-    "/tmp/virtual-mac-open-after-respring";
-static const char *gVMActiveMarker = "/tmp/virtual-mac-vm-active";
-static NSString * const gSettingsPath = @"/var/mobile/Media/VirtualMac/Settings.plist";
+#define gOpenAfterRespring VZTemporaryPath("virtual-mac-open-after-respring")
+#define gVMActiveMarker VZTemporaryPath("virtual-mac-vm-active")
+#define gSettingsPath @(VZStatePath("Settings.plist"))
 static NSDictionary *gSettings;
 
 static BOOL VZSettingEnabled(NSString *key)
@@ -73,7 +73,7 @@ typedef int64_t (*VZIOHIDEventGetIntegerValue)(CFTypeRef, uint32_t);
 
 static void Log(const char *message)
 {
-    FILE *file = fopen("/tmp/vz-springboard-shortcuts.log", "a");
+    FILE *file = fopen(VZTemporaryPath("vz-springboard-shortcuts.log"), "a");
     if (!file)
         return;
     fprintf(file, "%s\n", message);
@@ -232,7 +232,7 @@ static void VZPostCommandShortcut(int64_t usage, BOOL pressed)
         pressed ? @"down" : @"up"];
     CFNotificationCenterPostNotification(
         CFNotificationCenterGetDarwinNotifyCenter(),
-        (CFStringRef)name, NULL, NULL, YES);
+        (CFStringRef)VZNotificationName(name), NULL, NULL, YES);
     DebugLog(pressed ? "relayed consumed Command shortcut down to Virtual Mac"
                      : "relayed consumed Command shortcut up to Virtual Mac");
 }
@@ -243,7 +243,7 @@ static void VZPostShortcut(const char *name, BOOL pressed)
         @"com.mac.virtual.%s.%@", name, pressed ? @"down" : @"up"];
     CFNotificationCenterPostNotification(
         CFNotificationCenterGetDarwinNotifyCenter(),
-        (CFStringRef)notification, NULL, NULL, YES);
+        (CFStringRef)VZNotificationName(notification), NULL, NULL, YES);
     char buffer[128];
     snprintf(buffer, sizeof(buffer),
              "relayed %s %s to Virtual Mac", name, pressed ? "down" : "up");
@@ -472,7 +472,8 @@ static void VZInstallKeyboardPassthrough(void)
     VZObserveSpringBoardFinishedLaunching();
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), NULL,
-        VZSettingsChanged, CFSTR("com.mac.virtual.settings-changed"),
+        VZSettingsChanged,
+        (CFStringRef)VZNotificationName(@"com.mac.virtual.settings-changed"),
         NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     Class springBoard = objc_getClass("SpringBoard");
     VZScheduleOneShotOpen();

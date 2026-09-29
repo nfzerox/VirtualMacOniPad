@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Mac-urile virtuale complete și imaginile de restaurare din afara aplicației Virtual Mac nu vor fi eliminate.";
 "Configuration failed: %@" = "Configurarea a eșuat: %@";
 "Configure %@" = "Configura %@";
+"Consolidate" = "Consolidează";
+"Consolidate Legacy Library" = "Consolidează biblioteca legacy";
+"Consolidate Legacy Library?" = "Să consolidez biblioteca legacy?";
+"Consolidation Complete" = "Consolidare completă";
+"Consolidation Failed" = "Consolidare eșuată";
 "Continue" = "Continuă";
 "Controls Opacity" = "Opacitatea comenzilor";
 "Copy Library Path" = "Copiați calea bibliotecii";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Oglindire pe Tot Ecranul";
 "General" = "Generali";
 "Get Help" = "Obțineți ajutor";
+"Get roothide Package" = "Obține pachetul roothide";
 "Height" = "Înălțime";
 "Incomplete Installation" = "Instalare incompleta";
 "Incomplete Installations" = "Installazioni incomplete";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Intrare microfon";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Minimum: %llu GB. Limita superioară este determinată de sistemul de fișiere.";
 "Move Controls" = "Mutați controlli";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Mută Virtual Mac-urile din biblioteca legacy în biblioteca principală. Numele deja existente primesc un sufix numeric. Închide mai întâi toate Virtual Mac-urile care rulează.";
 "Name" = "Nume";
 "Name Already Used" = "Numele este deja folosit";
 "NAT: Share %@" = "NAT: condividi %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Niciun Mac Virtual nu corespunde căutării.";
 "Off" = "Dezactivat";
 "OK" = "OK";
+"Older Virtual Macs are stored in %@." = "Virtual Mac-urile mai vechi sunt stocate în %@.";
 "On" = "Activat";
 "On for Next Boot" = "Activat la următoarea pornire";
 "On My iPad" = "Pe iPad-ul meu";
@@ -204,6 +212,7 @@
 "Resolution" = "Rezoluție";
 "Resources" = "Resurse";
 "Resume" = "Reluați";
+"roothide Package Required" = "Pachet roothide necesar";
 "Save" = "Salvează";
 "Save a ZIP file containing logs and crash reports." = "Salvați un fișier ZIP care conține jurnale și rapoarte de blocare.";
 "Save Diagnostics to Files" = "Salvați diagnosticele în Fișiere";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Dezactivează gesturile multitasking";
 "Suppress System Edge Gestures" = "Dezactivează gesturile de la margine";
 "Switch to Running Virtual Mac" = "Passa al Mac virtual rulează";
-"Switch to the Official Version of Dopamine" = "Treceți la versiunea oficială de Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Passa al Mac virtual rulează e spegnilo prima di avviarne un altro.";
 "The diagnostics archive could not be created." = "Arhiva de diagnosticare nu a putut fi creată.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Prima valoare a progresului poate apărea după câteva minute, în timp ce Mac-ul virtual trece din DFU în RestoreOS. iPad-ul va rămâne activ.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Prima valoare a progresului poate apărea după câteva minute, în timp ce Mac-ul virtual trece din DFU în RestoreOS. iPhone-ul va rămâne activ.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Mac-ul virtual incomplet și fișierele sale de instalare vor fi șterse.";
 "The installer could not be started: %s" = "Programul de instalare nu a putut fi pornit: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Biblioteca legacy nu a putut fi consolidată. Închide toate Virtual Mac-urile care rulează și încearcă din nou.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Virtual Mac-urile legacy au fost mutate în biblioteca principală. Distincția legacy a dispărut.";
 "The new Virtual Mac is ready to use." = "Noul Mac virtual este gata de utilizare.";
 "The partial restore image will be deleted." = "Imaginea de restaurare descărcată parțial va fi ștearsă.";
 "The Virtual Mac configuration could not be created." = "Configurația Mac-ului virtual nu a putut fi creată.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Aceste opțiuni afectează iPadOS numai când Mac virtual este în prim-plan și rulează un Mac virtual.";
 "This iPad is incompatible with Virtual Mac" = "Acest iPad nu este compatibil cu Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "Acest iPhone nu este compatibil cu Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Acesta este pachetul standard Virtual Mac care rulează pe un jailbreak Dopamine-roothide. Instalați pachetul roothide oficial pentru stocare privată și compatibilitate completă.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Aceasta restabilește toate configurările Virtual Mac la valorile implicite. Mac-urile virtuale, imaginile de restaurare și fișierele de instalare nu vor fi eliminate.";
 "this Virtual Mac" = "acest Mac virtual";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Pentru a activa accelerarea OpenGL, opriți acest Virtual Mac, apoi activați-o în opțiunile sale.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Opacitatea comenzilor Virtual Mac";
 "Virtual Mac devices are stored in %@." = "Mac-urile virtuale sunt stocate în %@.";
 "Virtual Mac Display" = "Ecranul Mac-ului virtual";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac nu acceptă mediul Dopamine-roothide. Eliminați jailbreakul roothide din Dopamine-roothide > Configurări > Eliminați jailbreakul, apoi treceți la versiunea oficială de Dopamine.";
 "Virtual Mac Guest Tools" = "Instrumente pentru oaspetele Mac Virtual";
 "Virtual Mac has no published framebuffer" = "Mac-ul virtual nu a publicat niciun buffer de cadre";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac necesită iPad Pro (M1, M2) sau iPad Air (M1) cu iPadOS 14–16.3.1 sau iPhone 14 Pro și iPhone 14 Pro Max cu iOS 16–16.3.1.";

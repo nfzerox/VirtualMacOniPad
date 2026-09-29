@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 #import "VZLocalPolicy.h"
 
 #import <CommonCrypto/CommonDigest.h>
@@ -20,7 +21,7 @@ static void LocalPolicyLog(NSString *format, ...)
     NSString *message = [[NSString alloc] initWithFormat:format
                                                arguments:arguments];
     va_end(arguments);
-    int descriptor = open("/tmp/VirtualMac.log",
+    int descriptor = open(VZTemporaryPath("VirtualMac.log"),
                           O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0644);
     if (descriptor >= 0) {
         dprintf(descriptor, "[GuestTools] %s\n", message.UTF8String);

@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 // Metal shim for the iOS-ported VZ VMM service. macOS Metal exports MTLCopyAllDevices
 // (multi-GPU enumeration); iOS Metal does not (single GPU). The extracted VMM binds it,
 // so dyld fails the load. We build a tiny arm64e dylib that re-exports the device's real
@@ -61,11 +62,18 @@ static MSHookFunctionFn LoadMetalHookFunction(void) {
     MSHookFunctionFn hook =
         (MSHookFunctionFn)dlsym(RTLD_DEFAULT, "MSHookFunction");
     if (hook) return hook;
+#if defined(VZ_ROOTHIDE)
+    const char *paths[] = {
+        jbroot("/usr/lib/libellekit.dylib"),
+        jbroot("/usr/lib/libhooker.dylib"),
+    };
+#else
     static const char *paths[] = {
         "/var/jb/usr/lib/libellekit.dylib",
         "/var/jb/usr/lib/libhooker.dylib",
         "/usr/lib/libhooker.dylib",
     };
+#endif
     for (NSUInteger index = 0;
          index < sizeof(paths) / sizeof(paths[0]); ++index) {
         void *image = dlopen(paths[index], RTLD_NOW | RTLD_LOCAL);

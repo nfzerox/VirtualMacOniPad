@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Dokončené virtuálne Macy a obrazy obnovy mimo aplikácie Virtual Mac nebudú odstránené.";
 "Configuration failed: %@" = "Konfigurácia zlyhala: %@";
 "Configure %@" = "Konfigurovat %@";
+"Consolidate" = "Zlúčiť";
+"Consolidate Legacy Library" = "Zlúčiť staršiu knižnicu";
+"Consolidate Legacy Library?" = "Zlúčiť staršiu knižnicu?";
+"Consolidation Complete" = "Zlúčenie dokončené";
+"Consolidation Failed" = "Zlúčenie zlyhalo";
 "Continue" = "Pokračovať";
 "Controls Opacity" = "Krytie ovládacích prvkov";
 "Copy Library Path" = "Kopírovať cestu knižnice";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Celozrkadlenie Obrazovky";
 "General" = "Všeobecné";
 "Get Help" = "Pomoc";
+"Get roothide Package" = "Získať balík roothide";
 "Height" = "Výška";
 "Incomplete Installation" = "Nedokončená instalace";
 "Incomplete Installations" = "Nedokončené instalace";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Vstup mikrofonu";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Minimum: %llu GB. Horní limit určuje súborový systém.";
 "Move Controls" = "Presunúť ovládacie prvky";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Presunúť Virtual Mac zo staršej knižnice do hlavnej knižnice. Už existujúce mená dostanú číselnú príponu. Najprv zavrite všetky bežiace Virtual Mac.";
 "Name" = "Názov";
 "Name Already Used" = "Název se už používá";
 "NAT: Share %@" = "NAT: Sdílet %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Žiadny virtuálny Mac nezodpovedá vášmu vyhľadávaniu.";
 "Off" = "Vypnuté";
 "OK" = "Potvrdiť";
+"Older Virtual Macs are stored in %@." = "Staršie Virtual Mac sa ukladajú do %@.";
 "On" = "Zapnuté";
 "On for Next Boot" = "Zapnuté pri nasledujúcom spustení";
 "On My iPad" = "Na mojom iPade";
@@ -204,6 +212,7 @@
 "Resolution" = "Rozlíšenie";
 "Resources" = "Prostriedky";
 "Resume" = "Pokračovat";
+"roothide Package Required" = "Vyžaduje sa balík roothide";
 "Save" = "Uložiť";
 "Save a ZIP file containing logs and crash reports." = "Uložte súbor ZIP obsahujúci záznamy a hlásenia o pádoch.";
 "Save Diagnostics to Files" = "Uložiť diagnostiku do Súborov";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Potlačiť gestá multitaskingu";
 "Suppress System Edge Gestures" = "Potlačiť gestá od okrajov";
 "Switch to Running Virtual Mac" = "Prepnúť na spustený virtuálny Mac";
-"Switch to the Official Version of Dopamine" = "Prejsť na oficiálnu verziu Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Pred spustením iného virtuálneho Macu prepnite na spustený a vypnite ho.";
 "The diagnostics archive could not be created." = "Diagnostický archív sa nepodarilo vytvoriť.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Prvá hodnota priebehu môže trvať niekoľko minút, kým virtuálny Mac prechádza z DFU do RestoreOS. iPad zostane aktívny.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Prvá hodnota priebehu môže trvať niekoľko minút, kým virtuálny Mac prechádza z DFU do RestoreOS. iPhone zostane aktívny.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Nedokončený virtuálny Mac a jeho inštalačné súbory budú odstránené.";
 "The installer could not be started: %s" = "Inštalačný program sa nepodarilo spustiť: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Staršiu knižnicu sa nepodarilo zlúčiť. Zavrite všetky bežiace Virtual Mac a skúste to znova.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Staršie Virtual Mac boli presunuté do hlavnej knižnice. Rozlišenie starej verzie bolo zrušené.";
 "The new Virtual Mac is ready to use." = "Nový virtuálny Mac je pripravený na použitie.";
 "The partial restore image will be deleted." = "Čiastočne stiahnutý obraz obnovy bude odstránený.";
 "The Virtual Mac configuration could not be created." = "Konfiguráciu virtuálneho Macu sa nepodarilo vytvoriť.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Tieto možnosti ovplyvňujú iPadOS iba vtedy, keď je Virtuálny Mac v popredí a virtuálny Mac je spustený.";
 "This iPad is incompatible with Virtual Mac" = "Tento iPad nie je kompatibilný s aplikáciou Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "Tento iPhone nie je kompatibilný s aplikáciou Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Toto je štandardný balík Virtual Mac bežiaci na jailbreaku Dopamine-roothide. Nainštalujte oficiálny balík roothide pre súkromné úložisko a plnú kompatibilitu.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Týmto sa obnovia predvolené hodnoty všetkých nastavení aplikácie Virtual Mac. Virtuálne Macy, obrazy obnovy ani inštalačné súbory nebudú odstránené.";
 "this Virtual Mac" = "tento virtuálny Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Ak chcete zapnúť akceleráciu OpenGL, vypnite tento Virtual Mac a potom ju zapnite v jeho možnostiach.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Nepriehľadnosť ovládacích prvkov Virtual Macu";
 "Virtual Mac devices are stored in %@." = "Virtuálne Macy sa ukladajú do %@.";
 "Virtual Mac Display" = "Displej Virtuálneho Macu";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac nepodporuje prostredie Dopamine-roothide. Odstráňte roothide jailbreak v Dopamine-roothide > Nastavenia > Odstrániť jailbreak a potom prejdite na oficiálnu verziu Dopamine.";
 "Virtual Mac Guest Tools" = "Nástroje hosťa pre Virtuálny Mac";
 "Virtual Mac has no published framebuffer" = "Virtuálny Mac nemá zverejnený framebuffer";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac vyžaduje iPad Pro (M1, M2) alebo iPad Air (M1) so systémom iPadOS 14–16.3.1 alebo iPhone 14 Pro a iPhone 14 Pro Max so systémom iOS 16–16.3.1.";

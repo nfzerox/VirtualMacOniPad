@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 #import "VZGuestRuntimePolicy.h"
 
 #if EXPERIMENT_GDB_DEBUG
@@ -419,7 +420,7 @@ static BOOL FindBootArgsPointerByData(VZGDBRemote *remote,
     uint64_t *targets = targetStorage.mutableBytes;
     uint64_t *slots = slotStorage.mutableBytes;
     BOOL captureCandidates = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-dump-guest-kernel"];
+        fileExistsAtPath:@(VZTemporaryPath("vz-dump-guest-kernel"))];
     NSMutableData *candidateCapture = captureCandidates
         ? [NSMutableData data] : nil;
     for (NSUInteger candidateClass = 0; candidateClass < 2;
@@ -484,7 +485,7 @@ static BOOL FindBootArgsPointerByData(VZGDBRemote *remote,
             *bootArgsPointer = slots[index];
             if (candidateCapture)
                 [candidateCapture writeToFile:
-                    @"/tmp/vz-boot-args-candidates.bin" atomically:NO];
+                    @(VZTemporaryPath("vz-boot-args-candidates.bin")) atomically:NO];
             dprintf(STDERR_FILENO,
                 "[GuestPolicy] validated boot_args=%p through global=%p\n",
                 (void *)targets[index], (void *)slots[index]);
@@ -496,7 +497,7 @@ static BOOL FindBootArgsPointerByData(VZGDBRemote *remote,
             candidateClass == 0 ? "external" : "kernel-data");
     }
     if (candidateCapture)
-        [candidateCapture writeToFile:@"/tmp/vz-boot-args-candidates.bin"
+        [candidateCapture writeToFile:@(VZTemporaryPath("vz-boot-args-candidates.bin"))
                             atomically:NO];
     return YES;
 }
@@ -517,7 +518,7 @@ static BOOL FindPolicyGlobals(VZGDBRemote *remote, uint64_t start,
     const NSUInteger overlap = 64;
     size = MIN(size, UINT64_C(32) * 1024 * 1024);
     BOOL captureKernelText = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-dump-guest-kernel"];
+        fileExistsAtPath:@(VZTemporaryPath("vz-dump-guest-kernel"))];
     NSMutableData *kernelText = captureKernelText
         ? [NSMutableData dataWithLength:(NSUInteger)size] : nil;
     for (uint64_t offset = 0; offset < size &&
@@ -571,7 +572,7 @@ static BOOL FindPolicyGlobals(VZGDBRemote *remote, uint64_t start,
         offset += length - overlap;
     }
     if (kernelText) {
-        [kernelText writeToFile:@"/tmp/vz-guest-kernel-text.bin"
+        [kernelText writeToFile:@(VZTemporaryPath("vz-guest-kernel-text.bin"))
                        atomically:NO];
         dprintf(STDERR_FILENO,
             "[GuestPolicy] captured kernel text start=0x%llx size=0x%llx\n",

@@ -1,3 +1,4 @@
+#include "../host/VZPaths.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -41,16 +42,18 @@ static int is_direct_child(const char *value, const char *parent)
         strchr(value + parent_length + 1, '/') == NULL;
 }
 
-static const char *bootstrap_tool(const char *rootless, const char *rootful)
+static int is_child_path(const char *value, const char *parent)
 {
-    return access(rootless, X_OK) == 0 ? rootless : rootful;
+    size_t length = strlen(parent);
+    return strncmp(value, parent, length) == 0 && value[length] == '/' &&
+        value[length + 1] != '\0';
 }
 
 int main(int argc, char **argv)
 {
     if (argc == 2 && strcmp(argv[1], "--diagnose") == 0) {
         const char *script =
-            "/var/root/VirtualMac/install/start-install.sh";
+            VZRuntimePath("install/start-install.sh");
         struct stat info;
         printf("launcher uid=%u euid=%u gid=%u egid=%u\n",
                getuid(), geteuid(), getgid(), getegid());
@@ -73,7 +76,7 @@ int main(int argc, char **argv)
     if (argc == 4 && strcmp(argv[1], "--cancel-install") == 0) {
         const char *attempt = argv[3];
         if (!is_decimal(argv[2]) || !has_prefix(attempt,
-                "/var/mobile/Media/VirtualMac/Installations/") ||
+                VZStatePath("Installations/")) ||
             !has_suffix(attempt, ".installation") ||
             strchr(attempt, '\n') || strchr(attempt, '\r') ||
             strstr(attempt, "/../") || has_suffix(attempt, "/..")) {
@@ -89,21 +92,20 @@ int main(int argc, char **argv)
         if (process > 1)
             kill(-process, SIGTERM);
         usleep(500000);
-        execl(bootstrap_tool("/var/jb/bin/rm", "/bin/rm"),
-              "rm", "-rf", "--", attempt,
+        execl(VZBootstrapPath("/bin/rm"),
+              "rm", "-rf", "--", VZBootstrapArgument(attempt),
               (char *)NULL);
         return 1;
     }
     if (argc == 3 && strcmp(argv[1], "--delete-artifact") == 0) {
         const char *path = argv[2];
         const char *installations =
-            "/var/mobile/Media/VirtualMac/Installations/";
-        const char *images =
-            "/var/mobile/Media/VirtualMac/Restore Images/";
+            VZStatePath("Installations/");
+        const char *images = VZRestoreImagesRoot;
         int allowed =
             (has_prefix(path, installations) &&
              strlen(path) > strlen(installations)) ||
-            (has_prefix(path, images) && strlen(path) > strlen(images));
+            is_child_path(path, images);
         if (!allowed || strchr(path, '\n') || strchr(path, '\r') ||
             strstr(path, "/../") || has_suffix(path, "/..")) {
             fprintf(stderr, "install-launcher: invalid artifact path\n");
@@ -114,8 +116,8 @@ int main(int argc, char **argv)
                     strerror(errno));
             return 1;
         }
-        execl(bootstrap_tool("/var/jb/bin/rm", "/bin/rm"),
-              "rm", "-rf", "--", path,
+        execl(VZBootstrapPath("/bin/rm"),
+              "rm", "-rf", "--", VZBootstrapArgument(path),
               (char *)NULL);
         fprintf(stderr, "install-launcher: cleanup exec failed: %s\n",
                 strerror(errno));
@@ -125,16 +127,15 @@ int main(int argc, char **argv)
         fprintf(stderr, "install-launcher: expected seven arguments\n");
         return 2;
     }
-    if (!has_prefix(argv[1],
-            "/var/mobile/Media/VirtualMac/Restore Images/") ||
+    if (!is_child_path(argv[1], VZRestoreImagesRoot) ||
         !(has_suffix(argv[1], ".ipsw") || has_suffix(argv[1], ".zip")) ||
         !has_prefix(argv[2],
-            "/var/mobile/Media/VirtualMac/Installations/") ||
+            VZStatePath("Installations/")) ||
         !has_suffix(argv[2], ".bundle.installing") ||
-        !is_direct_child(argv[3], "/var/mobile/Media/VirtualMac") ||
+        !is_direct_child(argv[3], VZLibraryRoot) ||
         !has_suffix(argv[3], ".bundle") ||
         !has_prefix(argv[4],
-            "/var/mobile/Media/VirtualMac/Installations/") ||
+            VZStatePath("Installations/")) ||
         !has_suffix(argv[4], ".install.log") ||
         !is_decimal(argv[5]) || !is_decimal(argv[6]) ||
         !is_decimal(argv[7])) {
@@ -175,14 +176,18 @@ int main(int argc, char **argv)
         return 1;
     }
     if (setenv("PATH",
+#if defined(VZ_ROOTHIDE)
+               "/usr/bin:/bin:/usr/sbin:/sbin:/rootfs/usr/bin:/rootfs/bin",
+#else
                "/var/jb/usr/bin:/var/jb/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+#endif
                1) != 0) {
         fprintf(stderr, "INSTALL_FAILED\tlauncher cannot set PATH: %s\n",
                 strerror(errno));
         return 1;
     }
-    execl(bootstrap_tool("/var/jb/bin/sh", "/bin/sh"), "sh",
-          "/var/root/VirtualMac/install/start-install.sh", argv[1],
+    execl(VZBootstrapPath("/bin/sh"), "sh",
+          VZBootstrapArgument(VZRuntimePath("install/start-install.sh")), argv[1],
           argv[2], argv[3], argv[4], argv[5], argv[6], argv[7],
           (char *)NULL);
     fprintf(stderr, "INSTALL_FAILED\tlauncher exec failed: %s\n",

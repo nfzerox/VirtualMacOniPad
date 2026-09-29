@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "完了済みの仮想Macと、仮想Macフォルダ外の復元イメージは削除されません。";
 "Configuration failed: %@" = "構成に失敗しました：%@";
 "Configure %@" = "%@を構成";
+"Consolidate" = "統合";
+"Consolidate Legacy Library" = "旧版ライブラリを統合";
+"Consolidate Legacy Library?" = "旧版ライブラリを統合しますか？";
+"Consolidation Complete" = "統合が完了しました";
+"Consolidation Failed" = "統合に失敗しました";
 "Continue" = "続ける";
 "Controls Opacity" = "コントロールの不透明度";
 "Copy Library Path" = "ライブラリのパスをコピー";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "フルスクリーンミラーリング";
 "General" = "一般";
 "Get Help" = "ヘルプを表示";
+"Get roothide Package" = "roothideパッケージを入手";
 "Height" = "高さ";
 "Incomplete Installation" = "未完了のインストール";
 "Incomplete Installations" = "未完了のインストール";
@@ -153,6 +159,7 @@
 "Microphone Input" = "マイク入力";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "最小：%llu GB。上限はファイルシステムによって決まります。";
 "Move Controls" = "コントロールを移動";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "旧版ライブラリの仮想Macをメインライブラリに移動します。同名の仮想Macには数字のサフィックスが付きます。まず実行中のすべての仮想Macを閉じてください。";
 "Name" = "名前";
 "Name Already Used" = "その名前は使用されています";
 "NAT: Share %@" = "NAT：%@を共有";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "検索に一致する仮想Macはありません。";
 "Off" = "オフ";
 "OK" = "OK";
+"Older Virtual Macs are stored in %@." = "以前の仮想Macは %@ に保存されています。";
 "On" = "オン";
 "On for Next Boot" = "次回の起動のみオン";
 "On My iPad" = "このiPad内";
@@ -204,6 +212,7 @@
 "Resolution" = "解像度";
 "Resources" = "リソース";
 "Resume" = "再開";
+"roothide Package Required" = "roothideパッケージが必要";
 "Save" = "保存";
 "Save a ZIP file containing logs and crash reports." = "ログとクラッシュレポートを含むZIPファイルを保存します。";
 "Save Diagnostics to Files" = "診断情報を「ファイル」に保存";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "マルチタスクジェスチャを無効化";
 "Suppress System Edge Gestures" = "画面端のジェスチャを無効化";
 "Switch to Running Virtual Mac" = "実行中の仮想Macに切り替える";
-"Switch to the Official Version of Dopamine" = "Dopamineの公式版に切り替える";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "実行中の仮想Macに切り替えて終了してから、別の仮想Macを起動してください。";
 "The diagnostics archive could not be created." = "診断アーカイブを作成できませんでした。";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "仮想MacがDFUからRestoreOSに切り替わる間、最初の進行状況が表示されるまで数分かかることがあります。iPadはスリープしません。";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "仮想MacがDFUからRestoreOSに切り替わる間、最初の進行状況が表示されるまで数分かかることがあります。iPhoneはスリープしません。";
 "The incomplete Virtual Mac and its installation files will be deleted." = "未完了の仮想Macとインストールファイルが削除されます。";
 "The installer could not be started: %s" = "インストーラを起動できませんでした：%s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "旧版ライブラリを統合できませんでした。実行中のすべての仮想Macを閉じてから再試行してください。";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "旧版の仮想Macをメインライブラリに移動しました。旧版の区別はなくなりました。";
 "The new Virtual Mac is ready to use." = "新しい仮想Macを使用できます。";
 "The partial restore image will be deleted." = "ダウンロード途中の復元イメージが削除されます。";
 "The Virtual Mac configuration could not be created." = "仮想Macの構成を作成できませんでした。";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "これらのオプションは、仮想Macが最前面で実行中の場合にのみiPadOSに影響します。";
 "This iPad is incompatible with Virtual Mac" = "このiPadはVirtual Macに対応していません";
 "This iPhone is incompatible with Virtual Mac" = "このiPhoneはVirtual Macに対応していません";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "これはDopamine-roothide脱獄上で動作している標準のVirtual Macパッケージです。プライベートストレージと完全な互換性のために、公式roothideパッケージをインストールしてください。";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "すべての仮想Mac設定を初期値に戻します。仮想Mac、復元イメージ、インストールファイルは削除されません。";
 "this Virtual Mac" = "この仮想Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "OpenGLアクセラレーションを有効にするには、このVirtual Macをシステム終了してから、オプションでOpenGLアクセラレーションをオンにしてください。";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Virtual Macコントロールの不透明度";
 "Virtual Mac devices are stored in %@." = "仮想Macのデバイスは%@に保存されます。";
 "Virtual Mac Display" = "仮想Macのディスプレイ";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual MacはDopamine-roothide環境に対応していません。Dopamine-roothide > 設定 > Jailbreakを削除でroothide Jailbreakを削除してから、Dopamineの公式版に切り替えてください。";
 "Virtual Mac Guest Tools" = "仮想Macゲストツール";
 "Virtual Mac has no published framebuffer" = "仮想Macに公開済みフレームバッファがありません";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Macを使用するには、iPad Pro (M1、M2)またはiPad Air (M1)（iPadOS 14–16.3.1）またはiPhone 14 ProとiPhone 14 Pro Max（iOS 16–16.3.1）が必要です。";

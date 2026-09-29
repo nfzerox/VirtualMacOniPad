@@ -1,4 +1,5 @@
 #import "VZGuestTools.h"
+#include "VZPaths.h"
 
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -386,6 +387,52 @@ static void VZGuestToolsRun(NSString *path, NSArray *arguments,
         VZGuestToolsPollProcess(processIdentifier, 0, completion);
     });
 }
+
+#if defined(VZ_DEVELOPMENT)
+void VZGuestToolsCheckRuntime(void)
+{
+    if (gGuestWriteDescriptor < 0) {
+        VZGuestToolsLog(@"runtime check: guest agent unavailable");
+        return;
+    }
+    NSString *script = @"/usr/bin/sw_vers; /usr/sbin/ipconfig getifaddr en0; "
+        "/sbin/route -n get default; "
+        "/usr/bin/curl -4 -I -sS --connect-timeout 10 --max-time 20 https://www.apple.com; "
+        "/usr/sbin/system_profiler SPDisplaysDataType SPAudioDataType -json";
+    VZGuestToolsRun(@"/bin/sh", @[@"-c", script], ^(BOOL success, NSData *output) {
+        [output writeToFile:@(VZTemporaryPath("guest-runtime-check.txt")) atomically:YES];
+        VZGuestToolsLog(@"runtime check complete success=%d bytes=%lu", success,
+                       (unsigned long)output.length);
+    });
+}
+
+void VZGuestToolsCheckSharedFolders(void)
+{
+    if (gGuestWriteDescriptor < 0) {
+        VZGuestToolsLog(@"shared-folder check: guest agent unavailable");
+        return;
+    }
+    NSString *script = @"set -eu; "
+        "base='/Volumes/My Shared Files'; "
+        "test \"$(cat \"$base/VirtualMacReadWrite/host-sentinel.txt\")\" = virtualmac-private-share; "
+        "test \"$(cat \"$base/VirtualMacReadOnly/host-sentinel.txt\")\" = virtualmac-private-share; "
+        "printf guest-write-ok > \"$base/VirtualMacReadWrite/guest-sentinel.txt\"; "
+        "if (printf unexpected > \"$base/VirtualMacReadOnly/guest-sentinel.txt\") 2>/dev/null; "
+        "then echo READ_ONLY_FAILED; exit 1; fi; "
+        "echo SHARED_FOLDERS_PASS; "
+        "if test -f \"$base/VirtualMacReadWrite/audio-capture-probe\"; then "
+        "cp \"$base/VirtualMacReadWrite/audio-capture-probe\" /tmp/virtualmac-audio-capture-probe; "
+        "chmod 755 /tmp/virtualmac-audio-capture-probe; "
+        "result=0; /tmp/virtualmac-audio-capture-probe 5 || result=$?; "
+        "rm -f /tmp/virtualmac-audio-capture-probe /tmp/vz-audio-capture-result.txt; "
+        "exit $result; fi";
+    VZGuestToolsRun(@"/bin/sh", @[@"-c", script], ^(BOOL success, NSData *output) {
+        [output writeToFile:@(VZTemporaryPath("guest-shared-folders-check.txt")) atomically:YES];
+        VZGuestToolsLog(@"shared-folder check complete success=%d bytes=%lu", success,
+                       (unsigned long)output.length);
+    });
+}
+#endif
 
 static void VZGuestToolsWriteChunks(NSNumber *handle, NSData *data,
                                     NSUInteger offset,

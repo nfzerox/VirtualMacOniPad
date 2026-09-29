@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "वर्चुअल Mac के बाहर मौजूद पूरे वर्चुअल Mac और रीस्टोर इमेज नहीं हटाए जाएँगे।";
 "Configuration failed: %@" = "कॉन्फ़िगरेशन विफल: %@";
 "Configure %@" = "%@ कॉन्फ़िगर करें";
+"Consolidate" = "एकीकृत करें";
+"Consolidate Legacy Library" = "पुरानी लाइब्रेरी एकीकृत करें";
+"Consolidate Legacy Library?" = "पुरानी लाइब्रेरी एकीकृत करें?";
+"Consolidation Complete" = "एकीकरण पूर्ण";
+"Consolidation Failed" = "एकीकरण विफल";
 "Continue" = "जारी रखें";
 "Controls Opacity" = "कंट्रोल की अपारदर्शिता";
 "Copy Library Path" = "लाइब्रेरी पथ कॉपी करें";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "पूर्ण स्क्रीन मिररिंग";
 "General" = "सामान्य";
 "Get Help" = "सहायता पाएँ";
+"Get roothide Package" = "roothide पैकेज प्राप्त करें";
 "Height" = "ऊँचाई";
 "Incomplete Installation" = "अधूरा इंस्टॉलेशन";
 "Incomplete Installations" = "अधूरे इंस्टॉलेशन";
@@ -153,6 +159,7 @@
 "Microphone Input" = "माइक्रोफ़ोन इनपुट";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "न्यूनतम: %llu GB। ऊपरी सीमा फ़ाइल सिस्टम तय करता है।";
 "Move Controls" = "कंट्रोल ले जाएँ";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "पुरानी लाइब्रेरी के वर्चुअल Mac को मुख्य लाइब्रेरी में ले जाएँ। पहले से मौजूद नामों को अंक प्रत्यय मिलेगा। पहले सभी चल रहे वर्चुअल Mac बंद करें।";
 "Name" = "नाम";
 "Name Already Used" = "नाम पहले से उपयोग में है";
 "NAT: Share %@" = "NAT: %@ शेयर करें";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "आपकी खोज से कोई वर्चुअल Mac मेल नहीं खाता।";
 "Off" = "बंद";
 "OK" = "ठीक";
+"Older Virtual Macs are stored in %@." = "पुराने वर्चुअल Mac %@ में संग्रहीत होते हैं।";
 "On" = "चालू";
 "On for Next Boot" = "अगले बूट के लिए चालू";
 "On My iPad" = "मेरे iPad पर";
@@ -204,6 +212,7 @@
 "Resolution" = "रिज़ॉल्यूशन";
 "Resources" = "संसाधन";
 "Resume" = "फिर शुरू करें";
+"roothide Package Required" = "roothide पैकेज आवश्यक";
 "Save" = "सहेजें";
 "Save a ZIP file containing logs and crash reports." = "लॉग और क्रैश रिपोर्ट वाली ZIP फ़ाइल सहेजें।";
 "Save Diagnostics to Files" = "डायग्नोस्टिक्स को Files में सेव करें";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "मल्टीटास्किंग जेस्चर रोकें";
 "Suppress System Edge Gestures" = "किनारे के जेस्चर रोकें";
 "Switch to Running Virtual Mac" = "चल रहे वर्चुअल Mac पर जाएँ";
-"Switch to the Official Version of Dopamine" = "Dopamine के आधिकारिक संस्करण पर जाएँ";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "किसी अन्य को शुरू करने से पहले चल रहे वर्चुअल Mac पर जाएँ और उसे बंद करें।";
 "The diagnostics archive could not be created." = "डायग्नोस्टिक्स आर्काइव नहीं बनाया जा सका।";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "वर्चुअल Mac के DFU से RestoreOS में बदलने के दौरान पहला प्रगति मान आने में कई मिनट लग सकते हैं। आपका iPad सक्रिय रहेगा।";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "वर्चुअल Mac के DFU से RestoreOS में बदलने के दौरान पहला प्रगति मान आने में कई मिनट लग सकते हैं। आपका iPhone सक्रिय रहेगा।";
 "The incomplete Virtual Mac and its installation files will be deleted." = "अधूरा वर्चुअल Mac और उसकी इंस्टॉलेशन फ़ाइलें हटा दी जाएँगी।";
 "The installer could not be started: %s" = "इंस्टॉलर शुरू नहीं किया जा सका: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "पुरानी लाइब्रेरी एकीकृत नहीं की जा सकी। सभी चल रहे वर्चुअल Mac बंद करें और पुनः प्रयास करें।";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "पुराने वर्चुअल Mac मुख्य लाइब्रेरी में ले जाए गए। पुराना भेद समाप्त हो गया।";
 "The new Virtual Mac is ready to use." = "नया वर्चुअल Mac उपयोग के लिए तैयार है।";
 "The partial restore image will be deleted." = "आंशिक रीस्टोर इमेज हटा दी जाएगी।";
 "The Virtual Mac configuration could not be created." = "वर्चुअल Mac कॉन्फ़िगरेशन नहीं बनाया जा सका।";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "ये विकल्प iPadOS को केवल तब प्रभावित करते हैं, जब वर्चुअल Mac सामने हो और कोई वर्चुअल Mac चल रहा हो।";
 "This iPad is incompatible with Virtual Mac" = "यह iPad Virtual Mac के साथ संगत नहीं है";
 "This iPhone is incompatible with Virtual Mac" = "यह iPhone Virtual Mac के साथ संगत नहीं है";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "यह Dopamine-roothide जेलब्रेक पर चल रहा मानक Virtual Mac पैकेज है। निजी स्टोरेज और पूर्ण संगतता के लिए आधिकारिक roothide पैकेज इंस्टॉल करें।";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "यह वर्चुअल Mac की सभी सेटिंग्स को उनके डिफ़ॉल्ट पर रीसेट करता है। वर्चुअल Mac, रीस्टोर इमेज और इंस्टॉलेशन फ़ाइलें नहीं हटाई जाएँगी।";
 "this Virtual Mac" = "यह वर्चुअल Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "OpenGL एक्सेलेरेशन चालू करने के लिए इस Virtual Mac को बंद करें, फिर इसके विकल्पों में OpenGL एक्सेलेरेशन चालू करें।";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Virtual Mac नियंत्रणों की अपारदर्शिता";
 "Virtual Mac devices are stored in %@." = "वर्चुअल Mac %@ में संग्रहीत किए जाते हैं।";
 "Virtual Mac Display" = "वर्चुअल Mac डिस्प्ले";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac, Dopamine-roothide परिवेश का समर्थन नहीं करता। Dopamine-roothide > सेटिंग्स > जेलब्रेक हटाएँ में जाकर roothide जेलब्रेक हटाएँ, फिर Dopamine के आधिकारिक संस्करण पर जाएँ।";
 "Virtual Mac Guest Tools" = "वर्चुअल Mac अतिथि टूल";
 "Virtual Mac has no published framebuffer" = "वर्चुअल Mac का कोई प्रकाशित फ़्रेमबफ़र नहीं है";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac के लिए iPad Pro (M1, M2) या iPad Air (M1) पर iPadOS 14–16.3.1, या iPhone 14 Pro और iPhone 14 Pro Max पर iOS 16–16.3.1 आवश्यक है।";

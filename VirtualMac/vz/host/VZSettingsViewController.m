@@ -1,9 +1,13 @@
 #import "VZSettingsViewController.h"
+#import "VZPaths.h"
 #import "VZAppSettings.h"
 #import "VZDiagnostics.h"
 #import "VZLocalization.h"
 #import "VZSupport.h"
 #import "VZVMLibraryViewController.h"
+#include <spawn.h>
+#include <sys/wait.h>
+extern char **environ;
 
 @interface VZContributorChip : UIControl
 @property(nonatomic, copy) NSString *urlString;
@@ -154,6 +158,68 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
     return needed <= available ? fullTitle : compactTitle;
 }
 
+// The RootHide package install moves a pre-existing public library into
+// private User/Legacy. Offer to fold those bundles into User/Library so the
+// user ends up with one library and no legacy distinction. The action is
+// available only while the legacy directory still holds bundles.
+static BOOL VZLegacyBundlesExist(void)
+{
+#if defined(VZ_ROOTHIDE)
+    if (!VZIsRootHideEnvironment())
+        return NO;
+    NSString *legacyPath = VZLegacyLibraryPath();
+    if ([legacyPath isEqualToString:VZVMLibraryPath()])
+        return NO;
+    NSFileManager *manager = NSFileManager.defaultManager;
+    NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:legacyPath];
+    NSString *name = nil;
+    while ((name = enumerator.nextObject))
+        if ([name.pathExtension caseInsensitiveCompare:@"bundle"] == NSOrderedSame)
+            return YES;
+#endif
+    return NO;
+}
+
+// Render a jailbreak-internal path as "[jbroot]/<logical tail>". The jbroot
+// prefix is a randomized symlink under /var/containers, so stripping it leaves
+// the familiar /var/mobile/... form while the [jbroot] tag tells the user the
+// real location lives inside the jailbreak root (Filza finds it there).
+static NSString *VZDisplayPath(NSString *path)
+{
+#if defined(VZ_ROOTHIDE)
+    NSString *prefix = @"/var/containers/Bundle/Application/";
+    if ([path hasPrefix:prefix]) {
+        NSString *rest = [path substringFromIndex:prefix.length];
+        NSRange slash = [rest rangeOfString:@"/"];
+        if (slash.location != NSNotFound) {
+            NSString *tail = [rest substringFromIndex:slash.location];
+            return [@"[jbroot]" stringByAppendingString:tail];
+        }
+    }
+    return path;
+#else
+    return path;
+#endif
+}
+
+// The storage footer names the location devices are written to. Under RootHide
+// that location lives inside the jailbreak root, shown as [jbroot]/... so users
+// can locate it in Filza without staring at a randomized container prefix.
+static NSString *VZStorageFooterText(void)
+{
+    NSString *primary = VZDisplayPath(VZVMLibraryPath());
+#if defined(VZ_ROOTHIDE)
+    if (VZLegacyBundlesExist())
+        return [NSString stringWithFormat:@"%@\n%@",
+            [NSString stringWithFormat:VZL(@"Virtual Mac devices are stored in %@."), primary],
+            [NSString stringWithFormat:VZL(@"Older Virtual Macs are stored in %@."),
+                VZDisplayPath(VZLegacyLibraryPath())]];
+    return [NSString stringWithFormat:VZL(@"Virtual Mac devices are stored in %@."), primary];
+#else
+    return [NSString stringWithFormat:VZL(@"Virtual Mac devices are stored in %@."), primary];
+#endif
+}
+
 @implementation VZSettingsViewController
 
 - (instancetype)initWithMachines:(NSArray<NSDictionary *> *)machines
@@ -233,8 +299,9 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     (void)tableView;
+    NSInteger storageRows = 3 + (VZLegacyBundlesExist() ? 1 : 0);
     return section == 0 ? 4 : section == 1 ? 6 : section == 2 ? 4 :
-        section == 3 ? 3 : section == 4 ? 3 : section == 5 ? 2 :
+        section == 3 ? 3 : section == 4 ? storageRows : section == 5 ? 2 :
         section == 6 ? 1 : 4;
 }
 
@@ -250,7 +317,7 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
 {
     (void)tableView;
     if (section == 4)
-        return [NSString stringWithFormat:VZL(@"Virtual Mac devices are stored in %@."), VZVMLibraryPath()];
+        return VZStorageFooterText();
     if (section == 2)
         return VZDeviceString(
             VZL(@"These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running."),
@@ -453,6 +520,9 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
             forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = toggle;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    } else if (indexPath.section == 4 && indexPath.row == 3) {
+        cell.textLabel.text = VZL(@"Consolidate Legacy Library");
+        cell.textLabel.textColor = UIColor.systemRedColor;
     } else if (indexPath.section == 4) {
         NSArray *paths = indexPath.row == 1 ? VZCachedRestoreImagePaths()
                                             : VZInstallationArtifactPaths();
@@ -664,6 +734,114 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void)confirmConsolidateLegacyFrom:(UITableViewCell *)cell
+{
+#if defined(VZ_ROOTHIDE)
+    if (!VZLegacyBundlesExist())
+        return;
+    UIAlertController *alert = [UIAlertController
+        alertControllerWithTitle:VZL(@"Consolidate Legacy Library?")
+                         message:VZL(@"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first.")
+                  preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:VZL(@"Cancel")
+        style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:VZL(@"Consolidate")
+        style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            (void)action;
+            [self performConsolidateFromCell:cell];
+        }]];
+    [self presentViewController:alert animated:YES completion:nil];
+#else
+    (void)cell;
+#endif
+}
+
+- (void)performConsolidateFromCell:(UITableViewCell *)cell
+{
+#if defined(VZ_ROOTHIDE)
+    UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc]
+        initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium] autorelease];
+    cell.accessoryView = spinner;
+    cell.userInteractionEnabled = NO;
+    [spinner startAnimating];
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        const char *helper = VZRuntimePath("install/legacy-storage");
+        char *arguments[] = {(char *)helper, (char *)"--merge", NULL};
+        pid_t child = 0;
+        int spawned = posix_spawn(&child, helper, NULL, NULL, arguments, environ);
+        int status = 0;
+        pid_t waited = -1;
+        if (spawned == 0) {
+            do { waited = waitpid(child, &status, 0); }
+            while (waited < 0 && errno == EINTR);
+        }
+        BOOL ok = spawned == 0 && waited >= 0 && WIFEXITED(status) && WEXITSTATUS(status) == 0;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.accessoryView = nil;
+            cell.userInteractionEnabled = YES;
+            UINotificationFeedbackGenerator *feedback =
+                [[[UINotificationFeedbackGenerator alloc] init] autorelease];
+            [feedback notificationOccurred:ok
+                ? UINotificationFeedbackTypeSuccess
+                : UINotificationFeedbackTypeError];
+            if (ok) {
+                // Bundles moved from Legacy to Library, so any cached auto-boot
+                // path now points at a stale location. Re-resolve it through the
+                // stable machine identifier before reloading the library.
+                [self rebindAutoBootAfterConsolidation];
+                // Tell the library controller to rescan directories so the
+                // consolidated bundles drop their legacy badge immediately.
+                [NSNotificationCenter.defaultCenter postNotificationName:
+                    VZLibraryDidChangeNotification object:nil];
+                [self.tableView reloadData];
+                UIAlertController *done = [UIAlertController
+                    alertControllerWithTitle:VZL(@"Consolidation Complete")
+                                     message:VZL(@"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone.")
+                              preferredStyle:UIAlertControllerStyleAlert];
+                [done addAction:[UIAlertAction actionWithTitle:VZL(@"OK")
+                    style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:done animated:YES completion:nil];
+            } else {
+                NSString *detail = spawned != 0
+                    ? [NSString stringWithFormat:@"posix_spawn=%d (%s)", spawned, strerror(spawned)]
+                    : [NSString stringWithFormat:@"exit=%d", WIFEXITED(status) ? WEXITSTATUS(status) : -1];
+                VZPresentFailureReport(self,
+                    VZL(@"Consolidation Failed"),
+                    VZL(@"The legacy library could not be consolidated. Close all running Virtual Macs and try again."),
+                    detail,
+                    VZFailureSupportOptionNone);
+            }
+        });
+    });
+#else
+    (void)cell;
+#endif
+}
+
+// After consolidation the auto-boot bundle moved from User/Legacy to
+// User/Library. Match it by its stable MachineIdentifier and rewrite the
+// cached path so "Start on Launch" keeps pointing at the same machine.
+- (void)rebindAutoBootAfterConsolidation
+{
+#if defined(VZ_ROOTHIDE)
+    NSString *identifier = [VZAppSettings.sharedSettings stringForKey:VZAutoBootVMIdentifierKey];
+    NSString *oldPath = [VZAppSettings.sharedSettings stringForKey:VZAutoBootVMPathKey];
+    if (!identifier.length && !oldPath.length)
+        return;
+    for (NSDictionary *machine in VZDiscoverVirtualMachines()) {
+        NSString *path = machine[@"path"];
+        if (identifier.length && [VZVMStableIdentifier(path) isEqualToString:identifier]) {
+            [VZAppSettings.sharedSettings setString:VZStoredPath(path)
+                forKey:VZAutoBootVMPathKey];
+            return;
+        }
+    }
+    // No match: the machine was deleted or renamed beyond recognition.
+    [VZAppSettings.sharedSettings setString:nil forKey:VZAutoBootVMPathKey];
+    [VZAppSettings.sharedSettings setString:nil forKey:VZAutoBootVMIdentifierKey];
+#endif
+}
+
 - (void)exportDiagnosticsFrom:(UITableViewCell *)cell
 {
     UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc]
@@ -729,13 +907,15 @@ static NSString *VZSettingsFittingTitle(UITableView *tableView,
     else if (indexPath.section == 3 && indexPath.row == 2)
         [self chooseDebugLoggingFrom:cell];
     else if (indexPath.section == 7 && indexPath.row == 0) {
-        UIPasteboard.generalPasteboard.string = VZVMLibraryPath();
+        UIPasteboard.generalPasteboard.string = VZDisplayPath(VZVMLibraryPath());
         UINotificationFeedbackGenerator *feedback = [[[UINotificationFeedbackGenerator alloc] init] autorelease];
         [feedback notificationOccurred:UINotificationFeedbackTypeSuccess];
     } else if (indexPath.section == 4 && indexPath.row == 1)
         [self confirmDeletePaths:VZCachedRestoreImagePaths() title:VZL(@"Delete Cached IPSW?")];
     else if (indexPath.section == 4 && indexPath.row == 2)
         [self confirmDeletePaths:VZInstallationArtifactPaths() title:VZL(@"Delete Temporary Installation Files?")];
+    else if (indexPath.section == 4 && indexPath.row == 3)
+        [self confirmConsolidateLegacyFrom:cell];
     else if (indexPath.section == 7 && indexPath.row == 1)
         [self exportDiagnosticsFrom:cell];
     else if (indexPath.section == 5 && indexPath.row == 1)

@@ -1,0 +1,112 @@
+#!/bin/sh
+set -eu
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+runtime=/usr/libexec/VirtualMac
+library=/rootfs/var/mobile/Media/VirtualMac
+state=/var/mobile/Library/VirtualMac
+host_version="$(sw_vers -productVersion)"
+case "$host_version" in
+    15.*) variant=ipados15; network_domain=system ;;
+    16.*) variant=ipados16; network_domain=user/501 ;;
+    *) echo "unsupported RootHide host version: $host_version" >&2; exit 1 ;;
+esac
+replace_file() {
+    cat "$1" > "$2.virtualmac-new"
+    chmod 755 "$2.virtualmac-new"
+    mv -f "$2.virtualmac-new" "$2"
+}
+vmm="$runtime/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine"
+installation="$runtime/payload/Installation.xpc/Contents/MacOS/com.apple.Virtualization.Installation"
+frameworks="$runtime/payload/Installation.xpc/Contents/Frameworks"
+mobile_device="$frameworks/MobileDevice.framework/Versions/A/MobileDevice"
+install_variant="$variant"
+if test "$variant" = ipados15; then
+    compat="$runtime/payload/Compatibility/iPadOS15"
+    symbols=/rootfs/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64e.symbols
+    if test -f "$symbols" && LC_ALL=C grep -a -q '_ZNK17class_data_bits_t7safe_roEv' "$symbols"; then
+        compat="$runtime/payload/Compatibility/iPadOS15Authenticated"
+        install_variant=ipados15-auth
+        replace_file /usr/lib/libmrc.ipados15-auth.dylib /usr/lib/libmrc.dylib
+    fi
+    for framework in Hypervisor ParavirtualizedGraphics Virtualization MetalSerializer DiskImages2; do
+        replace_file "$compat/$framework" "$runtime/payload/Frameworks/$framework.framework/Versions/A/$framework"
+    done
+    replace_file "$compat/VideoToolbox" "$runtime/payload/Frameworks/VideoToolbox.framework/VideoToolbox"
+fi
+replace_file "$vmm.$variant" "$vmm"
+replace_file "$installation.$install_variant" "$installation"
+replace_file "$frameworks/InstallationCompat.dylib.$variant" "$frameworks/InstallationCompat.dylib"
+replace_file "$mobile_device.$install_variant" "$mobile_device"
+replace_file "/usr/libexec/InternetSharing.$variant" /usr/libexec/InternetSharing
+for directory in "$runtime" /Applications/VirtualMac.app /usr/lib /usr/libexec /usr/sbin; do
+    test -d "$directory"
+done
+mkdir -p "$state/User/Run" "$state/User/Installations" "$state/User/Diagnostics" \
+    "$state/User/Library" "$state/User/Restore Images" "$state/Root/Pairing" "$state/Network" /var/run/vm
+chown root:mobile "$state" "$state/Root" "$state/Network" /var/run/vm
+chmod 750 "$state"
+chmod 2750 "$state/Root" "$state/Network"
+chown root:wheel "$state/Root/Pairing"
+chmod 700 "$state/Root/Pairing"
+chmod 2770 /var/run/vm
+chown mobile:mobile "$state/User" "$state/User/Run" \
+    "$state/User/Installations" "$state/User/Diagnostics" "$state/User/Library" "$state/User/Restore Images"
+chmod 700 "$state/User" "$state/User/Run" \
+    "$state/User/Installations" "$state/User/Diagnostics" "$state/User/Library" "$state/User/Restore Images"
+if test ! -f "$state/User/Settings.plist" && test -f "$library/Settings.plist"; then
+    cat "$library/Settings.plist" > "$state/User/Settings.plist"
+    chown mobile:mobile "$state/User/Settings.plist"
+    chmod 600 "$state/User/Settings.plist"
+fi
+chown root:wheel "$runtime/install/install-launcher"
+chmod 4755 "$runtime/install/install-launcher"
+# The in-app migration action runs legacy-storage as the mobile user,
+# so it needs the same setuid privilege as the installer launcher.
+chown root:wheel "$runtime/install/legacy-storage"
+chmod 4755 "$runtime/install/legacy-storage"
+# On first install over an existing standard-Dopamine library, move the
+# public directory into private User/Legacy atomically. The in-app
+# "Consolidate Legacy Library" action then folds it into User/Library.
+# Tolerate a running VM (rare during package install) without aborting.
+if [ -d "$library" ] && [ ! -e "$state/User/Legacy" ]; then
+    "$runtime/install/legacy-storage" --migrate >/tmp/virtualmac-migrate.log 2>&1 || true
+fi
+# Trust the final paths. cdhash randomization is owned by RootHide.
+dpkg-query -L com.mac.virtual | while IFS= read -r candidate; do
+    test -f "$candidate" || continue
+    magic=$(od -An -tx1 -N4 "$candidate" | tr -d ' \n')
+    case "$magic" in
+        cffaedfe|cefaedfe|cafebabe|bebafeca)
+            /basebin/jbctl trustcache add "$(jbroot "$candidate")"
+            ;;
+    esac
+done
+touch "$state/Network/dhcpd_leases"
+chmod 640 "$state/Network/dhcpd_leases"
+native_root=$(jbroot /)
+native_root=${native_root%/}
+for domain in system user/501; do
+    for service in com.apple.NetworkSharing vzi.apple.bootpd; do
+        plist=com.apple.NetworkSharing.plist
+        test "$service" != vzi.apple.bootpd || plist=com.apple.bootpd.plist
+        job=$(launchctl print "$domain/$service" 2>/dev/null || true)
+        job_path=$(printf '%s\n' "$job" | sed -n 's/^[[:space:]]*path = //p')
+        case "$job_path" in
+            "$native_root/Library/LaunchDaemons/$plist"|\
+            "/private$native_root/Library/LaunchDaemons/$plist")
+                launchctl bootout "$domain/$service" 2>/dev/null || true
+                ;;
+            *)
+                if test -n "$job" && test "$domain" = "$network_domain"; then
+                    echo "another package owns $domain/$service" >&2
+                    exit 1
+                fi
+                ;;
+        esac
+    done
+done
+launchctl bootstrap "$network_domain" /Library/LaunchDaemons/com.apple.NetworkSharing.plist
+launchctl kickstart -k "$network_domain/com.apple.NetworkSharing"
+launchctl enable "$network_domain/vzi.apple.bootpd"
+launchctl bootstrap "$network_domain" /Library/LaunchDaemons/com.apple.bootpd.plist
+uicache -p /Applications/VirtualMac.app

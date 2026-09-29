@@ -43,6 +43,8 @@ FULL_IPADOS_AUDIT=0
 INSTALL_IPAD=0
 LAUNCH_IPAD=0
 SKIP_DEPENDENCIES=0
+BUILD_ROOTHIDE=1
+INSTALL_ROOTHIDE=0
 
 usage() {
     cat <<'EOF'
@@ -60,10 +62,12 @@ Build options:
   --device-support-dmg P Reuse the macOS 27 DeviceSupport disk image
   --xcode PATH           Xcode.app or its Contents/Developer directory
   --skip-dependencies    Do not install Homebrew or Brewfile dependencies
+  --no-roothide          Skip the native Dopamine-roothide package
   --non-interactive      Never prompt; download omitted restore images
 
 Optional iPad deployment:
-  --install              Install the resulting deb over USB SSH
+  --install              Install the standard deb over USB SSH
+  --install-roothide     Install the Dopamine-roothide deb over USB SSH
   --launch               Install and then launch Virtual Mac
   --ipad-udid UDID       Target device; auto-detected when exactly one is attached
   --ipad-port PORT       Local iproxy port (default: 2221)
@@ -92,8 +96,10 @@ while (($#)); do
         --full-ipados-audit) FULL_IPADOS_AUDIT=1; shift ;;
         --xcode) XCODE_PATH="${2:?missing path}"; shift 2 ;;
         --skip-dependencies) SKIP_DEPENDENCIES=1; shift ;;
+        --no-roothide) BUILD_ROOTHIDE=0; shift ;;
         --non-interactive) INTERACTIVE=0; shift ;;
         --install) INSTALL_IPAD=1; shift ;;
+        --install-roothide) INSTALL_IPAD=1; INSTALL_ROOTHIDE=1; shift ;;
         --launch) INSTALL_IPAD=1; LAUNCH_IPAD=1; shift ;;
         --ipad-udid) IPAD_UDID="${2:?missing UDID}"; shift 2 ;;
         --ipad-port) IPAD_PORT="${2:?missing port}"; shift 2 ;;
@@ -102,6 +108,10 @@ while (($#)); do
         *) die "unknown option: $1 (run ./setup.sh --help)" ;;
     esac
 done
+
+if [[ "$INSTALL_ROOTHIDE" == 1 && "$BUILD_ROOTHIDE" != 1 ]]; then
+    die "--install-roothide needs the roothide package; drop --no-roothide"
+fi
 
 # No explicit --non-interactive marker is retained after parsing, so enable
 # the wizard whenever a terminal is attached and CI has not opted out.
@@ -281,6 +291,22 @@ DEB="$(find "$BUILD_ROOT/release" -maxdepth 1 -type f \
     xargs -0 ls -1t | head -1)"
 [[ -f "$DEB" ]] || die "build completed without a deb"
 
+# The roothide package is part of the default build. It reuses the component
+# products build-ipad-deb.sh just produced and only recompiles its own host
+# components, so its component gate is skipped here. It fetches the
+# Dopamine-roothide devkit on first use.
+if [[ "$BUILD_ROOTHIDE" == 1 ]]; then
+    VZ_SKIP_REBUILD=1 "$REPO_ROOT/scripts/build-roothide-deb.sh"
+    ROOTHIDE_DEB="$BUILD_ROOT/roothide/VirtualMac_roothide.deb"
+    [[ -f "$ROOTHIDE_DEB" ]] || die "roothide build completed without a deb"
+fi
+
+if [[ "$INSTALL_ROOTHIDE" == 1 ]]; then
+    DEPLOY_DEB="$ROOTHIDE_DEB"
+else
+    DEPLOY_DEB="$DEB"
+fi
+
 if [[ "$INTERACTIVE" == 1 && "$INSTALL_IPAD" == 0 ]]; then
     prompt_yes_no "Install the package on a USB-connected Dopamine iPad?" 0 && INSTALL_IPAD=1
 fi
@@ -302,16 +328,16 @@ if [[ "$INSTALL_IPAD" == 1 ]]; then
     : "${VZ_IPAD_PASSWORD:?set VZ_IPAD_PASSWORD or use --ipad-password-file}"
     export VZ_IPAD_UDID="$IPAD_UDID" VZ_IPAD_PORT="$IPAD_PORT"
     export VZ_IPAD_PASSWORD
-    export VZ_IPAD_DEB="$DEB"
+    export VZ_IPAD_DEB="$DEPLOY_DEB"
     "$REPO_ROOT/scripts/install-ipad-deb.sh"
     if [[ "$LAUNCH_IPAD" == 1 ]]; then
         "$REPO_ROOT/scripts/launch-ipad-app.sh" 1
     fi
 fi
 
-cat <<EOF
-
-Build complete.
-  Package: $DEB
-  Build:   $BUILD_ROOT
-EOF
+printf '\nBuild complete.\n'
+printf '  Package: %s\n' "$DEB"
+if [[ "$BUILD_ROOTHIDE" == 1 ]]; then
+    printf '  roothide package: %s\n' "$ROOTHIDE_DEB"
+fi
+printf '  Build:   %s\n' "$BUILD_ROOT"

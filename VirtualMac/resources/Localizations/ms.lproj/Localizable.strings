@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Peranti Mac maya lengkap dan imej pemulihan di luar Mac maya tidak akan dipadam.";
 "Configuration failed: %@" = "Konfigurasi gagal: %@";
 "Configure %@" = "Konfigurasikan %@";
+"Consolidate" = "Gabung";
+"Consolidate Legacy Library" = "Gabung pustaka lama";
+"Consolidate Legacy Library?" = "Gabung pustaka lama?";
+"Consolidation Complete" = "Penggabungan selesai";
+"Consolidation Failed" = "Penggabungan gagal";
 "Continue" = "Teruskan";
 "Controls Opacity" = "Kelegapan Kawalan";
 "Copy Library Path" = "Salin Laluan Perpustakaan";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Pencerminan Skrin Penuh";
 "General" = "Umum";
 "Get Help" = "Dapatkan Bantuan";
+"Get roothide Package" = "Dapatkan pakej roothide";
 "Height" = "Ketinggian";
 "Incomplete Installation" = "Pemasangan Belum Selesai";
 "Incomplete Installations" = "Pemasangan yang Belum Selesai";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Input Mikrofon";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Minimum: %llu GB. Had atas ditentukan oleh sistem fail.";
 "Move Controls" = "Pindahkan Kawalan";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Alihkan Virtual Mac dari pustaka lama ke pustaka utama. Nama yang sedia ada akan dapat imbangan angka. Tutup semua Virtual Mac yang sedang berjalan dahulu.";
 "Name" = "Nama";
 "Name Already Used" = "Nama Telah Digunakan";
 "NAT: Share %@" = "NAT: Bagikan %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Tiada Mac Maya yang sepadan dengan carian anda.";
 "Off" = "Nyahaktif";
 "OK" = "OK";
+"Older Virtual Macs are stored in %@." = "Virtual Mac lama disimpan dalam %@.";
 "On" = "Aktif";
 "On for Next Boot" = "Aktif untuk But Seterusnya";
 "On My iPad" = "Pada iPad Saya";
@@ -204,6 +212,7 @@
 "Resolution" = "Resolusi";
 "Resources" = "Sumber";
 "Resume" = "Sambung";
+"roothide Package Required" = "Pakej roothide diperlukan";
 "Save" = "Simpan";
 "Save a ZIP file containing logs and crash reports." = "Simpan fail ZIP yang mengandungi log dan laporan ranap.";
 "Save Diagnostics to Files" = "Simpan Diagnostik ke Fail";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Sekat Gerak Isyarat Berbilang Tugas";
 "Suppress System Edge Gestures" = "Sekat Gerak Isyarat Tepi";
 "Switch to Running Virtual Mac" = "Beralih ke Mac maya yang Berjalan";
-"Switch to the Official Version of Dopamine" = "Tukar kepada versi rasmi Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Beralihlah ke Mac maya yang berjalan dan matikan sebelum memulakan yang lain.";
 "The diagnostics archive could not be created." = "Arkib diagnostik tidak boleh dibuat.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Nilai kemajuan pertama mungkin mengambil masa beberapa minit apabila Virtual Mac beralih daripada DFU kepada RestoreOS. iPad akan kekal aktif.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Nilai kemajuan pertama mungkin mengambil masa beberapa minit apabila Virtual Mac beralih daripada DFU kepada RestoreOS. iPhone akan kekal aktif.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Mac maya yang belum selesai dan fail pemasangannya akan dipadam.";
 "The installer could not be started: %s" = "Pemasang tidak dapat dimulakan: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Pustaka lama tidak dapat digabungkan. Tutup semua Virtual Mac yang sedang berjalan dan cuba lagi.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Virtual Mac lama telah dialihkan ke pustaka utama. Perbezaan lama telah lenyap.";
 "The new Virtual Mac is ready to use." = "Mac maya baru siap digunakan.";
 "The partial restore image will be deleted." = "Imej pemulihan separa akan dipadam.";
 "The Virtual Mac configuration could not be created." = "Konfigurasi Mac maya tidak boleh dibuat.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Pilihan ini hanya menjejaskan iPadOS ketika Mac Maya berada di hadapan dan Mac maya sedang berjalan.";
 "This iPad is incompatible with Virtual Mac" = "iPad ini tidak serasi dengan Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "iPhone ini tidak serasi dengan Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Ini adalah pakej Virtual Mac standard yang berjalan pada jailbreak Dopamine-roothide. Pasang pakej roothide rasmi untuk storan peribadi dan keserasian penuh.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Ini mengembalikan semua tetapan Virtual Mac kepada nilai lalai. Virtual Mac, imej pemulihan dan fail pemasangan tidak akan dipadamkan.";
 "this Virtual Mac" = "Mac maya ini";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Untuk mengaktifkan pecutan OpenGL, matikan Virtual Mac ini, kemudian aktifkannya dalam pilihan.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Kelegapan Kawalan Virtual Mac";
 "Virtual Mac devices are stored in %@." = "Mac Maya disimpan dalam %@.";
 "Virtual Mac Display" = "Paparan Mac Maya";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac tidak menyokong persekitaran Dopamine-roothide. Buang jailbreak roothide melalui Dopamine-roothide > Tetapan > Buang Jailbreak, kemudian tukar kepada versi rasmi Dopamine.";
 "Virtual Mac Guest Tools" = "Alat Tetamu Mac Maya";
 "Virtual Mac has no published framebuffer" = "Mac maya tidak mempunyai framebuffer yang diterbitkan";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac memerlukan iPad Pro (M1, M2) atau iPad Air (M1) yang menjalankan iPadOS 14–16.3.1, atau iPhone 14 Pro dan iPhone 14 Pro Max yang menjalankan iOS 16–16.3.1.";

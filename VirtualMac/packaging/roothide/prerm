@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+. /usr/libexec/VirtualMac/install/stop-runtime.sh
+uicache -u /Applications/VirtualMac.app 2>/dev/null || true

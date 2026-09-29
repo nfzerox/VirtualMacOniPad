@@ -1,6 +1,8 @@
 #import "VZAppSettings.h"
+#import "VZPaths.h"
 
 NSString * const VZSettingsDidChangeNotification = @"VZSettingsDidChange";
+NSString * const VZLibraryDidChangeNotification = @"VZLibraryDidChange";
 NSString * const VZLibraryLayoutKey = @"LibraryLayout";
 NSString * const VZAutoBootVMPathKey = @"AutoBootVMPath";
 NSString * const VZAutoBootVMIdentifierKey = @"AutoBootVMIdentifier";
@@ -28,12 +30,15 @@ NSString * const VZDebugLoggingModeOff = @"off";
 NSString * const VZDebugLoggingModeNextBoot = @"next";
 NSString * const VZDebugLoggingModeAlways = @"always";
 
-static NSString * const VZSettingsPath = @"/var/mobile/Media/VirtualMac/Settings.plist";
+#define VZSettingsPath @(VZStatePath("Settings.plist"))
 static CFStringRef const VZSettingsDarwinNotification =
     CFSTR("com.mac.virtual.settings-changed");
 
 NSString *VZRootHideJailbreakRootPath(void)
 {
+#if defined(VZ_ROOTHIDE)
+    return @(jbroot("/"));
+#else
     NSString *path = NSBundle.mainBundle.bundlePath;
     NSRange marker = [path rangeOfString:@"/.jbroot-"];
     if (marker.location == NSNotFound)
@@ -46,6 +51,7 @@ NSString *VZRootHideJailbreakRootPath(void)
         ? path.length : separator.location;
     NSString *root = [path substringToIndex:end];
     return root.length ? root : nil;
+#endif
 }
 
 BOOL VZIsRootHideEnvironment(void)
@@ -71,6 +77,11 @@ BOOL VZIsRootHideEnvironment(void)
 {
     if ((self = [super init])) {
         NSDictionary *saved = [NSDictionary dictionaryWithContentsOfFile:VZSettingsPath];
+#if defined(VZ_ROOTHIDE)
+        if (!saved && ![NSFileManager.defaultManager fileExistsAtPath:VZSettingsPath])
+            saved = [NSDictionary dictionaryWithContentsOfFile:
+                [VZLegacyLibraryPath() stringByAppendingPathComponent:@"Settings.plist"]];
+#endif
         _values = [[NSMutableDictionary alloc] initWithDictionary:
             [saved isKindOfClass:NSDictionary.class] ? saved : @{}];
         // Migrate the former switch without changing what an existing user
@@ -125,7 +136,13 @@ BOOL VZIsRootHideEnvironment(void)
     id value = self.values[key];
     if (![value isKindOfClass:NSString.class])
         value = [self defaults][key];
-    return [value isKindOfClass:NSString.class] ? value : nil;
+    if (![value isKindOfClass:NSString.class])
+        return nil;
+#if defined(VZ_ROOTHIDE)
+    if ([key isEqualToString:VZAutoBootVMPathKey])
+        return VZResolvedStoredPath(value);
+#endif
+    return value;
 }
 
 - (void)save
@@ -142,7 +159,8 @@ BOOL VZIsRootHideEnvironment(void)
            error ? error.description.UTF8String : "(none)");
     CFNotificationCenterPostNotification(
         CFNotificationCenterGetDarwinNotifyCenter(),
-        VZSettingsDarwinNotification, NULL, NULL, YES);
+        (CFStringRef)VZNotificationName((NSString *)VZSettingsDarwinNotification),
+        NULL, NULL, YES);
     [NSNotificationCenter.defaultCenter postNotificationName:
         VZSettingsDidChangeNotification object:self];
 }
@@ -155,6 +173,10 @@ BOOL VZIsRootHideEnvironment(void)
 
 - (void)setString:(NSString *)value forKey:(NSString *)key
 {
+#if defined(VZ_ROOTHIDE)
+    if ([key isEqualToString:VZAutoBootVMPathKey])
+        value = VZStoredPath(value);
+#endif
     if ([value isKindOfClass:NSString.class] && value.length)
         self.values[key] = value;
     else
