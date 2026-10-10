@@ -4,21 +4,32 @@ set -euo pipefail
 
 VZ_REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VZ_BUILD_ROOT="${VZ_BUILD_ROOT:-$VZ_REPO_ROOT/build}"
-# Every shipped binary uses the oldest currently supported deployment target.
-# A single package therefore runs on iPadOS 14.5 through 16.3.1; runtime
-# compatibility decisions must be made from the actual host OS instead of by
-# producing OS-specific packages.  The override exists only for bring-up of
-# host-specific diagnostic builds.
+# Virtual Mac is intended to work on iPhone and iPad devices running iOS/iPadOS
+# 14 and newer. The runtime must still verify the actual host OS; the build
+# system should not reject newer releases ahead of the oldest supported version.
 VZ_IPADOS_MIN_VERSION="${VZ_IPADOS_MIN_VERSION:-14.5}"
 
-case "$VZ_IPADOS_MIN_VERSION" in
-    14.5|15.0) ;;
-    *)
-        echo "error: VZ_IPADOS_MIN_VERSION must be 14.5 or 15.0" >&2
-        exit 1
-        ;;
-esac
+# Accept any iOS/iPadOS version starting at 14.0. This intentionally removes the
+# previous 14.5/15.0-only hard stop while still preserving a minimum floor.
+python3 - "$VZ_IPADOS_MIN_VERSION" <<'PY'
+import sys
+version = sys.argv[1]
+parts = version.split('.')
+if len(parts) < 2:
+    raise SystemExit("error: VZ_IPADOS_MIN_VERSION must be a dotted version like 14.5")
+try:
+    major = int(parts[0])
+    minor = int(parts[1])
+except ValueError as exc:
+    raise SystemExit(f"error: invalid version: {version!r}") from exc
+if major < 14:
+    raise SystemExit("error: VZ_IPADOS_MIN_VERSION must be 14.0 or newer")
+PY
 export VZ_IPADOS_MIN_VERSION
+
+# StickDebug/JIT is required before launching the VM on-device. The build system
+# can warn early without blocking the package export.
+export VZ_STICKDEBUG_JIT_REQUIRED="${VZ_STICKDEBUG_JIT_REQUIRED:-1}"
 
 if [[ "${VZ_IGNORE_ENV_FILE:-0}" != 1 && -f "$VZ_REPO_ROOT/.env" ]]; then
     set -a
@@ -84,7 +95,7 @@ ipad_ssh_args() {
         devices="$(idevice_id -l)"
         count="$(printf '%s\n' "$devices" | awk 'NF { count++ } END { print count+0 }')"
         [[ "$count" == 1 ]] ||
-            die "attach exactly one iPad or set VZ_IPAD_UDID"
+            die "attach exactly one iPhone or iPad or set VZ_IPAD_UDID"
         VZ_IPAD_UDID="$devices"
     fi
     VZ_IPAD_PORT="${VZ_IPAD_PORT:-2221}"
@@ -149,3 +160,7 @@ ipad_scp() {
     ensure_ipad_usb
     sshpass -p "$VZ_IPAD_PASSWORD" scp "${IPAD_SCP_ARGS[@]}" "$@"
 }
+
+if [[ "${VZ_STICKDEBUG_JIT_REQUIRED:-0}" == "1" ]]; then
+    echo "note: StickDebug JIT must be enabled before launching Virtual Mac on-device." >&2
+fi

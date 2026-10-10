@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 
 SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
-OUT="$VZ_BUILD_ROOT/ipad-app"
+OUT="${VZ_BUILD_ROOT:-$VZ_REPO_ROOT/build}/ios-app"
 APP="$OUT/VirtualMac.app"
 BIN="$APP/VirtualMac"
 HOOK="$APP/VZHostCompat.dylib"
@@ -90,8 +90,8 @@ xcrun ibtool --compile "$APP/VirtualMacLaunchScreen.storyboardc" \
     --target-device ipad \
     --minimum-deployment-target "$VZ_IPADOS_MIN_VERSION" >/dev/null
 
-# Generate the exact legacy icon filenames consumed by iPadOS 16. The checked
-# in 1024-pixel RGB master has no alpha channel, as required for app icons.
+# Generate the exact legacy icon filenames consumed by iOS/iPadOS 14+. The
+# checked-in 1024-pixel RGB master has no alpha channel, as required for app icons.
 cp "$VZ_REPO_ROOT/assets/VirtualMac.png" "$APP/AppIcon1024x1024.png"
 for spec in \
     '120 AppIcon60x60@2x.png' \
@@ -142,4 +142,6 @@ xattr -cr "$APP"
 ldid -Icom.mac.virtual -S"$ENTS" "$BIN"
 ldid -S"$ENTS" "$HOOK"
 ldid -S "$DIAGNOSTICS"
-echo "native iPad VM app built: $APP"
+
+echo "note: StickDebug JIT must be enabled before running Virtual Mac on device."
+echo "native iPhone/iPad VM app built: $APP"
