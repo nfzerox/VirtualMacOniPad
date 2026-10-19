@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 // Publish VMM's real AVP-backed restore USB device to MobileDevice without
 // requiring macOS's AppleUSBUserHCIResources kernel service.  MobileDevice
 // continues to use iPadOS's native IOUSBLib; only IOKit registry/user-client
@@ -88,7 +89,7 @@ static uint8_t fake_usb_recovery_dfu_recipient_mode;
 static uint8_t fake_usb_pipe_endpoints[256];
 
 static void usb_shim_log(const char *format, ...) {
-    FILE *file = fopen("/tmp/installation-usb.log", "a");
+    FILE *file = fopen(VZTemporaryPath("installation-usb.log"), "a");
     if (!file)
         return;
     va_list arguments;

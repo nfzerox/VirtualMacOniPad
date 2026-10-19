@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "מחשבי Mac וירטואליים שהושלמו ותמונות שחזור מחוץ ליישום לא יוסרו.";
 "Configuration failed: %@" = "התצורה נכשלה: %@";
 "Configure %@" = "הגדרת %@";
+"Consolidate" = "איחוד";
+"Consolidate Legacy Library" = "איחוד ספריית מורשת";
+"Consolidate Legacy Library?" = "לאחד את ספריית המורשת?";
+"Consolidation Complete" = "האיחוד הושלם";
+"Consolidation Failed" = "האיחוד נכשל";
 "Continue" = "המשך";
 "Controls Opacity" = "אטימות הפקדים";
 "Copy Library Path" = "העתקת נתיב הספרייה";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "שיקוף במסך מלא";
 "General" = "כללי";
 "Get Help" = "קבלת עזרה";
+"Get roothide Package" = "קבל את חבילת roothide";
 "Height" = "גובה";
 "Incomplete Installation" = "התקנה שלא הושלמה";
 "Incomplete Installations" = "התקנות שלא הושלמו";
@@ -153,6 +159,7 @@
 "Microphone Input" = "קלט מיקרופון";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "מינימום: %llu GB. הגבול העליון נקבע על ידי מערכת הקבצים.";
 "Move Controls" = "הזזת הפקדים";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "העבר את ה-Virtual Mac מספריית המורשת לספרייה הראשית. שמות קיימים יקבלו סיומת מספרית. תחילה סגור את כל ה-Virtual Mac הפועלים.";
 "Name" = "שם";
 "Name Already Used" = "השם כבר בשימוש";
 "NAT: Share %@" = "NAT: שיתוף %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "אין מחשבי Mac וירטואליים התואמים לחיפוש.";
 "Off" = "כבוי";
 "OK" = "אישור";
+"Older Virtual Macs are stored in %@." = "Virtual Mac ישנים יותר נשמרים ב-%@.";
 "On" = "פעיל";
 "On for Next Boot" = "פעיל בהפעלה הבאה";
 "On My iPad" = "ב-iPad שלי";
@@ -204,6 +212,7 @@
 "Resolution" = "רזולוציה";
 "Resources" = "משאבים";
 "Resume" = "המשך";
+"roothide Package Required" = "נדרשת חבילת roothide";
 "Save" = "שמירה";
 "Save a ZIP file containing logs and crash reports." = "שמרו קובץ ZIP המכיל יומנים ודוחות קריסה.";
 "Save Diagnostics to Files" = "שמירת נתוני האבחון ב״קבצים״";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "השבתת מחוות ריבוי משימות";
 "Suppress System Edge Gestures" = "השבתת מחוות קצה";
 "Switch to Running Virtual Mac" = "מעבר ל-Mac הווירטואלי שפועל";
-"Switch to the Official Version of Dopamine" = "מעבר לגרסה הרשמית של Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "יש לעבור ל-Mac הווירטואלי שפועל ולכבות אותו לפני הפעלת אחד אחר.";
 "The diagnostics archive could not be created." = "לא ניתן ליצור את ארכיון האבחון.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "ערך ההתקדמות הראשון עשוי להופיע לאחר מספר דקות בזמן שה-Mac הווירטואלי עובר מ-DFU ל-RestoreOS. ה-iPad יישאר פעיל.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "ערך ההתקדמות הראשון עשוי להופיע לאחר מספר דקות בזמן שה-Mac הווירטואלי עובר מ-DFU ל-RestoreOS. ה-iPhone יישאר פעיל.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "ה-Mac הווירטואלי שלא הושלם וקובצי ההתקנה שלו יימחקו.";
 "The installer could not be started: %s" = "לא ניתן להפעיל את תוכנית ההתקנה: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "לא ניתן היה לאחד את ספריית המורשת. סגור את כל ה-Virtual Mac הפועלים ונסה שוב.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "ה-Virtual Mac מהמורשת הועברו לספרייה הראשית. הבחנת המורשת בוטלה.";
 "The new Virtual Mac is ready to use." = "ה-Mac הווירטואלי החדש מוכן לשימוש.";
 "The partial restore image will be deleted." = "תמונת השחזור שהורדה חלקית תימחק.";
 "The Virtual Mac configuration could not be created." = "לא ניתן ליצור את תצורת ה-Mac הווירטואלי.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "אפשרויות אלה משפיעות על iPadOS רק כאשר Mac וירטואלי בחזית ומופעל Mac וירטואלי.";
 "This iPad is incompatible with Virtual Mac" = "ה-iPad הזה אינו תואם ל-Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "ה-iPhone הזה אינו תואם ל-Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "זהו חבילת Virtual Mac הרגילה שפועלת על פריצת Dopamine-roothide. התקן את חבילת roothide הרשמית לאחסון פרטי ותאימות מלא.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "פעולה זו מאפסת את כל הגדרות Mac וירטואלי לברירות המחדל. מחשבי Mac וירטואליים, תמונות שחזור וקובצי התקנה לא יוסרו.";
 "this Virtual Mac" = "Mac וירטואלי זה";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "כדי להפעיל האצת OpenGL, יש לכבות את ה‑Virtual Mac הזה ולהפעיל אותה באפשרויות שלו.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "אטימות הפקדים של Virtual Mac";
 "Virtual Mac devices are stored in %@." = "מחשבי Mac וירטואליים נשמרים ב-%@.";
 "Virtual Mac Display" = "צג ה-Mac הווירטואלי";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac אינו תומך בסביבת Dopamine-roothide. יש להסיר את פריצת roothide דרך Dopamine-roothide > הגדרות > הסרת Jailbreak, ואז לעבור לגרסה הרשמית של Dopamine.";
 "Virtual Mac Guest Tools" = "כלי אורח עבור Mac וירטואלי";
 "Virtual Mac has no published framebuffer" = "ל-Mac הווירטואלי אין framebuffer שפורסם";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac דורש iPad Pro (M1, M2) או iPad Air (M1) עם iPadOS 14–16.3.1, או iPhone 14 Pro ו- iPhone 14 Pro Max עם iOS 16–16.3.1.";

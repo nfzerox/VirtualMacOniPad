@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <objc/message.h>
@@ -428,7 +429,7 @@ static void *CreateTaskWithAdaptiveReservation(
     if (baseAddress != NULL)
         *baseAddress = NULL;
     void *emergencyTask = createTask(1ULL << 20, baseAddress);
-    notify_post(VZVideoMemoryExhaustedNotification);
+    notify_post(VZNotificationName(@(VZVideoMemoryExhaustedNotification)).UTF8String);
     if (emergencyTask != NULL) {
         dprintf(STDERR_FILENO,
                 "VirtualMac PVG: graphics address space exhausted; using "
@@ -447,7 +448,7 @@ static void *CreateTaskWithAdaptiveReservation(
 
 static const char *TracePath(void) {
     const char *configured = getenv("PVG_TRACE_PATH");
-    return configured && configured[0] ? configured : "/tmp/pvg-trace.log";
+    return configured && configured[0] ? configured : VZTemporaryPath("pvg-trace.log");
 }
 
 static void Trace(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);

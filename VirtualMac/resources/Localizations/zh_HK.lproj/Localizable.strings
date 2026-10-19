@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "不會刪除完整的虛擬Mac，也不會刪除虛擬Mac文件夾之外的恢復鏡像。";
 "Configuration failed: %@" = "配置失敗：%@";
 "Configure %@" = "配置%@";
+"Consolidate" = "合併";
+"Consolidate Legacy Library" = "合併舊版庫";
+"Consolidate Legacy Library?" = "合併舊版庫？";
+"Consolidation Complete" = "合併完成";
+"Consolidation Failed" = "合併失敗";
 "Continue" = "繼續";
 "Controls Opacity" = "控制項不透明度";
 "Copy Library Path" = "複製資料庫路徑";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "全螢幕鏡像";
 "General" = "一般";
 "Get Help" = "取得協助";
+"Get roothide Package" = "取得 roothide 套件";
 "Height" = "高度";
 "Incomplete Installation" = "未完成的安裝";
 "Incomplete Installations" = "未完成的安裝";
@@ -153,6 +159,7 @@
 "Microphone Input" = "麥克風輸入";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "最小值：%llu GB。上限由文件系統決定。";
 "Move Controls" = "移動控制項";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "將舊版庫中的虛擬機移到主庫。重名的虛擬機會加上數字後綴。請先關閉所有正在運行的虛擬機。";
 "Name" = "名稱";
 "Name Already Used" = "名稱已被使用";
 "NAT: Share %@" = "NAT：共享%@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "沒有符合搜尋條件的虛擬Mac。";
 "Off" = "關閉";
 "OK" = "好";
+"Older Virtual Macs are stored in %@." = "舊版虛擬機儲存在 %@。";
 "On" = "開啟";
 "On for Next Boot" = "下次啟動時開啟";
 "On My iPad" = "我的iPad";
@@ -204,6 +212,7 @@
 "Resolution" = "分辨率";
 "Resources" = "資源";
 "Resume" = "繼續";
+"roothide Package Required" = "需要 roothide 套件";
 "Save" = "儲存";
 "Save a ZIP file containing logs and crash reports." = "儲存包含記錄和當機報告的ZIP檔案。";
 "Save Diagnostics to Files" = "將診斷資料儲存到「檔案」";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "停用多工處理手勢";
 "Suppress System Edge Gestures" = "停用螢幕邊緣手勢";
 "Switch to Running Virtual Mac" = "切換到正在運行的虛擬Mac";
-"Switch to the Official Version of Dopamine" = "切換至官方版Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "請切換到正在運行的虛擬Mac並將其關機，然後再啓動另一台。";
 "The diagnostics archive could not be created." = "無法創建診斷歸檔。";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "虛擬Mac從DFU切換到RestoreOS時，首次顯示進度可能需要幾分鐘。你的iPad將保持喚醒。";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "虛擬Mac從DFU切換到RestoreOS時，首次顯示進度可能需要幾分鐘。你的iPhone將保持喚醒。";
 "The incomplete Virtual Mac and its installation files will be deleted." = "將刪除未完成的虛擬Mac及其安裝文件。";
 "The installer could not be started: %s" = "無法啟動安裝程式：%s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "無法合併舊版庫。請關閉所有正在運行的虛擬機後重試。";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "舊版虛擬機已移到主庫。舊版與主庫的區別已消除。";
 "The new Virtual Mac is ready to use." = "新的虛擬Mac已可使用。";
 "The partial restore image will be deleted." = "將刪除未下載完成的恢復鏡像。";
 "The Virtual Mac configuration could not be created." = "無法創建虛擬Mac配置。";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "這些選項只會在虛擬Mac位於最前方並正在執行時影響iPadOS。";
 "This iPad is incompatible with Virtual Mac" = "此iPad與虛擬Mac不相容";
 "This iPhone is incompatible with Virtual Mac" = "此iPhone與虛擬Mac不相容";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "這是在 Dopamine-roothide 越獄上運行的標準版 Virtual Mac。請安裝官方 roothide 套件，以獲得私有儲存空間和完整相容性。";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "這會將虛擬Mac的所有設置還原為默認值，但不會刪除虛擬Mac、恢復鏡像或安裝文件。";
 "this Virtual Mac" = "此虛擬Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "如要開啟OpenGL加速，請將此虛擬Mac關機，然後在其選項中開啟OpenGL加速。";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "虛擬Mac控制項不透明度";
 "Virtual Mac devices are stored in %@." = "虛擬Mac裝置儲存在%@。";
 "Virtual Mac Display" = "虛擬Mac顯示器";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "虛擬Mac不支援Dopamine-roothide環境。請在Dopamine-roothide > 設定 > 移除越獄中移除roothide越獄，然後切換至官方版Dopamine。";
 "Virtual Mac Guest Tools" = "虛擬Mac增強工具";
 "Virtual Mac has no published framebuffer" = "虛擬Mac未提供幀緩衝區";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac需要執行iPadOS 14–16.3.1的iPad Pro (M1、M2)或iPad Air (M1)，或執行iOS 16–16.3.1的iPhone 14 Pro和iPhone 14 Pro Max。";

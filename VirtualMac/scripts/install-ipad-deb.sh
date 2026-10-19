@@ -20,18 +20,32 @@ fi
 [[ -n "$DEB" && -f "$DEB" ]] ||
     die "standalone package not found; run scripts/build-ipad-deb.sh first"
 
+# The roothide package is rootless by construction: its usr/libexec helpers
+# resolve inside the Dopamine-roothide bootstrap instead of Apple's real system
+# paths, and it keeps state in private storage rather than /var/root/VirtualMac.
+# Its dependency list identifies it, so the standard package's rootful-path
+# safety checks are skipped for it below.
+depends="$(dpkg-deb -f "$DEB" Depends | tr ',' '\n' |
+    sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+roothide=0
+if printf '%s\n' "$depends" | grep -qx roothide; then
+    roothide=1
+fi
+
 # Refuse an unsafe development package before it reaches a rootful jailbreak.
 # Apple system files are outside Virtual Mac's ownership; all Taurine helpers
 # must live below /var/root/VirtualMac/rootful.
-archive_paths="$(dpkg-deb --fsys-tarfile "$DEB" | tar -tf -)"
-for forbidden in \
-    ./usr/libexec/bootpd \
-    ./usr/libexec/InternetSharing \
-    ./Library/LaunchDaemons/com.apple.bootpd.plist; do
-    if printf '%s\n' "$archive_paths" | grep -Fxq "$forbidden"; then
-        die "refusing package that replaces an Apple system path: $forbidden"
-    fi
-done
+if [[ "$roothide" == 0 ]]; then
+    archive_paths="$(dpkg-deb --fsys-tarfile "$DEB" | tar -tf -)"
+    for forbidden in \
+        ./usr/libexec/bootpd \
+        ./usr/libexec/InternetSharing \
+        ./Library/LaunchDaemons/com.apple.bootpd.plist; do
+        if printf '%s\n' "$archive_paths" | grep -Fxq "$forbidden"; then
+            die "refusing package that replaces an Apple system path: $forbidden"
+        fi
+    done
+fi
 
 rootless="$(ipad_ssh 'test -x /var/jb/usr/bin/jbctl && echo 1 || echo 0')"
 system_bootpd_before="$(ipad_ssh 'sha256sum /usr/libexec/bootpd | cut -d" " -f1')"
@@ -58,13 +72,23 @@ status="$(ipad_ssh "dpkg-query -W -f='\${db:Status-Status}' \
 [[ "$status" == installed ]] ||
     die "package did not reach installed state (status: ${status:-missing})"
 
-ipad_ssh "
+if [[ "$roothide" == 0 ]]; then
+    ipad_ssh "
 set -eu
 test -u /var/root/VirtualMac/install/install-launcher
 test -d /var/mobile/Media/VirtualMac
 "
+fi
 
-if [[ "$rootless" == 1 ]]; then
+if [[ "$roothide" == 1 ]]; then
+    ipad_ssh "
+set -eu
+test -x /var/jb/Applications/VirtualMac.app/VirtualMac
+test -f /var/jb/usr/lib/VirtualMacPaths.dylib
+test -f /var/jb/usr/lib/TweakInject/VZKeyboardPassthrough.dylib
+test -x /var/jb/usr/libexec/VirtualMac/install/install-launcher
+"
+elif [[ "$rootless" == 1 ]]; then
     ipad_ssh "
 set -eu
 test -x /var/jb/Applications/VirtualMac.app/VirtualMac

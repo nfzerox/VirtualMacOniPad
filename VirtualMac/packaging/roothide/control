@@ -1,0 +1,8 @@
+Package: com.mac.virtual
+Name: Virtual Mac
+Version: 2:1.2.3+roothide14
+Architecture: iphoneos-arm64e
+Maintainer: Virtual Mac
+Section: Utilities
+Depends: firmware (>= 15.0), firmware (<< 16.4), roothide, dopamine-basebin-link, ellekit
+Description: Native RootHide build of Virtual Mac for iPadOS 15 and 16.

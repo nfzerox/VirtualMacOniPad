@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Virtual Mac dışındaki tamamlanmış Sanal Mac’ler ve geri yükleme imajları kaldırılmaz.";
 "Configuration failed: %@" = "Yapılandırma başarısız: %@";
 "Configure %@" = "%@ Aygıtını Yapılandır";
+"Consolidate" = "Birleştir";
+"Consolidate Legacy Library" = "Eski kitaplığı birleştir";
+"Consolidate Legacy Library?" = "Eski kitaplık birleştirilsin mi?";
+"Consolidation Complete" = "Birleştirme tamamlandı";
+"Consolidation Failed" = "Birleştirme başarısız";
 "Continue" = "Sürdür";
 "Controls Opacity" = "Denetim Opaklığı";
 "Copy Library Path" = "Kitaplık Yolunu Kopyala";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Tam Ekran Yansıtma";
 "General" = "Genel";
 "Get Help" = "Yardım Al";
+"Get roothide Package" = "roothide paketini al";
 "Height" = "Yükseklik";
 "Incomplete Installation" = "Tamamlanmamış Kurulum";
 "Incomplete Installations" = "Tamamlanmamış Kurulumlar";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Mikrofon Girişi";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Minimum: %llu GB. Üst sınırı dosya sistemi belirler.";
 "Move Controls" = "Denetimleri Taşı";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Eski kitaplıktaki Virtual Mac'leri ana kitaplığa taşı. Aynı isimler numara soneki alır. Önce tüm çalışan Virtual Mac'leri kapatın.";
 "Name" = "Ad";
 "Name Already Used" = "Ad Zaten Kullanılıyor";
 "NAT: Share %@" = "NAT: %@ Paylaş";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Aramanızla eşleşen bir Sanal Mac yok.";
 "Off" = "Kapalı";
 "OK" = "Tamam";
+"Older Virtual Macs are stored in %@." = "Eski Virtual Mac'ler %@ içinde saklanır.";
 "On" = "Açık";
 "On for Next Boot" = "Sonraki Başlatmada Açık";
 "On My iPad" = "iPad’imde";
@@ -204,6 +212,7 @@
 "Resolution" = "Çözünürlük";
 "Resources" = "Kaynaklar";
 "Resume" = "Sürdür";
+"roothide Package Required" = "roothide paketi gerekli";
 "Save" = "Kaydet";
 "Save a ZIP file containing logs and crash reports." = "Günlükleri ve çökme raporlarını içeren bir ZIP dosyası kaydedin.";
 "Save Diagnostics to Files" = "Tanılamayı Dosyalar’a Kaydet";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Çoklu Görev Hareketlerini Engelle";
 "Suppress System Edge Gestures" = "Kenar Hareketlerini Engelle";
 "Switch to Running Virtual Mac" = "Çalışan Sanal Mac’e Geç";
-"Switch to the Official Version of Dopamine" = "Dopamine’in resmi sürümüne geç";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Başka birini başlatmadan önce çalışan Sanal Mac’e geçip onu kapatın.";
 "The diagnostics archive could not be created." = "Tanı arşivi oluşturulamadı.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Sanal Mac DFU’dan RestoreOS’e geçerken ilk ilerleme değeri birkaç dakika sürebilir. iPad’iniz uyanık kalacak.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Sanal Mac DFU’dan RestoreOS’e geçerken ilk ilerleme değeri birkaç dakika sürebilir. iPhone’unuz uyanık kalacak.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Tamamlanmamış Sanal Mac ve kurulum dosyaları silinecek.";
 "The installer could not be started: %s" = "Yükleyici başlatılamadı: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Eski kitaplık birleştirilemedi. Tüm çalışan Virtual Mac'leri kapatıp yeniden deneyin.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Eski Virtual Mac'ler ana kitaplığa taşındı. Eski ayrımı kalktı.";
 "The new Virtual Mac is ready to use." = "Yeni Sanal Mac kullanıma hazır.";
 "The partial restore image will be deleted." = "Kısmen indirilmiş geri yükleme imajı silinecek.";
 "The Virtual Mac configuration could not be created." = "Sanal Mac yapılandırması oluşturulamadı.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Bu seçenekler iPadOS’i yalnızca Sanal Mac öndeyken ve bir sanal Mac çalışırken etkiler.";
 "This iPad is incompatible with Virtual Mac" = "Bu iPad, Virtual Mac ile uyumlu değil";
 "This iPhone is incompatible with Virtual Mac" = "Bu iPhone, Virtual Mac ile uyumlu değil";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Bu, bir Dopamine-roothide jailbreak üzerinde çalışan standart Virtual Mac paketidir. Özel depolama ve tam uyumluluk için resmi roothide paketini yükleyin.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Bu, tüm Virtual Mac ayarlarını saptanmış değerlere sıfırlar. Sanal Mac’ler, geri yükleme imajları ve kurulum dosyaları kaldırılmaz.";
 "this Virtual Mac" = "bu Sanal Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "OpenGL hızlandırmayı açmak için bu Virtual Mac’i kapatın, ardından seçeneklerinden OpenGL Hızlandırma’yı açın.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Virtual Mac Denetim Opaklığı";
 "Virtual Mac devices are stored in %@." = "Sanal Mac’ler %@ içinde saklanır.";
 "Virtual Mac Display" = "Sanal Mac Ekranı";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac, Dopamine-roothide ortamını desteklemez. Dopamine-roothide > Ayarlar > Jailbreak’i Kaldır yolundan roothide jailbreak’ini kaldırın, ardından Dopamine’in resmi sürümüne geçin.";
 "Virtual Mac Guest Tools" = "Sanal Mac Konuk Araçları";
 "Virtual Mac has no published framebuffer" = "Sanal Mac’in yayımlanmış framebuffer’ı yok";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac için iPad Pro (M1, M2) veya iPad Air (M1) üzerinde iPadOS 14–16.3.1 veya iPhone 14 Pro ve iPhone 14 Pro Max üzerinde iOS 16–16.3.1 gerekir.";

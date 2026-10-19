@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 #import "native_bc_texture_support.h"
 
 #import <dlfcn.h>
@@ -316,11 +317,18 @@ static BOOL ValidateTextureFormatABI(const AGXImage *image,
 static MSHookFunctionFn LoadHookFunction(void) {
     MSHookFunctionFn hook = dlsym(RTLD_DEFAULT, "MSHookFunction");
     if (hook) return hook;
+#if defined(VZ_ROOTHIDE)
+    const char *paths[] = {
+        jbroot("/usr/lib/libellekit.dylib"),
+        jbroot("/usr/lib/libhooker.dylib"),
+    };
+#else
     static const char *paths[] = {
         "/var/jb/usr/lib/libellekit.dylib",
         "/var/jb/usr/lib/libhooker.dylib",
         "/usr/lib/libhooker.dylib",
     };
+#endif
     for (NSUInteger index = 0; index < sizeof(paths) / sizeof(paths[0]); ++index) {
         void *image = dlopen(paths[index], RTLD_NOW | RTLD_LOCAL);
         hook = image ? dlsym(image, "MSHookFunction") : NULL;

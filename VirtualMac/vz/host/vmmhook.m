@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 // DYLD_INSERT hook for the iOS-ported VZ VMM service.
 // The VMM's main() calls xpc_main(handler), but iOS xpc_main requires the launchd
 // XPCService-domain context (it reads the job's "XPCService" config dict -> "Could not
@@ -341,8 +342,8 @@ __attribute__((used)) static struct {
 #define XPC_MACH_SERVICE_LISTENER 1ULL
 
 static void logf_(const char *fmt, ...) {
-    FILE *f = fopen("/tmp/vmmhook.log", "a"); if (!f) return;
-    fchmod(fileno(f), 0666);
+    FILE *f = fopen(VZTemporaryPath("vmmhook.log"), "a"); if (!f) return;
+    fchmod(fileno(f), VZLogMode);
     va_list ap; va_start(ap, fmt); vfprintf(f, fmt, ap); va_end(ap);
     fputc('\n', f); fclose(f);
 }
@@ -2178,7 +2179,7 @@ static void fake_usb_bridge_start(void) {
         strlcpy(address.sun_path, VZ_USB_BRIDGE_SOCKET,
                 sizeof(address.sun_path));
         if (bind(server, (struct sockaddr *)&address, sizeof(address)) < 0 ||
-            chmod(VZ_USB_BRIDGE_SOCKET, 0666) < 0 ||
+            chmod(VZ_USB_BRIDGE_SOCKET, VZSocketMode) < 0 ||
             listen(server, SOMAXCONN) < 0) {
             logf_("[vmmhook] USB bridge listen failed: %s", strerror(errno));
             close(server);
@@ -2973,7 +2974,7 @@ void vmm_xpc_main(void (*handler)(xo_t)) {
     logf_("[vmmhook] listener L=%p E=%p myport=0x%x", L, E, myport);
     const char *endpointFile = getenv("VZ_VMM_ENDPOINT_FILE");
     if (!endpointFile || !endpointFile[0])
-        endpointFile = "/tmp/vmm_ep.txt";
+        endpointFile = VZTemporaryPath("vmm_ep.txt");
     FILE *f = fopen(endpointFile, "w");
     if (f) {
         fprintf(f, "0x%x\n", myport);
@@ -3023,7 +3024,7 @@ static int vmm_open(const char *path, int oflag, ...) {
                 snprintf(fb, sizeof(fb), "%s", configured);
             else
                 snprintf(fb, sizeof(fb),
-                         "/var/root/VirtualMac/payload/%s", base);
+                         "%s%s", VZRuntimePath("payload/"), base);
             int fd = __open(fb, oflag, mode);
             void *ret0 = __builtin_return_address(0);
             void *ret1 = __builtin_return_address(1);
