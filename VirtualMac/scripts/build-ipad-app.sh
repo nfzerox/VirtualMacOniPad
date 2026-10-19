@@ -27,6 +27,8 @@ for installer_icon in monterey ventura sonoma sequoia tahoe golden-gate ipsw; do
 done
 need_file "$VZ_REPO_ROOT/vz/host/NSViewShim.m"
 need_file "$VZ_REPO_ROOT/vz/host/VZAppSettings.m"
+need_file "$VZ_REPO_ROOT/vz/host/VZGamepadBridge.m"
+need_file "$VZ_REPO_ROOT/vz/host/VZGamepadSettingsViewController.m"
 need_file "$VZ_REPO_ROOT/vz/host/VZDiagnostics.m"
 need_file "$VZ_REPO_ROOT/vz/host/VZFailureDetailsViewController.m"
 need_file "$VZ_REPO_ROOT/vz/host/VZRestoreCatalog.m"
@@ -106,11 +108,14 @@ done
 xcrun --sdk iphoneos clang \
     -arch arm64 -miphoneos-version-min="$VZ_IPADOS_MIN_VERSION" -isysroot "$SDK" -fblocks \
     -framework AVFAudio -framework CoreImage -framework Foundation \
-    -framework GameController -framework Metal -framework Security -framework UIKit \
+    -framework GameController -framework Metal -framework QuartzCore \
+    -framework Security -framework UIKit \
     -framework UniformTypeIdentifiers \
     -Wl,-export_dynamic -Wl,-undefined,dynamic_lookup \
     "$VZ_REPO_ROOT/vz/host/NSViewShim.m" \
     "$VZ_REPO_ROOT/vz/host/VZAppSettings.m" \
+    "$VZ_REPO_ROOT/vz/host/VZGamepadBridge.m" \
+    "$VZ_REPO_ROOT/vz/host/VZGamepadSettingsViewController.m" \
     "$VZ_REPO_ROOT/vz/host/VZDiagnostics.m" \
     "$VZ_REPO_ROOT/vz/host/VZFailureDetailsViewController.m" \
     "$VZ_REPO_ROOT/vz/host/VZRestoreCatalog.m" \

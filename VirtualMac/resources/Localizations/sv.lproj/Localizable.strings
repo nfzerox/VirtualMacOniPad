@@ -170,6 +170,7 @@
 "On My iPhone" = "På min iPhone";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "Endast cirka %llu GB är tillgängligt. Skivavbilden är dynamisk, men installationen eller senare användning kan misslyckas om lagringsutrymmet tar slut.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "Öppna Kontrollcenter, starta en skärminspelning och återskapa sedan problemet.";
+"Open Gamepad Script Folder" = "Öppna mappen med handkontrollsskript";
 "OpenGL Acceleration" = "OpenGL-acceleration";
 "OpenGL Acceleration Is Off" = "OpenGL-acceleration är av";
 "OpenGL Acceleration requires macOS Sonoma or later." = "OpenGL-acceleration kräver macOS Sonoma eller senare.";

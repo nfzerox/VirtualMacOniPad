@@ -170,6 +170,7 @@
 "On My iPhone" = "Omassa iPhonessa";
 "Only about %llu GB is currently available. The disk image is sparse, but installation or later use can fail when storage fills up." = "Tallennustilaa on nyt vain noin %llu Gt. Levykuva on dynaaminen, mutta asennus tai myöhempi käyttö voi epäonnistua tallennustilan täyttyessä.";
 "Open Control Center and start Screen Recording, then reproduce the problem." = "Avaa Ohjauskeskus, aloita näyttötallennus ja toista sitten ongelma.";
+"Open Gamepad Script Folder" = "Avaa peliohjaimen komentosarjakansio";
 "OpenGL Acceleration" = "OpenGL-kiihdytys";
 "OpenGL Acceleration Is Off" = "OpenGL-kiihdytys ei ole käytössä";
 "OpenGL Acceleration requires macOS Sonoma or later." = "OpenGL-kiihdytys vaatii macOS Sonoman tai uudemman.";
