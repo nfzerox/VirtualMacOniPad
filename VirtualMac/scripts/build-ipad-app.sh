@@ -59,7 +59,7 @@ cp "$VZ_BUILD_ROOT/guest-tools/VirtualMacGuestTools.tar.gz" \
     "$APP/GuestTools/VirtualMacGuestTools.tar.gz"
 sips -Z 320 "$VZ_REPO_ROOT/assets/VirtualMacTemplate.png" \
     --out "$APP/VirtualMacTemplate.png" >/dev/null
-APP_VERSION="${VZ_RELEASE_VERSION:-1.2.3}"
+APP_VERSION="${VZ_RELEASE_VERSION:-1.2.4}"
 APP_BUILD="$(git -C "$VZ_REPO_ROOT" rev-list --count HEAD)"
 plutil -replace CFBundleShortVersionString -string "$APP_VERSION" \
     "$APP/Info.plist"

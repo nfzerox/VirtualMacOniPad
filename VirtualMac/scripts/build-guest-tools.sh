@@ -32,7 +32,7 @@ mkdir -p "$MACOS" "$RESOURCES"
 cp "$VZ_REPO_ROOT/vz/guest/VirtualMacGuestTools-Info.plist" \
     "$CONTENTS/Info.plist"
 plutil -replace CFBundleShortVersionString -string \
-    "${VZ_RELEASE_VERSION:-1.2.3}" "$CONTENTS/Info.plist"
+    "${VZ_RELEASE_VERSION:-1.2.4}" "$CONTENTS/Info.plist"
 
 for architecture in arm64 x86_64; do
     xcrun --sdk macosx clang -arch "$architecture" -fblocks \

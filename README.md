@@ -2,6 +2,8 @@
 
 People have dreamed of running macOS on iPad for [more](https://www.macstories.net/stories/macpad-how-i-created-the-hybrid-mac-ipad-laptop-and-tablet-that-apple-wont-make/) [than](https://github.com/khanhduytran0/MacWSBootingGuide) [a](https://khronokernel.com/apple/silicon/2021/01/17/QEMU-AS.html) [decade](https://worthdoingbadly.com/macappsios/). Today, that dream comes true. With Virtual Mac, iPad finally breaks free from iPadOS, enabling pro apps like Xcode, Terminal, Final Cut Pro, Logic Pro, and Pixelmator Pro to run directly on device. Requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1.
 
+Running a newer version of iPadOS? Use [Henge](https://github.com/Leviidev/Henge) or [macPad](https://github.com/DCMMC/macPad) instead. [Learn more.](https://github.com/nfzerox/VirtualMacOniPad#how-can-i-run-macos-if-my-ipad-is-running-a-newer-version-of-ipados)
+
 ![Screenshot of Virtual Mac on iPad](VirtualMac/screenshots/VirtualMac.png)
 
 [See Virtual Mac on iPad in action with this Snazzy Labs video](https://www.youtube.com/watch?v=RRuMpK9taGU&t=893s). Also seen on: [iGeneration](https://www.igen.fr/ipad/2026/08/virtual-mac-fait-tourner-macos-sur-certains-ipad-jailbreakes-157355), [ifun.de](https://www.ifun.de/open-source-projekt-bringt-macos-auf-das-ipad-285132/), [La Manzana Mordida](https://lamanzanamordida.net/noticias/instalar-macos-ipad-virtualmac/), [すまほん!!](https://smhn.info/202608-apple-ipad-virtual-mac-macos-jailbreak-hypervisor), [鵺間飛行 (video)](https://www.bilibili.com/video/BV1Nfue6PExJ/), [IT Home](https://www.ithome.com/0/985/545.htm), [ezone](https://ezone.hk/article/20104816/ipad%E7%B5%82%E6%96%BC%E5%8F%AF%E4%BB%A5%E8%B7%91macos-%E6%B0%91%E9%96%93%E7%A5%9E%E4%BA%BA%E9%87%8B%E5%87%BA%E9%96%8B%E6%BA%90%E5%B7%A5%E5%85%B7-%E6%94%AF%E6%8F%B4gpu%E5%8A%A0%E9%80%9F-%E5%AF%ABcode-%E5%8D%B3%E7%9D%87%E6%94%AF%E6%8F%B4%E6%A9%9F%E5%9E%8B%E8%88%87%E7%B3%BB%E7%B5%B1), [KOCPC](https://www.kocpc.com.tw/archives/664343), and [Bilibili (video)](https://www.bilibili.com/video/BV1PfuR69EoC/). Virtual Mac on iPad is a community project and is not affiliated with Dopamine, UTM, VirtualBuddy, or Apple. Contributions are welcome!
@@ -19,6 +21,14 @@ Ran into a problem? [Check the troubleshooting section](https://github.com/nfzer
 
 Virtual Mac on iPad requires an iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1. iPad Pro models with 1 TB or 2 TB of storage have 16 GB of RAM and provide the best performance and experience.
 
+### How can I run macOS if my iPad is running a newer version of iPadOS?
+
+If your iPad is running a newer version of iPadOS, you can use either:
+- [Henge](https://github.com/Leviidev/Henge): A fast, easy-to-use JIT-based macOS emulator that works on the latest iPadOS and iOS. It doesn't require a jailbreak or complex configuration, and is recommended for most users.
+- [macPad](https://github.com/DCMMC/macPad): Run macOS userland and apps at native performance on iPadOS, at the cost of app compatibility and configuration complexity. This is for advanced users who are comfortable with using frontier coding agents to troubleshoot.
+
+Virtualizing on iPadOS 16.4 or later with hardware hypervisor presents additional challenges because [Hypervisor support was removed from the iPadOS XNU kernel](https://x.com/UTMapp/status/1708907045314035986). Contributions are welcome!
+
 ### Which versions of macOS does this support?
 
 Virtual Mac on iPad supports macOS 12 Monterey up to macOS 26 Tahoe, with experimental support for macOS 27 Golden Gate. macOS 15 Sequoia is the recommended version to install. [You can download the latest compatible version of Xcode, Final Cut Pro Trial, Logic Pro Trial, and Pixelmator Pro Trial](https://nfzerox.github.io/virtual-mac/app/).
@@ -33,10 +43,6 @@ Magic Keyboard is not required because you can also use the touchscreen and virt
 - If the HUD gets in the way, move it to a different corner or hide it from the More menu. To show it again, press and hold the Virtual Mac icon on the iPad Home Screen, then tap Show Virtual Mac Controls.
 - To automatically start up your virtual Mac, enable System Settings > Users & Groups > Automatically log in, and set System Settings > Lock Screen to Never. Then in Virtual Mac's in-app Settings, change Start on Launch from Show Library to the name of your virtual Mac. To show library again, press and hold the Virtual Mac icon on the iPad Home Screen, then tap Show Library.
 - If your Magic Keyboard doesn't have a hardware Escape key, press Command + Period (⌘ + .) instead. You can also map another key to Escape in Settings > General > Keyboard > Hardware Keyboard > Modifier Keys.
-
-### Is it possible to support newer versions of iPadOS?
-
-Supporting iPadOS 16.4 or later presents additional challenges because [Hypervisor support was removed from the iPadOS XNU kernel](https://x.com/UTMapp/status/1708907045314035986). Contributions are welcome!
 
 ### Does Virtual Mac on iPad work on iPhone?
 
@@ -55,6 +61,7 @@ First, open Sileo and update to the latest version of Virtual Mac. If the issue 
 - If you see "[install-launcher failed: Permission denied](https://github.com/nfzerox/VirtualMacOniPad/issues/10)", update to the latest version of Virtual Mac. If the issue remains, open Filza and [follow this screenshot](VirtualMac/screenshots/troubleshooting/troubleshooting-permission.png), changing access permissions of `/var/root` to "Read, Execute" for "Others".
 - If you see "[Unexpected device state 'DFU' expected 'RestoreOS' (Probably forced into DFU mode externally)](https://github.com/nfzerox/VirtualMacOniPad/issues/11)", update to the latest version of Virtual Mac. If the issue remains, open Sileo > Packages, search for usbmuxd and [temporarily uninstall it](VirtualMac/screenshots/troubleshooting/troubleshooting-usbmuxd.png).
 - If you see "launcher cannot become root: Operation not permitted" or "Internal Virtualization error. The virtual machine failed to start", and have Choicy installed, open Settings > Choicy > Applications > Virtual Mac, and turn off "Disable Tweak Injection". You can also uninstall Choicy.
+- If an app you use launches to a white screen, try to disable OpenGL Acceleration from the Virtual Mac menu item.
 - Virtual Mac may conflict with certain other tweaks. If problems remain, remove other tweaks one at a time to narrow down the conflict.
 
 [Open a GitHub issue](https://github.com/nfzerox/VirtualMacOniPad/issues?q=is%3Aissue) when you encounter a crash, bug, or other problem. Include clear reproduction steps, a screenshot or screen recording, and diagnostics file from Virtual Mac's in app Settings > Export Diagnostics.

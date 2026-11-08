@@ -288,17 +288,46 @@ static void *SegmentedAddressForOffset(id self, SEL selector,
     return translated ?: nativeAddress;
 }
 
+static BOOL TaskIsSegmented(void *task) {
+    pthread_rwlock_rdlock(&gSegmentedTaskLock);
+    BOOL found = FindSegmentedTaskLocked(task) != NULL;
+    pthread_rwlock_unlock(&gSegmentedTaskLock);
+    return found;
+}
+
 static void *SegmentedMappedAddressForOffset(id self, SEL selector,
                                              uint64_t offset,
                                              uint64_t length) {
-    // The original method maintains PGTask's mapped-range tracker and invokes
-    // the descriptor callback. Discard only its base+offset result.
+    // The original method maintains PGTask's mapped-range tracker and maps the
+    // requested range on demand through the descriptor callback. Keep that
+    // side effect, but never trust its base+offset result: it assumes the
+    // whole 16 GiB logical reservation, which a segmented task does not back.
     void *nativeAddress = ((void *(*)(id, SEL, uint64_t, uint64_t))
         objc_msgSend)(self, gOriginalMappedAddressForOffsetSelector,
                       offset, length);
-    void *translated = TranslatedTaskAddress(
-        PGTaskHandle(self), offset, length, NO);
-    return translated ?: nativeAddress;
+    void *task = PGTaskHandle(self);
+    // Translate symmetrically with addressForOffset:, which creates the
+    // overflow segment on demand.
+    void *translated = TranslatedTaskAddress(task, offset, length, YES);
+    if (translated != NULL)
+        return translated;
+    if (TaskIsSegmented(task)) {
+        // No reservation backs this range (beyond or straddling the primary
+        // reservation). base+offset would point outside it: PGFifoThread's
+        // memcpy then faults (SIGSEGV) or copies garbage into a Metal library
+        // ("Corrupted library" SIGABRT), killing the VMM and the guest. Fail
+        // the lookup the same way PGTask itself rejects an out-of-range
+        // request, so PG drops the resource instead.
+        dprintf(STDERR_FILENO,
+                "VirtualMac PVG: refusing unbacked mappedAddressForOffset "
+                "offset=%llu length=%llu\n",
+                (unsigned long long)offset, (unsigned long long)length);
+        @throw [NSException
+            exceptionWithName:@"VirtualMacPGFifoUnmappedRange"
+                       reason:@"mappedAddressForOffset range is not backed"
+                     userInfo:nil];
+    }
+    return nativeAddress;
 }
 
 static BOOL InstallSegmentedPGTaskAddressHooks(void) {
