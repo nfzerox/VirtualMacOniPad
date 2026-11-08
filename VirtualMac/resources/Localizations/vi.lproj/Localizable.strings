@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Các máy Mac ảo hoàn chỉnh và ảnh khôi phục nằm ngoài Virtual Mac sẽ không bị xóa.";
 "Configuration failed: %@" = "Cấu hình không thành công: %@";
 "Configure %@" = "Định cấu hình %@";
+"Consolidate" = "Gộp";
+"Consolidate Legacy Library" = "Gộp thư viện cũ";
+"Consolidate Legacy Library?" = "Gộp thư viện cũ?";
+"Consolidation Complete" = "Đã gộp xong";
+"Consolidation Failed" = "Gộp thất bại";
 "Continue" = "Tiếp tục";
 "Controls Opacity" = "Độ mờ của điều khiển";
 "Copy Library Path" = "Sao chép đường dẫn thư viện";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Phản Chiếu Toàn Màn Hình";
 "General" = "Cài đặt chung";
 "Get Help" = "Nhận trợ giúp";
+"Get roothide Package" = "Nhận gói roothide";
 "Height" = "Chiều cao";
 "Incomplete Installation" = "Bản cài đặt chưa hoàn tất";
 "Incomplete Installations" = "Các bản cài đặt chưa hoàn tất";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Đầu vào micrô";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Tối thiểu: %llu GB. Giới hạn trên do hệ thống tệp quyết định.";
 "Move Controls" = "Di chuyển nút điều khiển";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Di chuyển các Virtual Mac từ thư viện cũ sang thư viện chính. Tên đã tồn tại sẽ được thêm hậu tố số. Trước tiên hãy đóng tất cả Virtual Mac đang chạy.";
 "Name" = "Tên";
 "Name Already Used" = "Tên đã được sử dụng";
 "NAT: Share %@" = "NAT: Chia sẻ %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Không có Máy Mac ảo nào khớp với tìm kiếm.";
 "Off" = "Tắt";
 "OK" = "OK";
+"Older Virtual Macs are stored in %@." = "Các Virtual Mac cũ được lưu trong %@.";
 "On" = "Bật";
 "On for Next Boot" = "Bật cho lần khởi động tiếp theo";
 "On My iPad" = "Trên iPad của tôi";
@@ -204,6 +212,7 @@
 "Resolution" = "Độ phân giải";
 "Resources" = "Tài nguyên";
 "Resume" = "Tiếp tục";
+"roothide Package Required" = "Yêu cầu gói roothide";
 "Save" = "Lưu";
 "Save a ZIP file containing logs and crash reports." = "Lưu tệp ZIP chứa nhật ký và báo cáo sự cố.";
 "Save Diagnostics to Files" = "Lưu chẩn đoán vào Tệp";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Chặn cử chỉ đa nhiệm";
 "Suppress System Edge Gestures" = "Chặn cử chỉ cạnh màn hình";
 "Switch to Running Virtual Mac" = "Chuyển sang máy Mac ảo đang chạy";
-"Switch to the Official Version of Dopamine" = "Chuyển sang phiên bản Dopamine chính thức";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Hãy chuyển sang máy Mac ảo đang chạy và tắt máy đó trước khi khởi động máy khác.";
 "The diagnostics archive could not be created." = "Không thể tạo tệp chẩn đoán.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Giá trị tiến trình đầu tiên có thể mất vài phút trong khi máy Mac ảo chuyển từ DFU sang RestoreOS. iPad của bạn sẽ không ngủ.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Giá trị tiến trình đầu tiên có thể mất vài phút trong khi máy Mac ảo chuyển từ DFU sang RestoreOS. iPhone của bạn sẽ không ngủ.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Máy Mac ảo chưa hoàn tất và các tệp cài đặt của máy sẽ bị xóa.";
 "The installer could not be started: %s" = "Không thể khởi chạy trình cài đặt: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Không thể gộp thư viện cũ. Đóng tất cả Virtual Mac đang chạy và thử lại.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Các Virtual Mac cũ đã được di chuyển sang thư viện chính. Sự phân biệt cũ đã biến mất.";
 "The new Virtual Mac is ready to use." = "Máy Mac ảo mới đã sẵn sàng để sử dụng.";
 "The partial restore image will be deleted." = "Ảnh khôi phục tải xuống một phần sẽ bị xóa.";
 "The Virtual Mac configuration could not be created." = "Không thể tạo cấu hình máy Mac ảo.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Các tùy chọn này chỉ ảnh hưởng đến iPadOS khi Máy Mac ảo ở phía trước và Máy Mac ảo đang chạy.";
 "This iPad is incompatible with Virtual Mac" = "iPad này không tương thích với Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "iPhone này không tương thích với Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Đây là gói Virtual Mac tiêu chuẩn đang chạy trên jailbreak Dopamine-roothide. Cài đặt gói roothide chính thức để có vùng lưu trữ riêng và khả năng tương thích đầy đủ.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Thao tác này đặt lại tất cả cài đặt Virtual Mac về mặc định. Máy Mac ảo, ảnh khôi phục và tệp cài đặt sẽ không bị xóa.";
 "this Virtual Mac" = "máy Mac ảo này";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Để bật tăng tốc OpenGL, hãy tắt Virtual Mac này rồi bật Tăng tốc OpenGL trong tùy chọn của máy.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Độ mờ của điều khiển Virtual Mac";
 "Virtual Mac devices are stored in %@." = "Các Máy Mac ảo được lưu trong %@.";
 "Virtual Mac Display" = "Màn hình Máy Mac ảo";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac không hỗ trợ môi trường Dopamine-roothide. Hãy gỡ bản bẻ khóa roothide trong Dopamine-roothide > Cài đặt > Gỡ Jailbreak, sau đó chuyển sang phiên bản Dopamine chính thức.";
 "Virtual Mac Guest Tools" = "Công cụ máy khách cho Máy Mac ảo";
 "Virtual Mac has no published framebuffer" = "Máy Mac ảo không có framebuffer được công bố";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac yêu cầu iPad Pro (M1, M2) hoặc iPad Air (M1) chạy iPadOS 14–16.3.1, hoặc iPhone 14 Pro và iPhone 14 Pro Max chạy iOS 16–16.3.1.";

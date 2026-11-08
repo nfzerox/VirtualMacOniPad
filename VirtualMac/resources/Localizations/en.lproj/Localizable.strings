@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed.";
 "Configuration failed: %@" = "Configuration failed: %@";
 "Configure %@" = "Configure %@";
+"Consolidate" = "Consolidate";
+"Consolidate Legacy Library" = "Consolidate Legacy Library";
+"Consolidate Legacy Library?" = "Consolidate Legacy Library?";
+"Consolidation Complete" = "Consolidation Complete";
+"Consolidation Failed" = "Consolidation Failed";
 "Continue" = "Continue";
 "Controls Opacity" = "Controls Opacity";
 "Copy Library Path" = "Copy Library Path";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Full Screen Mirroring";
 "General" = "General";
 "Get Help" = "Get Help";
+"Get roothide Package" = "Get roothide Package";
 "Height" = "Height";
 "Incomplete Installation" = "Incomplete Installation";
 "Incomplete Installations" = "Incomplete Installations";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Microphone Input";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Minimum: %llu GB. The upper limit is determined by the filesystem.";
 "Move Controls" = "Move Controls";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first.";
 "Name" = "Name";
 "Name Already Used" = "Name Already Used";
 "NAT: Share %@" = "NAT: Share %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "No Virtual Macs match your search.";
 "Off" = "Off";
 "OK" = "OK";
+"Older Virtual Macs are stored in %@." = "Older Virtual Macs are stored in %@.";
 "On" = "On";
 "On for Next Boot" = "On for Next Boot";
 "On My iPad" = "On My iPad";
@@ -204,6 +212,7 @@
 "Resolution" = "Resolution";
 "Resources" = "Resources";
 "Resume" = "Resume";
+"roothide Package Required" = "roothide Package Required";
 "Save" = "Save";
 "Save a ZIP file containing logs and crash reports." = "Save a ZIP file containing logs and crash reports.";
 "Save Diagnostics to Files" = "Save Diagnostics to Files";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Suppress Multitasking Gestures";
 "Suppress System Edge Gestures" = "Suppress System Edge Gestures";
 "Switch to Running Virtual Mac" = "Switch to Running Virtual Mac";
-"Switch to the Official Version of Dopamine" = "Switch to the Official Version of Dopamine";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Switch to the running Virtual Mac and shut it down before starting another one.";
 "The diagnostics archive could not be created." = "The diagnostics archive could not be created.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "The incomplete Virtual Mac and its installation files will be deleted.";
 "The installer could not be started: %s" = "The installer could not be started: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "The legacy library could not be consolidated. Close all running Virtual Macs and try again.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "The legacy Virtual Macs were moved into the main library. The legacy distinction is gone.";
 "The new Virtual Mac is ready to use." = "The new Virtual Mac is ready to use.";
 "The partial restore image will be deleted." = "The partial restore image will be deleted.";
 "The Virtual Mac configuration could not be created." = "The Virtual Mac configuration could not be created.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running.";
 "This iPad is incompatible with Virtual Mac" = "This iPad is incompatible with Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "This iPhone is incompatible with Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed.";
 "this Virtual Mac" = "this Virtual Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Virtual Mac Controls Opacity";
 "Virtual Mac devices are stored in %@." = "Virtual Mac devices are stored in %@.";
 "Virtual Mac Display" = "Virtual Mac Display";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine.";
 "Virtual Mac Guest Tools" = "Virtual Mac Guest Tools";
 "Virtual Mac has no published framebuffer" = "Virtual Mac has no published framebuffer";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1.";

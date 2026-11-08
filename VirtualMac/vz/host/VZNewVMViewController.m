@@ -223,9 +223,13 @@ static UIImage *VZCatalogIcon(NSDictionary *image)
  titleForFooterInSection:(NSInteger)section
 {
     (void)tableView;
+#if defined(VZ_ROOTHIDE)
+    return nil;
+#else
     return section == 2
         ? VZL(@"You can also copy an existing Virtual Mac bundle to /var/mobile/Media/VirtualMac using an app such as iMazing or Filza.")
         : nil;
+#endif
 }
 
 - (CGFloat)tableView:(UITableView *)tableView

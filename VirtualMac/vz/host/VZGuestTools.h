@@ -13,6 +13,11 @@ void VZGuestToolsStartProvisioning(NSString *bundlePath,
                                    BOOL removalPending);
 void VZGuestToolsReset(void);
 
+#if defined(VZ_DEVELOPMENT)
+void VZGuestToolsCheckRuntime(void);
+void VZGuestToolsCheckSharedFolders(void);
+#endif
+
 // Updates the virtual Mac's NVRAM before its platform configuration is used.
 BOOL VZGuestToolsConfigureBootArguments(id auxiliaryStorage,
                                         BOOL guestAgentEnabled,

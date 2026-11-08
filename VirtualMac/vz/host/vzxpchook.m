@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 // Host-side DYLD_INSERT interpose for the iOS-ported VZ host.
 //
 // [VZVirtualMachine start] does xpc_connection_create("com.apple.Virtualization.
@@ -65,12 +66,12 @@ extern char _xpc_type_mach_send[];
 extern char **environ;
 
 #define VMM_NAME "com.apple.Virtualization.VirtualMachine"
-#define DEFAULT_VMM_BIN "/var/root/VirtualMac/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine"
+#define DEFAULT_VMM_BIN VZRuntimePath("payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine")
 #define INSTALLATION_NAME "com.apple.Virtualization.Installation"
-#define DEFAULT_INSTALLATION_BIN "/var/root/VirtualMac/payload/Installation.xpc/Contents/MacOS/com.apple.Virtualization.Installation"
+#define DEFAULT_INSTALLATION_BIN VZRuntimePath("payload/Installation.xpc/Contents/MacOS/com.apple.Virtualization.Installation")
 #define EP_PORT_OFF  0x18
-#define DEFAULT_EP_FILE "/tmp/vmm_ep.txt"
-#define DEFAULT_INSTALLATION_EP_FILE "/tmp/installation_ep.txt"
+#define DEFAULT_EP_FILE VZTemporaryPath("vmm_ep.txt")
+#define DEFAULT_INSTALLATION_EP_FILE VZTemporaryPath("installation_ep.txt")
 
 static volatile int gVMMStarted;
 static xo_t gPendingFramebufferConnection;
@@ -133,7 +134,7 @@ static const char *session_file(const char *environmentName,
             encodedUID == (unsigned long)geteuid())
             return configured;
     }
-    snprintf(storage, PATH_MAX, "/tmp/%s.%u.%d", name,
+    snprintf(storage, PATH_MAX, "%s%s.%u.%d", VZTemporaryPath(""), name,
              (unsigned)geteuid(), getpid());
     setenv(environmentName, storage, 1);
     return storage;
@@ -151,8 +152,8 @@ static const char *installation_endpoint_file(void) {
 }
 
 static void L(const char *fmt, ...) {
-    FILE *f = fopen("/tmp/vzxpchook.log", "a"); if (!f) return;
-    fchmod(fileno(f), 0666);
+    FILE *f = fopen(VZTemporaryPath("vzxpchook.log"), "a"); if (!f) return;
+    fchmod(fileno(f), VZLogMode);
     struct timespec now = {0};
     clock_gettime(CLOCK_MONOTONIC, &now);
     fprintf(f, "[%lld.%06ld] ", (long long)now.tv_sec,
@@ -174,7 +175,7 @@ static const char *prepare_endpoint_file(const char *environmentName,
     const char *slash = strrchr(defaultPath, '/');
     const char *name = slash ? slash + 1 : defaultPath;
     for (int attempt = 0; attempt < 8; attempt++) {
-        snprintf(replacement, PATH_MAX, "/tmp/%s.%u.%d.%08x", name,
+        snprintf(replacement, PATH_MAX, "%s%s.%u.%d.%08x", VZTemporaryPath(""), name,
                  (unsigned)geteuid(), getpid(), arc4random());
         if (unlink(replacement) == 0 || errno == ENOENT) {
             setenv(environmentName, replacement, 1);
@@ -278,7 +279,7 @@ static xo_t spawn_vmm_and_connect(dispatch_queue_t cq) {
     // posix_spawn fails with EACCES before the VMM executable is reached.
     const char *stderrPath = getenv("VZ_VMM_STDERR_LOG");
     if (!stderrPath || !stderrPath[0])
-        stderrPath = "/tmp/vmm.stderr.log";
+        stderrPath = VZTemporaryPath("vmm.stderr.log");
     // propagate VMMHOOK_DEBUG_SLEEP to the child by NOT stripping it (child_env keeps everything
     // except DYLD_INSERT_LIBRARIES; getenv VMMHOOK_DEBUG_SLEEP set on host inherits to child)
     // A Taurine restore enters through the setuid launcher rather than the
@@ -460,10 +461,10 @@ static xo_t spawn_installation_and_connect(dispatch_queue_t cq) {
     posix_spawn_file_actions_t actions;
     posix_spawn_file_actions_init(&actions);
     posix_spawn_file_actions_addopen(
-        &actions, 1, "/tmp/installation.stderr.log",
+        &actions, 1, VZTemporaryPath("installation.stderr.log"),
         O_WRONLY | O_CREAT | O_TRUNC, 0644);
     posix_spawn_file_actions_addopen(
-        &actions, 2, "/tmp/installation.stderr.log",
+        &actions, 2, VZTemporaryPath("installation.stderr.log"),
         O_WRONLY | O_CREAT | O_APPEND, 0644);
     pid_t pid = 0;
     int rc = posix_spawn(&pid, binary, &actions, NULL, argv, envp);
@@ -624,7 +625,7 @@ static void vz_xpc_connection_send_message_with_reply(
             const void *bytes = value ? xpc_data_get_bytes_ptr(value) : NULL;
             size_t byteCount = value ? xpc_data_get_length(value) : 0;
             if (bytes && byteCount) {
-                FILE *dump = fopen("/tmp/installation-reply.bin", "wb");
+                FILE *dump = fopen(VZTemporaryPath("installation-reply.bin"), "wb");
                 if (dump) {
                     fwrite(bytes, 1, byteCount, dump);
                     fclose(dump);
@@ -998,8 +999,8 @@ int vz_rebind_virtualization(void *imageBase) {
 // those selectors and preserve libc behavior for every other name.
 size_t confstr(int name, char *buffer, size_t length) {
     if (name == 65537 || name == 65538) {
-        static const char path[] = "/tmp/";
-        size_t required = sizeof(path);
+        const char *path = VZTemporaryPath("");
+        size_t required = strlen(path) + 1;
         if (buffer && length) {
             size_t copied = required < length ? required : length;
             memcpy(buffer, path, copied);

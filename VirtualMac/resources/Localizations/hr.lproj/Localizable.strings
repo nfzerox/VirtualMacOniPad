@@ -49,6 +49,11 @@
 "Complete Virtual Mac devices and restore images outside Virtual Mac are not removed." = "Dovršeni Virtualni Macovi i slike za obnovu izvan aplikacije neće se ukloniti.";
 "Configuration failed: %@" = "Konfiguracija nije uspjela: %@";
 "Configure %@" = "Konfiguriraj %@";
+"Consolidate" = "Spoji";
+"Consolidate Legacy Library" = "Spoji staru biblioteku";
+"Consolidate Legacy Library?" = "Spojiti staru biblioteku?";
+"Consolidation Complete" = "Spajanje dovršeno";
+"Consolidation Failed" = "Spajanje nije uspjelo";
 "Continue" = "Nastavi";
 "Controls Opacity" = "Neprozirnost kontrola";
 "Copy Library Path" = "Kopiraj put biblioteke";
@@ -115,6 +120,7 @@
 "Full Screen Mirroring" = "Potpuno Zrcaljenje Zaslona";
 "General" = "Općenito";
 "Get Help" = "Pomoć";
+"Get roothide Package" = "Dohvati roothide paket";
 "Height" = "Visina";
 "Incomplete Installation" = "Nedovršena instalacija";
 "Incomplete Installations" = "Nedovršene instalacije";
@@ -153,6 +159,7 @@
 "Microphone Input" = "Ulaz mikrofona";
 "Minimum: %llu GB. The upper limit is determined by the filesystem." = "Najmanje: %llu GB. Gornju granicu određuje datotečni sustav.";
 "Move Controls" = "Premjesti kontrole";
+"Move the Virtual Macs in the legacy library into the main library. Names that already exist get a number suffix. Close all running Virtual Macs first." = "Premjesti Virtual Mac iz stare biblioteke u glavnu biblioteku. Postojeća imena dobivaju brojčani sufiks. Najprije zatvori sve pokrenute Virtual Mac.";
 "Name" = "Naziv";
 "Name Already Used" = "Naziv se već koristi";
 "NAT: Share %@" = "NAT: Dijeli %@";
@@ -164,6 +171,7 @@
 "No Virtual Macs match your search." = "Nijedan Virtualni Mac ne odgovara vašem pretraživanju.";
 "Off" = "Isključeno";
 "OK" = "U redu";
+"Older Virtual Macs are stored in %@." = "Stariji Virtual Mac pohranjuju se u %@.";
 "On" = "Uključeno";
 "On for Next Boot" = "Uključeno za sljedeće pokretanje";
 "On My iPad" = "Na mom iPadu";
@@ -204,6 +212,7 @@
 "Resolution" = "Razlučivost";
 "Resources" = "Resursi";
 "Resume" = "Nastavi";
+"roothide Package Required" = "Potreban roothide paket";
 "Save" = "Spremi";
 "Save a ZIP file containing logs and crash reports." = "Spremite ZIP datoteku koja sadrži zapise i izvješća o rušenju.";
 "Save Diagnostics to Files" = "Spremi dijagnostiku u Datoteke";
@@ -245,13 +254,14 @@
 "Suppress Multitasking Gestures" = "Onemogući geste višezadaćnosti";
 "Suppress System Edge Gestures" = "Onemogući rubne geste";
 "Switch to Running Virtual Mac" = "Prijeđi na pokrenuti Virtualni Mac";
-"Switch to the Official Version of Dopamine" = "Prijeđite na službenu verziju Dopaminea";
 "Switch to the running Virtual Mac and shut it down before starting another one." = "Prijeđite na pokrenuti Virtualni Mac i isključite ga prije pokretanja drugoga.";
 "The diagnostics archive could not be created." = "Nije moguće izraditi dijagnostičku arhivu.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPad will remain awake." = "Prva vrijednost napretka može potrajati nekoliko minuta dok Virtualni Mac prelazi iz DFU-a u RestoreOS. Vaš iPad ostat će aktivan.";
 "The first progress value can take several minutes while the Virtual Mac changes from DFU to RestoreOS. Your iPhone will remain awake." = "Prva vrijednost napretka može potrajati nekoliko minuta dok Virtualni Mac prelazi iz DFU-a u RestoreOS. Vaš iPhone ostat će aktivan.";
 "The incomplete Virtual Mac and its installation files will be deleted." = "Nedovršeni Virtualni Mac i njegove instalacijske datoteke bit će izbrisani.";
 "The installer could not be started: %s" = "Instalacijski program nije moguće pokrenuti: %s";
+"The legacy library could not be consolidated. Close all running Virtual Macs and try again." = "Stara biblioteka nije mogla biti spojena. Zatvori sve pokrenute Virtual Mac i pokušaj ponovno.";
+"The legacy Virtual Macs were moved into the main library. The legacy distinction is gone." = "Stari Virtual Mac premješteni su u glavnu biblioteku. Razlika starijih je uklonjena.";
 "The new Virtual Mac is ready to use." = "Novi Virtualni Mac spreman je za uporabu.";
 "The partial restore image will be deleted." = "Djelomično preuzeta slika za obnovu bit će izbrisana.";
 "The Virtual Mac configuration could not be created." = "Nije moguće izraditi konfiguraciju Virtualnog Maca.";
@@ -261,6 +271,7 @@
 "These options affect iPadOS only while Virtual Mac is frontmost and a Virtual Mac is running." = "Ove opcije utječu na iPadOS samo dok je Virtualni Mac u prvom planu i virtualni Mac je pokrenut.";
 "This iPad is incompatible with Virtual Mac" = "Ovaj iPad nije kompatibilan s aplikacijom Virtual Mac";
 "This iPhone is incompatible with Virtual Mac" = "Ovaj iPhone nije kompatibilan s aplikacijom Virtual Mac";
+"This is the standard Virtual Mac package running on a Dopamine-roothide jailbreak. Install the official roothide package for private storage and full compatibility." = "Ovo je standardni paket Virtual Maca koji radi na Dopamine-roothide jailbreaku. Instalirajte službeni roothide paket za privatnu pohranu i potpunu kompatibilnost.";
 "This restores all Virtual Mac settings to their defaults. Virtual Macs, restore images, and installation files won’t be removed." = "Time se sve postavke Virtualnog Maca vraćaju na zadane vrijednosti. Virtualni Macovi, slike za obnovu i instalacijske datoteke neće se ukloniti.";
 "this Virtual Mac" = "ovaj Virtualni Mac";
 "To enable OpenGL acceleration, shut down this Virtual Mac, then in its options, enable OpenGL Acceleration." = "Za uključivanje ubrzanja OpenGL-a isključite ovaj Virtual Mac, a zatim ga uključite u njegovim opcijama.";
@@ -294,7 +305,6 @@
 "Virtual Mac Controls Opacity" = "Neprozirnost kontrola Virtual Maca";
 "Virtual Mac devices are stored in %@." = "Virtualni Macovi pohranjuju se u %@.";
 "Virtual Mac Display" = "Zaslon Virtualnog Maca";
-"Virtual Mac does not support the Dopamine-roothide environment. Remove the roothide jailbreak from Dopamine-roothide > Settings > Remove Jailbreak, then switch to the official version of Dopamine." = "Virtual Mac ne podržava okruženje Dopamine-roothide. Uklonite roothide jailbreak u Dopamine-roothide > Postavke > Ukloni jailbreak, a zatim prijeđite na službenu verziju Dopaminea.";
 "Virtual Mac Guest Tools" = "Alati za gosta Virtualnog Maca";
 "Virtual Mac has no published framebuffer" = "Virtualni Mac nema objavljeni framebuffer";
 "Virtual Mac requires iPad Pro (M1, M2) or iPad Air (M1) running iPadOS 14 up to 16.3.1, or iPhone 14 Pro and iPhone 14 Pro Max running iOS 16 up to 16.3.1." = "Virtual Mac zahtijeva iPad Pro (M1, M2) ili iPad Air (M1) sa sustavom iPadOS 14–16.3.1 ili iPhone 14 Pro i iPhone 14 Pro Max sa sustavom iOS 16–16.3.1.";

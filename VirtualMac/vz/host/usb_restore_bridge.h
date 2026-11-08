@@ -2,8 +2,9 @@
 #define VZ_USB_RESTORE_BRIDGE_H
 
 #include <stdint.h>
+#include "VZPaths.h"
 
-#define VZ_USB_BRIDGE_SOCKET "/tmp/vz-usb-restore.sock"
+#define VZ_USB_BRIDGE_SOCKET VZSocketPath("vz-usb-restore.sock")
 #define VZ_USB_BRIDGE_MAGIC 0x565a5553U
 #define VZ_USB_BRIDGE_VERSION 2U
 #define VZ_USB_BRIDGE_MAX_PAYLOAD (64U * 1024U * 1024U)

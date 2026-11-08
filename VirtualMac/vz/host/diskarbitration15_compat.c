@@ -1,3 +1,4 @@
+#include "VZPaths.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <dispatch/dispatch.h>
 #include <stdarg.h>
@@ -13,7 +14,7 @@ typedef void (*DADiskMountCallback)(DADiskRef, DADissenterRef, void *);
 
 static void trace_call(const char *name)
 {
-    FILE *file = fopen("/tmp/installation-usb.log", "a");
+    FILE *file = fopen(VZTemporaryPath("installation-usb.log"), "a");
     if (!file)
         return;
     fprintf(file, "[DiskArbitration15Compat] %s\n", name);
