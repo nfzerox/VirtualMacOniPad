@@ -296,7 +296,48 @@ void ThinHandleInfo(id fifo,uint32_t stamp,const void *payload,size_t length) {
         waitFor(event,value);
         ((void(*)(id,SEL,id))objc_msgSend)(task,NSSelectorFromString(@"runBlock:"),^{
             PrepareSync prepared=((PrepareSync(*)(id,SEL,const void *,uint32_t,id,uint64_t))objc_msgSend)(task,
-                NSSelectorFromString(@"prepareResources:count:event:value:"),(uint8_t *)legacy.mutableBytes…722 tokens truncated…nfo69-rejected",69,stamp,length,slot);
+                NSSelectorFromString(@"prepareResources:count:event:value:"),(uint8_t *)legacy.mutableBytes+12,resources,event,value);
+            if(prepared.wait)waitFor(prepared.event,prepared.value);
+            id<MTLCommandQueue> queue=((id(*)(id,SEL))objc_msgSend)(device,NSSelectorFromString(@"execQueue"));
+            id<MTLCommandBuffer> uncommitted=[queue commandBuffer];
+            id decoder=((id(*)(id,SEL))objc_msgSend)(task,NSSelectorFromString(@"deserializer"));
+            for(uint32_t i=0;i<buffers;i++) {
+                const uint8_t *range=p+12+(size_t)resources*8+(size_t)i*16;
+                uint64_t count=u64(range+8);need(count>=8&&count<=65536,@"Info segment bounds");
+                const uint8_t *segment=mapped(task,u64(range),count);
+                uint32_t total=u32(segment);need(total>=8&&total<=count,@"Info segment length");
+                need(segment[5]==0&&segment[6]==0,@"continuation not implemented by bounded Info spike");
+                if(segment[4]==4) {
+                    size_t cursor=8;
+                    while(cursor+8<=total) {
+                        uint32_t opcode=u32(segment+cursor),bytes=u32(segment+cursor+4);
+                        need(bytes>=8&&bytes<=total-cursor,@"Info record length");
+                        if(opcode!=469&&opcode!=450&&opcode!=459)ThinCommandUnknownInfo(opcode,bytes,cursor,total,taskID,i);
+                        need(opcode==469||opcode==450||opcode==459,@"unsupported Info record");
+                        if(opcode==450)computeQuery(task,segment+cursor+8,bytes-8);
+                        else if(opcode==459)imageblockQuery(task,segment+cursor+8,bytes-8);
+                        else heapQuery(task,segment+cursor+8,bytes-8);
+                        cursor+=bytes;
+                    }
+                    need(cursor==total,@"Info trailing partial record");
+                } else {
+                    need(segment[4]<=2,@"unsupported Info segment type");
+                    const void *one=segment;uint64_t size=total;
+                    ((void(*)(id,SEL,const void **,const uint64_t *,NSUInteger,id))objc_msgSend)(decoder,
+                        NSSelectorFromString(@"decodeSegments:lengths:count:into:"),&one,&size,1,uncommitted);
+                }
+            }
+            // No commit of the decoded command buffer. CPU queries are complete.
+            atomic_thread_fence(memory_order_release);
+            [fifo setValue:@(value+1) forKey:@"fifoEventValue"];event.signaledValue=value+1;
+        });
+        atomic_fetch_add(&completed,1);
+        ((void(*)(id,SEL,uint32_t))objc_msgSend)(fifo,NSSelectorFromString(@"signalStampValue:"),stamp);
+    } @catch(NSException *e) {
+        fprintf(stderr,"Info rejected: %s\n",e.reason.UTF8String);
+#ifdef THIN_RUNTIME_LIBRARY
+        uint32_t slot=((uint32_t(*)(id,SEL))objc_msgSend)(fifo,NSSelectorFromString(@"stampIndex"));
+        VMMThinRuntimeRecord("info69-rejected",69,stamp,length,slot);
 #endif
         atomic_store(&faultingFIFO,(uintptr_t)(__bridge void *)fifo);
         atomic_fetch_add(&rejected,1);
