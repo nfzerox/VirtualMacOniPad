@@ -7,6 +7,10 @@
 #include <string.h>
 #include "RuntimeLog.h"
 
+// Segment-dispatch reference: reims-vgpu at 1fe0acb, src/deserializer.rs,
+// cross-checked against the target driver. We retain the old host decoder ABI.
+// Pinned links and reference scope: docs/macos27-research-references.md.
+
 typedef struct {uint32_t length;uint8_t type,previous,next,padding;} ThinPrefixHeader;
 _Static_assert(sizeof(ThinPrefixHeader)==8,"segment header ABI");
 static id (*prefixOriginal)(id,SEL,const ThinPrefixHeader *,id,id,id);

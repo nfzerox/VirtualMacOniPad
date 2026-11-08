@@ -1,6 +1,10 @@
 #include "ThinBridge.h"
 #include <string.h>
 
+// Protocol reference: steelbrain/reims-vgpu, commit 1fe0acb68b287db36f1e6c7b9f45383940b8a76f
+// (descriptor2, FIFO resource flags, object/placement metadata), cross-checked
+// against the target ARM driver. See docs/macos27-research-references.md.
+
 static uint16_t u16(const uint8_t *p) {uint16_t v;memcpy(&v,p,2);return v;}
 static uint32_t u32(const uint8_t *p) {uint32_t v;memcpy(&v,p,4);return v;}
 static uint64_t u64(const uint8_t *p) {uint64_t v;memcpy(&v,p,8);return v;}

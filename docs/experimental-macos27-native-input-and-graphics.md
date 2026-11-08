@@ -26,3 +26,7 @@ bash VirtualMac/scripts/build-ipad-app.sh
 Cold boot with Native Touch and macOS27 Graphics Compatibility enabled. Confirm correct single-finger point/drag, two-finger contacts in a direct-touch-aware AppKit app, and normal Glass/shadows. Disable both for the original path. Do not reuse the same display UUID across VMs.
 
 Only the pinned runtime/27.2 combination has physical validation. This upstream contribution's standard public package has not yet been physically deployed; the device observations above apply to the private integration package. Native Touch currently pins whole-file runtime hashes, including signing/load-command differences. Check the assembled Virtualization/VMM/PVG against that profile before enabling it; a freshly rebuilt standard runtime may be rejected. Do not loosen the guards merely to pass. Multi-display, save/restore, other OS/hardware and long-duration behavior remain unverified. OpenGL, dynamic resolution and new TileShaders support are outside this change. Known outer opcode12 remains diagnostic; the profile is not a complete APV implementation.
+
+## Research references
+
+See [protocol sources, consulted revision and attribution scope](macos27-research-references.md).

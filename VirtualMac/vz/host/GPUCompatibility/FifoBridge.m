@@ -10,6 +10,10 @@
 #include "CommandDiagnostics.h"
 #include "NegotiationBridge.h"
 
+// FIFO/InfoIndirect semantic reference: reims-vgpu at 1fe0acb, fifo/commands/exec.rs.
+// This bridge preserves the old Apple reader's queue/barrier machinery.
+// Pinned links and reference scope: docs/macos27-research-references.md.
+
 // Isolated experiment: preserve each real reader's original IMP and native
 // barrier/advance/completion machinery. Hooks only this process's loaded copy.
 static void (*originalRootLatch)(id,SEL),(*originalChildLatch)(id,SEL);
