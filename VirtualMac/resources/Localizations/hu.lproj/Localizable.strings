@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac-billentyűzet";
 "Mac Keyboard Shortcuts" = "Mac Billentyűparancsok";
 "Mac Trackpad" = "Mac-trackpad";
+"macOS 27 Graphics Compatibility" = "macOS 27 grafikai kompatibilitás";
 "macOS Installed" = "macOS telepítve";
 "Memory" = "Memória";
 "Metal BC Support" = "Metal BC-támogatás";
@@ -156,6 +157,7 @@
 "Name" = "Név";
 "Name Already Used" = "A név már használatban van";
 "NAT: Share %@" = "NAT: %@ megosztása";
+"Native Touch" = "Natív érintés";
 "Network" = "Hálózat";
 "Network Attachment" = "Hálózati csatolmány";
 "Network Bridge (%@)" = "Hálózati híd (%@)";

@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac-tastatur";
 "Mac Keyboard Shortcuts" = "Mac-tastaturgenveje";
 "Mac Trackpad" = "Mac-pegefelt";
+"macOS 27 Graphics Compatibility" = "Grafikkompatibilitet med macOS 27";
 "macOS Installed" = "macOS installeret";
 "Memory" = "Hukommelse";
 "Metal BC Support" = "Understøttelse af Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Navn";
 "Name Already Used" = "Navnet er allerede i brug";
 "NAT: Share %@" = "NAT: Del %@";
+"Native Touch" = "Indbygget berøring";
 "Network" = "Netværk";
 "Network Attachment" = "Netværksforbindelse";
 "Network Bridge (%@)" = "Netværksbro (%@)";

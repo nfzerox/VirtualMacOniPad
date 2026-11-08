@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <objc/message.h>
@@ -54,7 +55,7 @@ static uint64_t gTaskReservationFallbacks;
 static uint64_t gTaskReservationFailures;
 static id (*gOriginalGetBufferForReferenceNonNull)(id, SEL, uint32_t);
 static const char * const VZVideoMemoryExhaustedNotification =
-    "com.mac.virtual.video-memory-exhausted";
+    VZ_HOST_IPC_PREFIX ".video-memory-exhausted";
 
 extern id PGNewDeviceWithDescriptor(id descriptor);
 static void InstallMetalLibraryFallback(id<MTLDevice> device);
@@ -447,7 +448,7 @@ static void *CreateTaskWithAdaptiveReservation(
 
 static const char *TracePath(void) {
     const char *configured = getenv("PVG_TRACE_PATH");
-    return configured && configured[0] ? configured : "/tmp/pvg-trace.log";
+    return configured && configured[0] ? configured : VZ_HOST_STATE_ROOT "/pvg-trace.log";
 }
 
 static void Trace(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);

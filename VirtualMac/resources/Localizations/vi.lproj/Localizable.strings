@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Bàn phím Mac";
 "Mac Keyboard Shortcuts" = "Phím tắt Mac";
 "Mac Trackpad" = "Bàn di chuột Mac";
+"macOS 27 Graphics Compatibility" = "Tương thích đồ họa macOS 27";
 "macOS Installed" = "Đã cài đặt macOS";
 "Memory" = "Bộ nhớ";
 "Metal BC Support" = "Hỗ trợ Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Tên";
 "Name Already Used" = "Tên đã được sử dụng";
 "NAT: Share %@" = "NAT: Chia sẻ %@";
+"Native Touch" = "Cảm ứng gốc";
 "Network" = "Mạng";
 "Network Attachment" = "Kết nối mạng";
 "Network Bridge (%@)" = "Cầu nối mạng (%@)";

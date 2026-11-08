@@ -1,4 +1,7 @@
+#import "VZAppIdentity.h"
 #import "VZVMLibraryViewController.h"
+#import "VZNativeTouchIdentity.h"
+#import "VZGPUCompatibility.h"
 #import "VZAppSettings.h"
 #import "VZSettingsViewController.h"
 #import "VZNewVMViewController.h"
@@ -128,7 +131,7 @@ NSString *VZVMLibraryPath(void)
 
 NSString *VZVMSupportPath(void)
 {
-    return @"/var/mobile/Media/VirtualMac";
+    return @VZ_HOST_DATA_ROOT;
 }
 
 NSString *VZRestoreImagesPath(void)
@@ -355,6 +358,8 @@ NSDictionary *VZVMDefaultOptions(void)
         VZBootRecoveryKey: @NO,
         VZSharedDirectoriesKey: @[],
         VZPointingDeviceKey: @"MacTrackpad",
+        VZNativeTouchEnabledKey: @NO,
+        VZGPUCompatibilityEnabledKey: @NO,
         VZKeyboardDeviceKey: @"MacKeyboard",
         VZApplePencilPressureTiltEnabledKey: @NO,
         VZVirtualMacGuestToolsEnabledKey: @YES,
@@ -589,7 +594,7 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         // files that the UIKit process cannot unlink. The setuid launcher
         // accepts only descendants of the two artifact directories.
         const char *launcher =
-            "/var/root/VirtualMac/install/install-launcher";
+            VZ_HOST_RUNTIME_ROOT "/install/install-launcher";
         char *arguments[] = {(char *)launcher, "--delete-artifact",
             (char *)path.fileSystemRepresentation, NULL};
         pid_t child = 0;
@@ -841,13 +846,13 @@ void VZRemovePaths(NSArray<NSString *> *paths)
     if (section == 2)
         return self.bundlePath ? 4 : 3;
     if (section == 3)
-        return 3;
+        return self.bundlePath ? 4 : 3;
     if (section == 4)
         return [VZDisplaySelectionForOptions(self.options)
                    isEqualToString:@"Custom"]
             ? 4 : 1;
     if (section == 5)
-        return 5;
+        return 6;
     return self.bundlePath && self.running ? 0 : 1;
 }
 
@@ -866,6 +871,8 @@ void VZRemovePaths(NSArray<NSString *> *paths)
  titleForFooterInSection:(NSInteger)section
 {
     (void)tableView;
+    if ((section == 3 && self.bundlePath) || section == 5)
+        return [NSString stringWithFormat:@"macOS 27.2 · %@", VZL(@"Experimental")];
     if (section == 0 && !self.bundlePath)
         return VZL(@"Storage size can’t be changed later. If you need additional storage in the future, set a larger size now.");
     return nil;
@@ -885,6 +892,7 @@ void VZRemovePaths(NSArray<NSString *> *paths)
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     cell.textLabel.text = nil;
+    cell.textLabel.numberOfLines = 1;
     cell.detailTextLabel.text = nil;
     cell.textLabel.textColor = UIColor.labelColor;
     cell.textLabel.textAlignment = NSTextAlignmentNatural;
@@ -979,6 +987,15 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         cell.detailTextLabel.text =
             [self.options[VZPointingDeviceKey] isEqualToString:@"USBMouse"]
             ? VZL(@"USB Mouse") : VZL(@"Mac Trackpad");
+    } else if (indexPath.section == 3 && indexPath.row == 3) {
+        cell.textLabel.text = VZL(@"Native Touch");
+        UISwitch *toggle = [[[UISwitch alloc] init] autorelease];
+        toggle.on = [self.options[VZNativeTouchEnabledKey] boolValue];
+        [toggle addTarget:self action:@selector(nativeTouchChanged:)
+            forControlEvents:UIControlEventValueChanged];
+        cell.accessoryView = toggle;
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     } else if (indexPath.section == 3) {
         NSString *fullTitle = VZL(@"Apple Pencil Pressure and Tilt");
         CGFloat available = MAX(CGRectGetWidth(tableView.bounds) - 147.0,
@@ -1009,12 +1026,14 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         NSArray *names = @[VZL(@"Audio Output"), VZL(@"Microphone Input"),
                            VZL(@"Metal BC Support"),
                            VZL(@"OpenGL Acceleration"),
-                           VZL(@"Video Encoding and Decoding Acceleration")];
+                           VZL(@"Video Encoding and Decoding Acceleration"),
+                           VZL(@"macOS 27 Graphics Compatibility")];
         NSArray *keys = @[VZAudioOutputEnabledKey, VZAudioInputEnabledKey,
                           VZMetalBCSupportEnabledKey,
                           VZOpenGLAccelerationEnabledKey,
-                          VZVideoToolboxEnabledKey];
+                          VZVideoToolboxEnabledKey, VZGPUCompatibilityEnabledKey];
         cell.textLabel.text = names[indexPath.row];
+        if (indexPath.row == 5) cell.textLabel.numberOfLines = 2;
         UISwitch *toggle = [[[UISwitch alloc] init] autorelease];
         BOOL guestTools = [self.options[VZVirtualMacGuestToolsEnabledKey]
             boolValue];
@@ -1514,7 +1533,7 @@ void VZRemovePaths(NSArray<NSString *> *paths)
     NSArray *keys = @[VZAudioOutputEnabledKey, VZAudioInputEnabledKey,
                       VZMetalBCSupportEnabledKey,
                       VZOpenGLAccelerationEnabledKey,
-                      VZVideoToolboxEnabledKey];
+                      VZVideoToolboxEnabledKey, VZGPUCompatibilityEnabledKey];
     if (sender.tag >= (NSInteger)keys.count)
         return;
     if (sender.tag == 3 && sender.on &&
@@ -1524,6 +1543,11 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         [self setGuestToolsSwitchOn:YES openGLOn:YES animated:YES];
     }
     self.options[keys[sender.tag]] = @(sender.on);
+}
+
+- (void)nativeTouchChanged:(UISwitch *)sender
+{
+    self.options[VZNativeTouchEnabledKey] = @(sender.on);
 }
 
 - (void)pencilRelayChanged:(UISwitch *)sender

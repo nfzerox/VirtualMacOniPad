@@ -284,6 +284,8 @@ xcrun --sdk iphoneos clang \
     -install_name "@rpath/LaunchServicesCompat.dylib" \
     "$VZ_REPO_ROOT/vz/host/lsshim.m" \
     "$VZ_REPO_ROOT/vz/host/vmmhook.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchBackend.m" \
+    "$VZ_REPO_ROOT/vz/host/VZGPUCompatibilityBootstrap.m" \
     "$VZ_REPO_ROOT/vz/host/pvg_trace.m" \
     -o "$VMM_FRAMEWORKS/LaunchServicesCompat.dylib"
 xcrun --sdk iphoneos clang \
@@ -466,6 +468,8 @@ xcrun --sdk iphoneos clang \
     -install_name "@rpath/LaunchServicesCompat.dylib" \
     "$VZ_REPO_ROOT/vz/host/lsshim.m" \
     "$VZ_REPO_ROOT/vz/host/vmmhook.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchBackend.m" \
+    "$VZ_REPO_ROOT/vz/host/VZGPUCompatibilityBootstrap.m" \
     "$VZ_REPO_ROOT/vz/host/pvg_trace.m" \
     -o "$VMM_HOOK_IPADOS14"
 ldid -ILaunchServicesCompat.dylib \
@@ -627,6 +631,8 @@ otool -L "$VMM_FRAMEWORKS/vmnet.framework/vmnet" | grep -Fq \
     "@loader_path/../Netrb.framework/Netrb" ||
     die "VMM vmnet is missing its patched Netrb dependency"
 
+VZ_GPU_COMPAT_OUTPUT="$VMM_FRAMEWORKS/libVMMGPUCompatibility.dylib" bash "$SCRIPT_DIR/build-gpu-compat.sh"
+
 {
     files=(
         "$BIN/vzboot"
@@ -645,6 +651,7 @@ otool -L "$VMM_FRAMEWORKS/vmnet.framework/vmnet" | grep -Fq \
         "$VMM_FRAMEWORKS/vmnet.framework/vmnet"
         "$VMM_FRAMEWORKS/Netrb.framework/Netrb"
         "$METAL_SERIALIZER_BINARY"
+        "$VMM_FRAMEWORKS/libVMMGPUCompatibility.dylib"
         "$VMM_FRAMEWORKS/VideoToolbox.framework/VideoToolbox"
         "$VMM_FRAMEWORKS/VideoToolboxParavirtualizationSupport.framework/VideoToolboxParavirtualizationSupport"
         "$VMM_FRAMEWORKS/DiskImages2.framework/Versions/A/DiskImages2"

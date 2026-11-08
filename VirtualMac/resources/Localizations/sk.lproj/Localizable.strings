@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Klávesnica Mac";
 "Mac Keyboard Shortcuts" = "Klávesové skratky pre Mac";
 "Mac Trackpad" = "Trackpad Mac";
+"macOS 27 Graphics Compatibility" = "Grafická kompatibilita s macOS 27";
 "macOS Installed" = "macOS je nainstalován";
 "Memory" = "Pamäť";
 "Metal BC Support" = "Podpora Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Názov";
 "Name Already Used" = "Název se už používá";
 "NAT: Share %@" = "NAT: Sdílet %@";
+"Native Touch" = "Natívny dotyk";
 "Network" = "Sieť";
 "Network Attachment" = "Sieťové pripojení";
 "Network Bridge (%@)" = "Sieťový most (%@)";

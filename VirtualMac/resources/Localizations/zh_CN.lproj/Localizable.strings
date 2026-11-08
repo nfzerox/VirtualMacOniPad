@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac键盘";
 "Mac Keyboard Shortcuts" = "Mac键盘快捷键";
 "Mac Trackpad" = "Mac触控板";
+"macOS 27 Graphics Compatibility" = "macOS 27 图形兼容";
 "macOS Installed" = "macOS已安装";
 "Memory" = "内存";
 "Metal BC Support" = "Metal BC支持";
@@ -156,6 +157,7 @@
 "Name" = "名称";
 "Name Already Used" = "名称已被使用";
 "NAT: Share %@" = "NAT：共享%@";
+"Native Touch" = "原生触控";
 "Network" = "网络";
 "Network Attachment" = "网络连接";
 "Network Bridge (%@)" = "网络桥接（%@）";

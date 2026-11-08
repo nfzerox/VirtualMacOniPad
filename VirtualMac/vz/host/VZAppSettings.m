@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 #import "VZAppSettings.h"
 
 NSString * const VZSettingsDidChangeNotification = @"VZSettingsDidChange";
@@ -28,9 +29,9 @@ NSString * const VZDebugLoggingModeOff = @"off";
 NSString * const VZDebugLoggingModeNextBoot = @"next";
 NSString * const VZDebugLoggingModeAlways = @"always";
 
-static NSString * const VZSettingsPath = @"/var/mobile/Media/VirtualMac/Settings.plist";
+static NSString * const VZSettingsPath = @VZ_HOST_DATA_ROOT "/Settings.plist";
 static CFStringRef const VZSettingsDarwinNotification =
-    CFSTR("com.mac.virtual.settings-changed");
+    CFSTR(VZ_HOST_IPC_PREFIX ".settings-changed");
 
 NSString *VZRootHideJailbreakRootPath(void)
 {

@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 #import "VZDiagnostics.h"
 #import "VZAppSettings.h"
 #import <UIKit/UIKit.h>
@@ -32,7 +33,7 @@ static uint32_t VZCRC32(NSData *data)
 
 static NSString *VZDiagnosticsLibraryPath(void)
 {
-    return @"/var/mobile/Media/VirtualMac";
+    return @VZ_HOST_DATA_ROOT;
 }
 
 static NSArray *VZDiagnosticsInstallationPaths(void)
@@ -102,10 +103,10 @@ static NSData *VZInstallerPreflightData(void)
     NSMutableString *report = [NSMutableString stringWithFormat:
         @"caller uid=%u euid=%u gid=%u egid=%u\n",
         getuid(), geteuid(), getgid(), getegid()];
-    NSArray *paths = @[@"/var", @"/var/root", @"/var/root/VirtualMac",
-        @"/var/root/VirtualMac/install",
-        @"/var/root/VirtualMac/install/install-launcher",
-        @"/var/root/VirtualMac/install/start-install.sh"];
+    NSArray *paths = @[@"/var", @"/var/root", @VZ_HOST_RUNTIME_ROOT,
+        @VZ_HOST_RUNTIME_ROOT "/install",
+        @VZ_HOST_RUNTIME_ROOT "/install/install-launcher",
+        @VZ_HOST_RUNTIME_ROOT "/install/start-install.sh"];
     for (NSString *path in paths)
         VZAppendPathStatus(report, path);
     NSString *rootHideRoot = VZRootHideJailbreakRootPath();
@@ -142,7 +143,7 @@ static NSData *VZInstallerPreflightData(void)
     posix_spawn_file_actions_adddup2(&actions, descriptors[1], STDERR_FILENO);
     posix_spawn_file_actions_addclose(&actions, descriptors[1]);
     const char *launcher =
-        "/var/root/VirtualMac/install/install-launcher";
+        VZ_HOST_RUNTIME_ROOT "/install/install-launcher";
     // A spawn error diagnoses the parent-directory/execute-permission failure
     // that prevents the launcher from running at all. Output from the
     // diagnostics-only mode covers the later privilege/script boundary.
@@ -392,7 +393,7 @@ static NSData *VZStorageData(void)
 {
     NSMutableString *report = [NSMutableString string];
     NSArray *paths = @[@"/var", @"/var/mobile", VZDiagnosticsLibraryPath(),
-        @"/var/root", @"/var/root/VirtualMac"];
+        @"/var/root", @VZ_HOST_RUNTIME_ROOT];
     for (NSString *path in paths) {
         VZAppendPathStatus(report, path);
         struct statfs fileSystem = {0};
@@ -455,23 +456,23 @@ static NSData *VZRuntimePathData(void)
         @"/Applications/VirtualMac.app/VirtualMac",
         @"/var/jb/Applications/VirtualMac.app",
         @"/var/jb/Applications/VirtualMac.app/VirtualMac",
-        @"/var/root/VirtualMac",
-        @"/var/root/VirtualMac/install",
-        @"/var/root/VirtualMac/payload",
+        @VZ_HOST_RUNTIME_ROOT,
+        @VZ_HOST_RUNTIME_ROOT "/install",
+        @VZ_HOST_RUNTIME_ROOT "/payload",
         @"/usr/libexec/VirtualMac/InternetSharing",
         @"/usr/libexec/VirtualMac/InternetSharing.ipados14",
         @"/usr/libexec/VirtualMac/bootpd",
-        @"/var/root/VirtualMac/rootful/Library/LaunchDaemons/com.apple.NetworkSharing.plist",
-        @"/var/root/VirtualMac/rootful/Library/LaunchDaemons/com.apple.bootpd.plist",
-        @"/var/root/VirtualMac/rootful/Library/LaunchDaemons/vzi.apple.bootpd-controller.plist",
-        @"/tmp/bootpd.plist",
+        @VZ_HOST_RUNTIME_ROOT "/rootful/Library/LaunchDaemons/com.apple.NetworkSharing.plist",
+        @VZ_HOST_RUNTIME_ROOT "/rootful/Library/LaunchDaemons/com.apple.bootpd.plist",
+        @VZ_HOST_RUNTIME_ROOT "/rootful/Library/LaunchDaemons/vzi.apple.bootpd-controller.plist",
+        @VZ_HOST_STATE_ROOT "/bootpd.plist",
         @"/var/db/dhcpd_leases",
         @"/Library/MobileSubstrate/DynamicLibraries/VZKeyboardPassthrough.dylib",
         @"/usr/lib/TweakInject/VZKeyboardPassthrough.dylib",
         @"/var/jb/Library/MobileSubstrate/DynamicLibraries/VZKeyboardPassthrough.dylib",
         @"/var/jb/usr/lib/TweakInject/VZKeyboardPassthrough.dylib",
         @"/var/run/usbmuxd",
-        @"/tmp/vzusbmuxd",
+        @VZ_HOST_STATE_ROOT "/vzusbmuxd",
     ];
     for (NSString *path in paths) {
         VZAppendPathStatus(report, path);
@@ -548,7 +549,7 @@ static void VZEnumerateDiagnosticEntries(VZDiagnosticEntryHandler handler)
     VZAddEntry(handler, @"device/dns/var-run-resolv.conf",
         VZBoundedFileData(@"/var/run/resolv.conf"));
     VZAddEntry(handler, @"network/bootpd.plist",
-        VZBoundedFileData(@"/tmp/bootpd.plist"));
+        VZBoundedFileData(@VZ_HOST_STATE_ROOT "/bootpd.plist"));
     VZAddEntry(handler, @"network/dhcpd-leases.txt",
         VZBoundedFileData(@"/var/db/dhcpd_leases"));
     VZAddEntry(handler, @"jailbreak/environment.txt", VZBootstrapData());
@@ -566,7 +567,7 @@ static void VZEnumerateDiagnosticEntries(VZDiagnosticEntryHandler handler)
             VZCommandOutput(dpkgQuery, @[@"-W",
                 @"-f=${Package}\t${Version}\t${Architecture}\\n"]));
         VZAddEntry(handler, @"package/metadata.txt",
-            VZCommandOutput(dpkgQuery, @[@"-s", @"com.mac.virtual"]));
+            VZCommandOutput(dpkgQuery, @[@"-s", @VZ_HOST_IPC_PREFIX]));
     }
     NSMutableArray *dpkgPaths = [NSMutableArray arrayWithArray:
         @[@"/var/jb/usr/bin/dpkg", @"/usr/bin/dpkg"]];
@@ -576,7 +577,7 @@ static void VZEnumerateDiagnosticEntries(VZDiagnosticEntryHandler handler)
     NSString *dpkg = VZFirstExecutablePath(dpkgPaths);
     if (dpkg)
         VZAddEntry(handler, @"package/verification.txt",
-            VZCommandOutput(dpkg, @[@"--verify", @"com.mac.virtual"]));
+            VZCommandOutput(dpkg, @[@"--verify", @VZ_HOST_IPC_PREFIX]));
     VZAddEntry(handler, @"package/runtime-paths.txt", VZRuntimePathData());
 
     NSString *launchctl = VZFirstExecutablePath(
@@ -614,17 +615,17 @@ static void VZEnumerateDiagnosticEntries(VZDiagnosticEntryHandler handler)
         @"bootpd-controller.out", @"bootpd-controller.err"];
     for (NSString *name in logNames)
         VZAddEntry(handler, [@"logs" stringByAppendingPathComponent:name],
-            VZBoundedFileData([@"/tmp" stringByAppendingPathComponent:name]));
+            VZBoundedFileData([@VZ_HOST_STATE_ROOT stringByAppendingPathComponent:name]));
 
     NSArray *temporary = [NSFileManager.defaultManager
-        contentsOfDirectoryAtPath:@"/tmp" error:nil];
+        contentsOfDirectoryAtPath:@VZ_HOST_STATE_ROOT error:nil];
     for (NSString *name in temporary) {
         if (![name hasPrefix:@"VirtualMac-install"] &&
             ![name hasPrefix:@"vz-usbmuxd"] &&
             ![name hasPrefix:@"installation"])
             continue;
         VZAddEntry(handler, [@"restore" stringByAppendingPathComponent:name],
-            VZBoundedFileData([@"/tmp" stringByAppendingPathComponent:name]));
+            VZBoundedFileData([@VZ_HOST_STATE_ROOT stringByAppendingPathComponent:name]));
     }
 
     NSMutableArray *inventory = [NSMutableArray array];
@@ -732,7 +733,7 @@ static void VZEnumerateDiagnosticEntries(VZDiagnosticEntryHandler handler)
 
 NSURL *VZCreateDiagnosticsArchive(NSError **error)
 {
-    NSString *directory = [@"/var/mobile/Media/VirtualMac"
+    NSString *directory = [@VZ_HOST_DATA_ROOT
         stringByAppendingPathComponent:@"Diagnostics"];
     if (![NSFileManager.defaultManager createDirectoryAtPath:directory
         withIntermediateDirectories:YES attributes:nil error:error])

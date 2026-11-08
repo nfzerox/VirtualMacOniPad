@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac Klavyesi";
 "Mac Keyboard Shortcuts" = "Mac Klavye Kısayolları";
 "Mac Trackpad" = "Mac İzleme Dörtgeni";
+"macOS 27 Graphics Compatibility" = "macOS 27 Grafik Uyumluluğu";
 "macOS Installed" = "macOS Kuruldu";
 "Memory" = "Bellek";
 "Metal BC Support" = "Metal BC Desteği";
@@ -156,6 +157,7 @@
 "Name" = "Ad";
 "Name Already Used" = "Ad Zaten Kullanılıyor";
 "NAT: Share %@" = "NAT: %@ Paylaş";
+"Native Touch" = "Yerel dokunma";
 "Network" = "Ağ";
 "Network Attachment" = "Ağ Bağlantısı";
 "Network Bridge (%@)" = "Ağ Köprüsü (%@)";

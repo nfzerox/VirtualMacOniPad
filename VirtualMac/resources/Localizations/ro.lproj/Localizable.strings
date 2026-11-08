@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Tastatură Mac";
 "Mac Keyboard Shortcuts" = "Comenzi rapide de la tastatură Mac";
 "Mac Trackpad" = "Trackpad Mac";
+"macOS 27 Graphics Compatibility" = "Compatibilitate grafică macOS 27";
 "macOS Installed" = "macOS installato";
 "Memory" = "Memorie";
 "Metal BC Support" = "Compatibilitate Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Nume";
 "Name Already Used" = "Numele este deja folosit";
 "NAT: Share %@" = "NAT: condividi %@";
+"Native Touch" = "Atingere nativă";
 "Network" = "Rețea";
 "Network Attachment" = "Conexiune de rețea";
 "Network Bridge (%@)" = "Bridge di rete (%@)";

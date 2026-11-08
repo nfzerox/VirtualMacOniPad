@@ -147,6 +147,7 @@
 "Mac Keyboard" = "מקלדת Mac";
 "Mac Keyboard Shortcuts" = "קיצורי מקשים של Mac";
 "Mac Trackpad" = "משטח עקיבה של Mac";
+"macOS 27 Graphics Compatibility" = "תאימות גרפית ל-macOS 27";
 "macOS Installed" = "macOS הותקן";
 "Memory" = "זיכרון";
 "Metal BC Support" = "תמיכה ב‑Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "שם";
 "Name Already Used" = "השם כבר בשימוש";
 "NAT: Share %@" = "NAT: שיתוף %@";
+"Native Touch" = "מגע מובנה";
 "Network" = "רשת";
 "Network Attachment" = "חיבור רשת";
 "Network Bridge (%@)" = "גשר רשת (%@)";

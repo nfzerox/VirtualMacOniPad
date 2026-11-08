@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Papan Kekunci Mac";
 "Mac Keyboard Shortcuts" = "Pintasan Papan Kekunci Mac";
 "Mac Trackpad" = "Trackpad Mac";
+"macOS 27 Graphics Compatibility" = "Keserasian Grafik macOS 27";
 "macOS Installed" = "macOS Dipasang";
 "Memory" = "Memori";
 "Metal BC Support" = "Sokongan Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Nama";
 "Name Already Used" = "Nama Telah Digunakan";
 "NAT: Share %@" = "NAT: Bagikan %@";
+"Native Touch" = "Sentuhan asli";
 "Network" = "Rangkaian";
 "Network Attachment" = "Lampiran Rangkaian";
 "Network Bridge (%@)" = "Jambatan Rangkaian (%@)";

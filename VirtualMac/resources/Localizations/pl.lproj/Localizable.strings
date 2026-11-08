@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Klawiatura Maca";
 "Mac Keyboard Shortcuts" = "Skróty klawiaturowe Maca";
 "Mac Trackpad" = "Gładzik Maca";
+"macOS 27 Graphics Compatibility" = "Zgodność grafiki macOS 27";
 "macOS Installed" = "macOS zainstalowany";
 "Memory" = "Pamięć";
 "Metal BC Support" = "Obsługa Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Nazwa";
 "Name Already Used" = "Nazwa jest już używana";
 "NAT: Share %@" = "NAT: udostępnij %@";
+"Native Touch" = "Natywny dotyk";
 "Network" = "Sieć";
 "Network Attachment" = "Połączenie sieciowe";
 "Network Bridge (%@)" = "Most sieciowy (%@)";

@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac-toetsenbord";
 "Mac Keyboard Shortcuts" = "Mac-sneltoetsen";
 "Mac Trackpad" = "Mac-trackpad";
+"macOS 27 Graphics Compatibility" = "Grafische compatibiliteit met macOS 27";
 "macOS Installed" = "macOS geïnstalleerd";
 "Memory" = "Geheugen";
 "Metal BC Support" = "Ondersteuning voor Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Naam";
 "Name Already Used" = "Naam al in gebruik";
 "NAT: Share %@" = "NAT: deel %@";
+"Native Touch" = "Native aanraakinvoer";
 "Network" = "Netwerk";
 "Network Attachment" = "Netwerkverbinding";
 "Network Bridge (%@)" = "Netwerkbrug (%@)";

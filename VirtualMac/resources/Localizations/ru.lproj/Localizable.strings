@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Клавиатура Mac";
 "Mac Keyboard Shortcuts" = "Сочетания клавиш Mac";
 "Mac Trackpad" = "Трекпад Mac";
+"macOS 27 Graphics Compatibility" = "Совместимость графики macOS 27";
 "macOS Installed" = "macOS установлена";
 "Memory" = "Память";
 "Metal BC Support" = "Поддержка Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Имя";
 "Name Already Used" = "Имя уже используется";
 "NAT: Share %@" = "NAT: общий доступ через %@";
+"Native Touch" = "Нативный сенсорный ввод";
 "Network" = "Сеть";
 "Network Attachment" = "Сетевое подключение";
 "Network Bridge (%@)" = "Сетевой мост (%@)";

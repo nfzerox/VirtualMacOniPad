@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Tipkovnica Mac";
 "Mac Keyboard Shortcuts" = "Bližnjice na tipkovnici Mac";
 "Mac Trackpad" = "Sledilna ploščica Mac";
+"macOS 27 Graphics Compatibility" = "Grafična združljivost z macOS 27";
 "macOS Installed" = "macOS je nameščen";
 "Memory" = "Pomnilnik";
 "Metal BC Support" = "Podpora za Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Ime";
 "Name Already Used" = "Ime je že uporabljeno";
 "NAT: Share %@" = "NAT: deli %@";
+"Native Touch" = "Izvorni dotik";
 "Network" = "Omrežje";
 "Network Attachment" = "Omrežna povezava";
 "Network Bridge (%@)" = "Omrežni most (%@)";

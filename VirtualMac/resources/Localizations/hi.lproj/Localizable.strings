@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac कीबोर्ड";
 "Mac Keyboard Shortcuts" = "मैक कीबोर्ड शॉर्टकट";
 "Mac Trackpad" = "Mac ट्रैकपैड";
+"macOS 27 Graphics Compatibility" = "macOS 27 ग्राफ़िक्स संगतता";
 "macOS Installed" = "macOS इंस्टॉल हो गया";
 "Memory" = "मेमोरी";
 "Metal BC Support" = "Metal BC समर्थन";
@@ -156,6 +157,7 @@
 "Name" = "नाम";
 "Name Already Used" = "नाम पहले से उपयोग में है";
 "NAT: Share %@" = "NAT: %@ शेयर करें";
+"Native Touch" = "मूल स्पर्श";
 "Network" = "नेटवर्क";
 "Network Attachment" = "नेटवर्क अटैचमेंट";
 "Network Bridge (%@)" = "नेटवर्क ब्रिज (%@)";

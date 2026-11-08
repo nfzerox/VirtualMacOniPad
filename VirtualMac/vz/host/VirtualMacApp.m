@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
 #import <UIKit/UIKit.h>
@@ -17,6 +18,9 @@
 #import "VZGuestTools.h"
 #import "VZGuestRuntimePolicy.h"
 #import "VZTrackpadScrollBridge.h"
+#import "VZGPUCompatibility.h"
+#import "VZNativeTouchIdentity.h"
+#import "VZNativeTouchInput.h"
 #include <dlfcn.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
@@ -88,6 +92,8 @@ static id gFramebuffer;
 static id gKeyboard;
 static id gPointingDevice;
 static UIView *gInputView;
+static VZNativeTouchInput *gNativeTouch;
+static void applyNativeTouchGesturePolicy(void);
 static UIView *gDisplayContainer;
 static CALayer *gDisplayLayer;
 static UIImageView *gCursorView;
@@ -199,6 +205,17 @@ static void resetScrollDiagnostics(void);
 static UIWindow *gExternalWindow;
 static UIView *gExternalMirrorView;
 static UIImageView *gExternalCursorView;
+
+static void applyNativeTouchGesturePolicy(void) {
+    BOOL scroll = [VZAppSettings.sharedSettings boolForKey:VZTouchTwoFingerScrollingKey];
+    gTouchScrollRecognizer.enabled = scroll && !gNativeTouch;
+    NSArray *allowed = (scroll || gNativeTouch)
+        ? @[@(UITouchTypeIndirectPointer)]
+        : @[@(UITouchTypeDirect), @(UITouchTypeIndirectPointer)];
+    gPinchRecognizer.allowedTouchTypes = allowed;
+    gRotationRecognizer.allowedTouchTypes = allowed;
+    gSmartMagnifyRecognizer.allowedTouchTypes = allowed;
+}
 
 static CGRect displayViewportRect(CGSize contentSize, CGRect bounds);
 static void updateDisplayGeometry(void);
@@ -1152,7 +1169,7 @@ static void installGCMouse(void) {
 }
 
 static void scheduleInputSelfTest(void) {
-    if (unlink("/tmp/vz-input-self-test") != 0)
+    if (unlink(VZ_HOST_STATE_ROOT "/vz-input-self-test") != 0)
         return;
     dispatch_after(
         dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC),
@@ -1174,7 +1191,7 @@ static void scheduleInputSelfTest(void) {
 }
 
 static void pollInputCommand(void) {
-    NSString *path = @"/tmp/vz-input-command";
+    NSString *path = @VZ_HOST_STATE_ROOT "/vz-input-command";
     NSString *command = [NSString stringWithContentsOfFile:path
                                                   encoding:NSUTF8StringEncoding
                                                      error:nil];
@@ -1256,7 +1273,7 @@ static void pollInputCommand(void) {
             UIImage *hostImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             NSData *png = hostImage ? UIImagePNGRepresentation(hostImage) : nil;
-            BOOL saved = [png writeToFile:@"/tmp/VirtualMac-host.png"
+            BOOL saved = [png writeToFile:@VZ_HOST_STATE_ROOT "/VirtualMac-host.png"
                                atomically:YES];
             printf("[VirtualMac] input command screenshot drew=%d saved=%d "
                    "bytes=%lu\n", drew, saved, (unsigned long)png.length);
@@ -1288,11 +1305,11 @@ static void forceStopVirtualMachine(void) {
     NSInteger state = ((NSInteger(*)(id, SEL))objc_msgSend)(
         gVirtualMachine, S("state"));
     if (state == 0) {
-        writeStopMarker("/tmp/vz-guest-stopped", "already stopped");
+        writeStopMarker(VZ_HOST_STATE_ROOT "/vz-guest-stopped", "already stopped");
         return;
     }
     if (![gVirtualMachine respondsToSelector:S("stopWithCompletionHandler:")]) {
-        writeStopMarker("/tmp/vz-force-stop-failed",
+        writeStopMarker(VZ_HOST_STATE_ROOT "/vz-force-stop-failed",
                         "stopWithCompletionHandler: unavailable");
         return;
     }
@@ -1304,13 +1321,13 @@ static void forceStopVirtualMachine(void) {
         gForceStopPending = NO;
         if (error) {
             const char *description = [[error description] UTF8String];
-            writeStopMarker("/tmp/vz-force-stop-failed",
+            writeStopMarker(VZ_HOST_STATE_ROOT "/vz-force-stop-failed",
                             description ?: "unknown direct stop error");
             printf("[VirtualMac] direct virtual machine stop failed: %s\n",
                    description ?: "unknown error");
             return;
         }
-        writeStopMarker("/tmp/vz-guest-stopped", "direct stop complete");
+        writeStopMarker(VZ_HOST_STATE_ROOT "/vz-guest-stopped", "direct stop complete");
         printf("[VirtualMac] direct virtual machine stop complete\n");
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([gVirtualMachineDelegate respondsToSelector:
@@ -1332,9 +1349,9 @@ static void startControlMonitor(void) {
         dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC),
         NSEC_PER_SEC, NSEC_PER_SEC / 10);
     dispatch_source_set_event_handler(gControlTimer, ^{
-        if (unlink("/tmp/vz-request-guest-stop") == 0)
+        if (unlink(VZ_HOST_STATE_ROOT "/vz-request-guest-stop") == 0)
             forceStopVirtualMachine();
-        if (unlink("/tmp/vz-request-force-stop") == 0)
+        if (unlink(VZ_HOST_STATE_ROOT "/vz-request-force-stop") == 0)
             forceStopVirtualMachine();
     });
     dispatch_resume(gControlTimer);
@@ -1556,7 +1573,7 @@ static void installShellShortcutRelay(void) {
                                   @"forward-delete", @"keypad-enter"]) {
         for (NSString *state in @[@"down", @"up"]) {
             NSString *name = [NSString stringWithFormat:
-                @"com.mac.virtual.%@.%@", shortcut, state];
+                @VZ_HOST_IPC_PREFIX ".%@.%@", shortcut, state];
             CFNotificationCenterAddObserver(
                 center, NULL, shellShortcutNotification,
                 (CFStringRef)name, NULL,
@@ -1604,7 +1621,7 @@ static void installVideoMemoryWarningRelay(void) {
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), NULL,
         videoMemoryExhaustedNotification,
-        CFSTR("com.mac.virtual.video-memory-exhausted"), NULL,
+        CFSTR(VZ_HOST_IPC_PREFIX ".video-memory-exhausted"), NULL,
         CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
@@ -1890,6 +1907,7 @@ static void sendSoftwareKey(UIKeyboardHIDUsage usage, BOOL shifted);
     BOOL _vzPencilHoverActive;
     BOOL _vzSuppressIndirectPointerClick;
 }
+- (void)resetDeferredDirectTouch;
 @end
 
 @implementation VZInputView
@@ -2012,6 +2030,7 @@ static void sendSoftwareKey(UIKeyboardHIDUsage usage, BOOL shifted);
 
 - (BOOL)resignFirstResponder
 {
+    [gNativeTouch cancelAll];
     [self releaseSoftwareModifiers];
     return [super resignFirstResponder];
 }
@@ -2807,6 +2826,14 @@ static bool pencilVsockSend(uint8_t type, float pressure,
 - (void)touchesBegan:(NSSet<UITouch *> *)touches
            withEvent:(UIEvent *)event
 {
+    if (gNativeTouch) {
+        [gNativeTouch handleTouches:touches inView:self
+            viewport:displayViewportRect(gDisplayPixelSize, self.bounds)];
+        touches = [touches objectsPassingTest:^BOOL(UITouch *t, BOOL *stop) {
+            (void)stop; return t.type != UITouchTypeDirect;
+        }];
+        if (!touches.count) return;
+    }
     UITouch *touch = [touches anyObject];
     if (touch)
         notePointerInputSource(touch.type == UITouchTypeDirect);
@@ -2895,6 +2922,14 @@ static bool pencilVsockSend(uint8_t type, float pressure,
 - (void)touchesMoved:(NSSet<UITouch *> *)touches
            withEvent:(UIEvent *)event
 {
+    if (gNativeTouch) {
+        [gNativeTouch handleTouches:touches inView:self
+            viewport:displayViewportRect(gDisplayPixelSize, self.bounds)];
+        touches = [touches objectsPassingTest:^BOOL(UITouch *t, BOOL *stop) {
+            (void)stop; return t.type != UITouchTypeDirect;
+        }];
+        if (!touches.count) return;
+    }
     UITouch *touch = [touches anyObject];
     if (touch.type == UITouchTypeDirect && [self usesDeferredDirectTouchClicks]) {
         [self moveDeferredDirectTouches:touches withEvent:event];
@@ -2951,6 +2986,14 @@ static bool pencilVsockSend(uint8_t type, float pressure,
 - (void)touchesEnded:(NSSet<UITouch *> *)touches
            withEvent:(UIEvent *)event
 {
+    if (gNativeTouch) {
+        [gNativeTouch handleTouches:touches inView:self
+            viewport:displayViewportRect(gDisplayPixelSize, self.bounds)];
+        touches = [touches objectsPassingTest:^BOOL(UITouch *t, BOOL *stop) {
+            (void)stop; return t.type != UITouchTypeDirect;
+        }];
+        if (!touches.count) return;
+    }
     // type=2 (proximity_leave): Pencil lifted off screen.
     // Pressure is 0 because the pen is no longer touching.
     // altitude=π/2 (perpendicular): the pen has no meaningful tilt
@@ -3001,6 +3044,14 @@ static bool pencilVsockSend(uint8_t type, float pressure,
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches
                withEvent:(UIEvent *)event
 {
+    if (gNativeTouch) {
+        [gNativeTouch handleTouches:touches inView:self
+            viewport:displayViewportRect(gDisplayPixelSize, self.bounds)];
+        touches = [touches objectsPassingTest:^BOOL(UITouch *t, BOOL *stop) {
+            (void)stop; return t.type != UITouchTypeDirect;
+        }];
+        if (!touches.count) return;
+    }
     UITouch *touch = [touches anyObject];
     if (touch.type == UITouchTypeDirect && [self usesDeferredDirectTouchClicks]) {
         [self cancelDeferredDirectTouches:touches withEvent:event];
@@ -3226,17 +3277,7 @@ static bool pencilVsockSend(uint8_t type, float pressure,
     [(VZHUDView *)gHUDView refreshMenu];
     [self updateHUDVisibility];
     updateDisplayGeometry();
-    if (gTouchScrollRecognizer) {
-        BOOL enabled = [VZAppSettings.sharedSettings
-            boolForKey:VZTouchTwoFingerScrollingKey];
-        gTouchScrollRecognizer.enabled = enabled;
-        NSArray *allowed = enabled ? @[@(UITouchTypeIndirectPointer)]
-                                   : @[@(UITouchTypeDirect),
-                                       @(UITouchTypeIndirectPointer)];
-        gPinchRecognizer.allowedTouchTypes = allowed;
-        gRotationRecognizer.allowedTouchTypes = allowed;
-        gSmartMagnifyRecognizer.allowedTouchTypes = allowed;
-    }
+    applyNativeTouchGesturePolicy();
 }
 
 - (void)updateHUDPosition
@@ -3492,14 +3533,14 @@ static NSString *VZInstallationConsoleText(NSString *installLogPath)
 {
     NSArray *sources = @[
         @[@"INSTALLER", installLogPath ?: @"", @YES],
-        @[@"INSTALLER LAUNCHER", @"/tmp/installation.stderr.log", @NO],
-        @[@"INSTALLATION HOOK", @"/tmp/installationhook.log", @NO],
-        @[@"VIRTUALIZATION FRAMEWORK", @"/tmp/vzxpchook.log", @NO],
-        @[@"MOBILEDEVICE / RESTORE USB", @"/tmp/installation-usb.log", @NO],
-        @[@"USBMUXD", @"/tmp/vz-usbmuxd.log", @NO],
-        @[@"USBMUXD LAUNCHER", @"/tmp/vz-usbmuxd-launch.log", @NO],
-        @[@"RESTORE VMM STDERR", @"/tmp/restore-vmm.stderr.log", @NO],
-        @[@"RESTORE VMM", @"/tmp/vmmhook.log", @NO],
+        @[@"INSTALLER LAUNCHER", @VZ_HOST_STATE_ROOT "/installation.stderr.log", @NO],
+        @[@"INSTALLATION HOOK", @VZ_HOST_STATE_ROOT "/installationhook.log", @NO],
+        @[@"VIRTUALIZATION FRAMEWORK", @VZ_HOST_STATE_ROOT "/vzxpchook.log", @NO],
+        @[@"MOBILEDEVICE / RESTORE USB", @VZ_HOST_STATE_ROOT "/installation-usb.log", @NO],
+        @[@"USBMUXD", @VZ_HOST_STATE_ROOT "/vz-usbmuxd.log", @NO],
+        @[@"USBMUXD LAUNCHER", @VZ_HOST_STATE_ROOT "/vz-usbmuxd-launch.log", @NO],
+        @[@"RESTORE VMM STDERR", @VZ_HOST_STATE_ROOT "/restore-vmm.stderr.log", @NO],
+        @[@"RESTORE VMM", @VZ_HOST_STATE_ROOT "/vmmhook.log", @NO],
     ];
     NSMutableString *console = [NSMutableString string];
     for (NSArray *source in sources) {
@@ -3560,14 +3601,14 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     self.view.backgroundColor = active ? UIColor.blackColor
                                        : UIColor.systemBackgroundColor;
     if (active) {
-        FILE *marker = fopen("/tmp/virtual-mac-vm-active", "w");
+        FILE *marker = fopen(VZ_HOST_STATE_ROOT "/virtual-mac-vm-active", "w");
         if (marker) {
             fputs("active\n", marker);
             fclose(marker);
         }
         resetPointerSession(YES);
     } else {
-        unlink("/tmp/virtual-mac-vm-active");
+        unlink(VZ_HOST_STATE_ROOT "/virtual-mac-vm-active");
     }
     [self updateImmersivePresentation];
     [self updateHUDVisibility];
@@ -3806,7 +3847,7 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     NSString *memory = [@(restoreMemorySize) stringValue];
     NSString *storage = [options[@"StorageSize"] stringValue];
     const char *launcher =
-        "/var/root/VirtualMac/install/install-launcher";
+        VZ_HOST_RUNTIME_ROOT "/install/install-launcher";
     char *arguments[] = {
         (char *)launcher,
         (char *)url.path.fileSystemRepresentation,
@@ -3908,7 +3949,7 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
             [self.installationTimer invalidate];
             self.installationTimer = nil;
             NSString *pid = [NSString stringWithFormat:@"%d", self.installationProcess];
-            const char *cancelLauncher = "/var/root/VirtualMac/install/install-launcher";
+            const char *cancelLauncher = VZ_HOST_RUNTIME_ROOT "/install/install-launcher";
             char *cancelArguments[] = {(char *)cancelLauncher, "--cancel-install",
                 (char *)pid.UTF8String,
                 (char *)self.installationAttemptPath.fileSystemRepresentation, NULL};
@@ -4144,6 +4185,12 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     gDisplayLayer = nil;
     gDisplayContainer = nil;
     gFramebuffer = nil;
+    [gNativeTouch release];
+    gNativeTouch = nil;
+    applyNativeTouchGesturePolicy();
+    unsetenv("VMM_NATIVE_TOUCH_ENABLED");
+    unsetenv("VMM_NATIVE_TOUCH_UUID");
+    VZGPUCompatibilityResetForBoot();
     [gFramebufferView release];
     gFramebufferView = nil;
     [gVirtualMachine release];
@@ -4162,10 +4209,8 @@ static void VZWriteInstallationAttempt(NSString *attemptPath, NSString *state,
     gCursorView.image = nil;
     gCursorView.hidden = YES;
     gInputView.hidden = YES;
-    gTouchScrollRecognizer = nil;
-    gPinchRecognizer = nil;
-    gRotationRecognizer = nil;
-    gSmartMagnifyRecognizer = nil;
+    // The input view owns these recognizers across VM switches; keep the
+    // non-owning references so the next VM can apply its own touch policy.
     self.activeVMBundlePath = nil;
     [self presentVMLibrary];
     if (error) {
@@ -4531,10 +4576,10 @@ static BOOL loadExtractedFrameworks(void) {
            [hookPath fileSystemRepresentation]);
 
     const char *images[] = {
-        "/var/root/VirtualMac/payload/Frameworks/vmnet.framework/vmnet",
-        "/var/root/VirtualMac/payload/Frameworks/Hypervisor.framework/Hypervisor",
-        "/var/root/VirtualMac/payload/Frameworks/ParavirtualizedGraphics.framework/ParavirtualizedGraphics",
-        "/var/root/VirtualMac/payload/Frameworks/Virtualization.framework/Virtualization",
+        VZ_HOST_RUNTIME_ROOT "/payload/Frameworks/vmnet.framework/vmnet",
+        VZ_HOST_RUNTIME_ROOT "/payload/Frameworks/Hypervisor.framework/Hypervisor",
+        VZ_HOST_RUNTIME_ROOT "/payload/Frameworks/ParavirtualizedGraphics.framework/ParavirtualizedGraphics",
+        VZ_HOST_RUNTIME_ROOT "/payload/Frameworks/Virtualization.framework/Virtualization",
     };
     for (NSUInteger i = 0; i < sizeof(images) / sizeof(images[0]); i++) {
         if (!dlopen(images[i], RTLD_NOW | RTLD_GLOBAL)) {
@@ -4830,7 +4875,7 @@ static id makeConfiguration(NSString *bundlePath, NSDictionary *options,
         [options[VZGuestToolsRemovalPendingKey] boolValue];
 #if EXPERIMENT_GDB_DEBUG
     BOOL externalKernelDebug = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-external-kernel-debug"];
+        fileExistsAtPath:@VZ_HOST_STATE_ROOT "/vz-external-kernel-debug"];
 #endif
     id platform = NEW("VZMacPlatformConfiguration");
     id auxiliaryStorage = ((id(*)(id, SEL, id))objc_msgSend)(
@@ -4979,6 +5024,17 @@ static id makeConfiguration(NSString *bundlePath, NSDictionary *options,
     printf("[VirtualMac] configured pointing device=%s class=%s\n",
            useUSBMouse ? "USB Mouse" : "Mac Trackpad",
            pointing ? object_getClassName(pointing) : "(unavailable)");
+    if ([options[VZNativeTouchEnabledKey] boolValue]) {
+        Class touchClass = NSClassFromString(@"_VZAppleTouchScreenConfiguration");
+        if (!touchClass || ![configuration respondsToSelector:S("_setMultiTouchDevices:")]) {
+            if (error) *error = [NSError errorWithDomain:@"VMMNativeTouch" code:2
+                userInfo:@{NSLocalizedDescriptionKey:@"Native touch configuration is unavailable in this runtime."}];
+            return nil;
+        }
+        id touchscreen = [[[touchClass alloc] init] autorelease];
+        if (!touchscreen) return nil;
+        setObj(configuration, "_setMultiTouchDevices:", @[touchscreen]);
+    }
     configureAudio(configuration, options);
     configureVideoToolbox(configuration, options);
     configureNetwork(configuration, options);
@@ -5039,6 +5095,7 @@ static BOOL prepareFramebuffer(UIView *container) {
     id view = ((id(*)(id, SEL, CGRect))objc_msgSend)(
         [framebufferViewClass alloc], S("initWithFrame:"), viewport);
     gFramebufferView = view;
+    if (gNativeTouch) gFramebufferView.userInteractionEnabled = NO;
     gFramebuffer = framebuffer;
     gFramebufferView.backgroundColor = [UIColor blackColor];
     gFramebufferView.autoresizingMask =
@@ -5158,27 +5215,47 @@ static void invokeVirtualMachineStartOnMain(void *opaque) {
 static void startVirtualMachineWorker(UIView *container, id delegate,
                                       NSString *bundlePath,
                                       NSDictionary *options) {
+    VZGPUCompatibilityResetForBoot();
     setVMJetsamProtection(YES);
+    unsetenv("VMM_NATIVE_TOUCH_ENABLED");
+    unsetenv("VMM_NATIVE_TOUCH_UUID");
+    if ([options[VZNativeTouchEnabledKey] boolValue]) {
+        NSError *touchError = nil;
+        NSString *uuid = nil;
+        if (VZNativeTouchValidateRuntime(@VZ_HOST_RUNTIME_ROOT "/payload", &touchError))
+            uuid = VZNativeTouchUUIDForConfiguration(
+                [bundlePath stringByAppendingPathComponent:VZVMConfigurationFileName], &touchError);
+        if (!uuid) { finishVMThreadSafe(delegate, touchError); return; }
+        setenv("VMM_NATIVE_TOUCH_UUID", uuid.UTF8String, 1);
+        setenv("VMM_NATIVE_TOUCH_ENABLED", "1", 1);
+    }
+    NSError *graphicsError = nil;
+    if (!VZGPUCompatibilityPrepareForBoot(options,
+            @VZ_HOST_RUNTIME_ROOT "/payload", @VZ_HOST_STATE_ROOT, &graphicsError)) {
+        finishVMThreadSafe(delegate, graphicsError); return;
+    }
+    BOOL gpuCompatibilityEnabled = [options[VZGPUCompatibilityEnabledKey] boolValue];
     gShiftPressedMask = 0;
     pencilVsockReset();
     VZGuestToolsReset();
     __atomic_store_n(&gPencilRelayEnabled,
         [options[VZApplePencilPressureTiltEnabledKey] boolValue],
         __ATOMIC_RELEASE);
-    unlink("/tmp/vzxpchook.log");
-    unlink("/tmp/vmmhook.log");
-    unlink("/tmp/vmm.stderr.log");
+    unlink(VZ_HOST_STATE_ROOT "/vzxpchook.log");
+    unlink(VZ_HOST_STATE_ROOT "/vmmhook.log");
+    unlink(VZ_HOST_STATE_ROOT "/vmm.stderr.log");
     setenv("VZ_VMM_BIN",
-           "/var/root/VirtualMac/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+           VZ_HOST_RUNTIME_ROOT "/payload/VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
            1);
     setenv("VZ_AVP_BOOTER",
-           "/var/root/VirtualMac/payload/Frameworks/Virtualization.framework/Resources/AVPBooter.vmapple2.bin",
+           VZ_HOST_RUNTIME_ROOT "/payload/Frameworks/Virtualization.framework/Resources/AVPBooter.vmapple2.bin",
            1);
     // Consume the one-shot mode at the actual boot boundary. The current boot
     // keeps the captured value while Settings immediately returns to Off.
     gDebugLogging = VZConsumeDebugLoggingForBoot();
     resetScrollDiagnostics();
-    setenv("VZ_DEBUG_LOGGING", gDebugLogging ? "1" : "0", 1);
+    // Keep the validated GPU adapter separate from legacy method-swizzle tracing.
+    setenv("VZ_DEBUG_LOGGING", (gDebugLogging && !gpuCompatibilityEnabled) ? "1" : "0", 1);
     setenv("VMMHOOK_TRACE_VCPU_LIMIT", gDebugLogging ? "256" : "8", 1);
     setenv("VMMHOOK_TRACE_XPC_LIMIT", gDebugLogging ? "200" : "8", 1);
     setenv("VMM_FACTORY_SETTLE_USEC", "100000", 1);
@@ -5190,7 +5267,7 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
     setenv("PVG_TRACE", "1", 1);
     // Functional PVG task compatibility remains installed in every build;
     // this flag enables only the additional diagnostic method wrappers.
-    if (gDebugLogging)
+    if (gDebugLogging && !gpuCompatibilityEnabled)
         setenv("PVG_TRACE_METHODS", "1", 1);
     else
         unsetenv("PVG_TRACE_METHODS");
@@ -5280,6 +5357,30 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
            [[pointingDevices description] UTF8String]);
     gKeyboard = [keyboards firstObject];
     gPointingDevice = [pointingDevices firstObject];
+    if ([options[VZNativeTouchEnabledKey] boolValue]) {
+        NSArray *touchDevices = [gVirtualMachine respondsToSelector:S("_multiTouchDevices")]
+            ? m0(gVirtualMachine, "_multiTouchDevices") : nil;
+        id device = touchDevices.firstObject;
+        BOOL available = touchDevices.count == 1 &&
+            [device respondsToSelector:S("sendMultiTouchEvents:")] &&
+            [NSClassFromString(@"_VZTouch") instancesRespondToSelector:S("initWithIndex:phase:location:swipeAim:timestamp:")] &&
+            [NSClassFromString(@"_VZMultiTouchEvent") instancesRespondToSelector:S("initWithTouches:")];
+        if (!available) {
+            NSError *touchError = [NSError errorWithDomain:@"VMMNativeTouch" code:3
+                userInfo:@{NSLocalizedDescriptionKey:@"The VM did not publish the native touchscreen input API."}];
+            finishVMThreadSafe(delegate, touchError); return;
+        }
+        void (^bindTouch)(void) = ^{
+            // Invalidate legacy delayed clicks before native code owns fingers.
+            [(VZInputView *)gInputView resetDeferredDirectTouch];
+            resetPointerSession(YES);
+            [gNativeTouch release];
+            gNativeTouch = [[VZNativeTouchInput alloc] initWithDevice:device];
+            applyNativeTouchGesturePolicy();
+        };
+        if (pthread_main_np()) bindTouch();
+        else dispatch_sync(dispatch_get_main_queue(), bindTouch);
+    }
     dumpRPCHandlers(gVirtualMachine, "after-init");
     // setFramebuffer: installs the process_frame_update handler needed by the
     // VMM. The host hook holds its set_frame_rate message until start succeeds.
@@ -5294,7 +5395,7 @@ static void startVirtualMachineWorker(UIView *container, id delegate,
     BOOL runtimePolicyEnabled = openGLAcceleration;
 #if EXPERIMENT_GDB_DEBUG
     BOOL externalKernelDebug = [[NSFileManager defaultManager]
-        fileExistsAtPath:@"/tmp/vz-external-kernel-debug"];
+        fileExistsAtPath:@VZ_HOST_STATE_ROOT "/vz-external-kernel-debug"];
 #endif
     void (^finishStartedVM)(void) = ^{
         dumpRPCHandlers(gVirtualMachine, "after-start");
@@ -5624,9 +5725,9 @@ static void disconnectExternalDisplay(void) {
 {
     UIApplicationShortcutItem *shortcut = launchOptions[
         UIApplicationLaunchOptionsShortcutItemKey];
-    BOOL bypassAutoBoot = [shortcut.type isEqualToString:@"com.mac.virtual.show-library"];
-    freopen("/tmp/VirtualMac.log", "a", stdout);
-    freopen("/tmp/VirtualMac.log", "a", stderr);
+    BOOL bypassAutoBoot = [shortcut.type isEqualToString:@VZ_HOST_IPC_PREFIX ".show-library"];
+    freopen(VZ_HOST_STATE_ROOT "/VirtualMac.log", "a", stdout);
+    freopen(VZ_HOST_STATE_ROOT "/VirtualMac.log", "a", stderr);
     setvbuf(stdout, NULL, _IONBF, 0);
 #if 0
     VZEnableKeyboardRenderingFixAfterCrash();
@@ -5737,6 +5838,7 @@ static void disconnectExternalDisplay(void) {
         smartMagnify.allowedTouchTypes = @[@(UITouchTypeIndirectPointer)];
     }
     [inputView addGestureRecognizer:smartMagnify];
+    applyNativeTouchGesturePolicy();
     [controller.view addSubview:inputView];
 
     gCursorView = [[UIImageView alloc] initWithFrame:CGRectZero];
@@ -5765,14 +5867,14 @@ static void disconnectExternalDisplay(void) {
     UIApplicationShortcutIcon *controlsIcon = [UIApplicationShortcutIcon
         iconWithSystemImageName:@"slider.horizontal.3"];
     application.shortcutItems = @[[[[UIApplicationShortcutItem alloc]
-        initWithType:@"com.mac.virtual.show-library"
+        initWithType:@VZ_HOST_IPC_PREFIX ".show-library"
         localizedTitle:VZL(@"Show Library") localizedSubtitle:nil
         icon:libraryIcon userInfo:nil] autorelease],
         [[[UIApplicationShortcutItem alloc]
-        initWithType:@"com.mac.virtual.show-controls"
+        initWithType:@VZ_HOST_IPC_PREFIX ".show-controls"
         localizedTitle:VZL(@"Show Virtual Mac Controls") localizedSubtitle:nil
         icon:controlsIcon userInfo:nil] autorelease]];
-    unlink("/tmp/virtual-mac-vm-active");
+    unlink(VZ_HOST_STATE_ROOT "/virtual-mac-vm-active");
     gMouseLocation = CGPointMake(CGRectGetMidX(inputView.bounds),
                                  CGRectGetMidY(inputView.bounds));
     gShowCursorWhenUsingTouch = [VZAppSettings.sharedSettings
@@ -5784,7 +5886,7 @@ static void disconnectExternalDisplay(void) {
     startControlMonitor();
     printf("[VirtualMac] VM picker ready inputWindow=%p\n", inputView.window);
     requestMicrophoneAccess(^{
-        NSString *controlPath = @"/tmp/vz-autoboot-path";
+        NSString *controlPath = @VZ_HOST_STATE_ROOT "/vz-autoboot-path";
         NSString *autoBootPath = [NSString
             stringWithContentsOfFile:controlPath
                            encoding:NSUTF8StringEncoding error:nil];
@@ -5885,6 +5987,7 @@ static void disconnectExternalDisplay(void) {
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     (void)application;
+    [gNativeTouch cancelAll];
     resetPointerSession(YES);
 }
 
@@ -5908,11 +6011,11 @@ static void disconnectExternalDisplay(void) {
 {
     (void)application;
     VZViewController *controller = (id)self.window.rootViewController;
-    BOOL handled = [shortcutItem.type isEqualToString:@"com.mac.virtual.show-library"] ||
-        [shortcutItem.type isEqualToString:@"com.mac.virtual.show-controls"];
-    if ([shortcutItem.type isEqualToString:@"com.mac.virtual.show-library"]) {
+    BOOL handled = [shortcutItem.type isEqualToString:@VZ_HOST_IPC_PREFIX ".show-library"] ||
+        [shortcutItem.type isEqualToString:@VZ_HOST_IPC_PREFIX ".show-controls"];
+    if ([shortcutItem.type isEqualToString:@VZ_HOST_IPC_PREFIX ".show-library"]) {
         [controller presentVMLibrary];
-    } else if ([shortcutItem.type isEqualToString:@"com.mac.virtual.show-controls"]) {
+    } else if ([shortcutItem.type isEqualToString:@VZ_HOST_IPC_PREFIX ".show-controls"]) {
         [VZAppSettings.sharedSettings setString:@"always"
             forKey:VZHUDVisibilityKey];
         [controller updateHUDVisibility];
@@ -5924,7 +6027,7 @@ static void disconnectExternalDisplay(void) {
              options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     (void)application; (void)options;
-    if (![url.scheme isEqualToString:@"virtualmac"]) return NO;
+    if (![url.scheme isEqualToString:@VZ_HOST_URL_SCHEME]) return NO;
     NSString *action = url.host.lowercaseString;
     // Developer-only visible UI checks for the touch keyboard. Keep these
     // outside libraryController so exercising them does not hide the running

@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Πληκτρολόγιο Mac";
 "Mac Keyboard Shortcuts" = "Συντομεύσεις πληκτρολογίου Mac";
 "Mac Trackpad" = "Επιφάνεια αφής Mac";
+"macOS 27 Graphics Compatibility" = "Συμβατότητα γραφικών macOS 27";
 "macOS Installed" = "Το macOS εγκαταστάθηκε";
 "Memory" = "Μνήμη";
 "Metal BC Support" = "Υποστήριξη Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Όνομα";
 "Name Already Used" = "Το όνομα χρησιμοποιείται ήδη";
 "NAT: Share %@" = "NAT: Κοινή χρήση %@";
+"Native Touch" = "Εγγενής αφή";
 "Network" = "Δίκτυο";
 "Network Attachment" = "Σύνδεση δικτύου";
 "Network Bridge (%@)" = "Γέφυρα δικτύου (%@)";

@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Mac-näppäimistö";
 "Mac Keyboard Shortcuts" = "Macin pikanäppäimet";
 "Mac Trackpad" = "Mac-ohjauslevy";
+"macOS 27 Graphics Compatibility" = "macOS 27:n grafiikkayhteensopivuus";
 "macOS Installed" = "macOS asennettu";
 "Memory" = "Muisti";
 "Metal BC Support" = "Metal BC -tuki";
@@ -156,6 +157,7 @@
 "Name" = "Nimi";
 "Name Already Used" = "Nimi on jo käytössä";
 "NAT: Share %@" = "NAT: Jaa %@";
+"Native Touch" = "Natiivi kosketus";
 "Network" = "Verkko";
 "Network Attachment" = "Verkkoliitäntä";
 "Network Bridge (%@)" = "Verkkosilta (%@)";

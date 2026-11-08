@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 // DYLD_INSERT hook for the iOS-ported VZ VMM service.
 // The VMM's main() calls xpc_main(handler), but iOS xpc_main requires the launchd
 // XPCService-domain context (it reads the job's "XPCService" config dict -> "Could not
@@ -342,7 +343,7 @@ __attribute__((used)) static struct {
 #define XPC_MACH_SERVICE_LISTENER 1ULL
 
 static void logf_(const char *fmt, ...) {
-    FILE *f = fopen("/tmp/vmmhook.log", "a"); if (!f) return;
+    FILE *f = fopen(VZ_HOST_STATE_ROOT "/vmmhook.log", "a"); if (!f) return;
     fchmod(fileno(f), 0666);
     va_list ap; va_start(ap, fmt); vfprintf(f, fmt, ap); va_end(ap);
     fputc('\n', f); fclose(f);
@@ -3012,7 +3013,9 @@ __attribute__((constructor)) static void hook_init(void) {
     if (s) { int n = atoi(s); if (n > 0) { logf_("[vmmhook] sleeping %ds for lldb attach", n); sleep(n); } }
 }
 
+extern void VZNativeTouchBackendInstall(bool required);
 void vmm_xpc_main(void (*handler)(xo_t)) {
+    VZNativeTouchBackendInstall(true);
     // VMM = listener, matching VZ's host-sends-first model: create an anonymous
     // xpc listener (no launchd check-in needed) whose event handler is the VMM's real connection
     // handler, then PUBLISH our endpoint's mach port name to a file. The host (which has
@@ -3031,7 +3034,7 @@ void vmm_xpc_main(void (*handler)(xo_t)) {
     logf_("[vmmhook] listener L=%p E=%p myport=0x%x", L, E, myport);
     const char *endpointFile = getenv("VZ_VMM_ENDPOINT_FILE");
     if (!endpointFile || !endpointFile[0])
-        endpointFile = "/tmp/vmm_ep.txt";
+        endpointFile = VZ_HOST_STATE_ROOT "/vmm_ep.txt";
     FILE *f = fopen(endpointFile, "w");
     if (f) {
         fprintf(f, "0x%x\n", myport);
@@ -3081,7 +3084,7 @@ static int vmm_open(const char *path, int oflag, ...) {
                 snprintf(fb, sizeof(fb), "%s", configured);
             else
                 snprintf(fb, sizeof(fb),
-                         "/var/root/VirtualMac/payload/%s", base);
+                         VZ_HOST_RUNTIME_ROOT "/payload/%s", base);
             int fd = __open(fb, oflag, mode);
             void *ret0 = __builtin_return_address(0);
             void *ret1 = __builtin_return_address(1);

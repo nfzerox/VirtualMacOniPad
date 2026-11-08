@@ -147,6 +147,7 @@
 "Mac Keyboard" = "Clavier Mac";
 "Mac Keyboard Shortcuts" = "Raccourcis clavier Mac";
 "Mac Trackpad" = "Trackpad Mac";
+"macOS 27 Graphics Compatibility" = "Compatibilité graphique avec macOS 27";
 "macOS Installed" = "macOS est installé";
 "Memory" = "Mémoire";
 "Metal BC Support" = "Prise en charge de Metal BC";
@@ -156,6 +157,7 @@
 "Name" = "Nom";
 "Name Already Used" = "Nom déjà utilisé";
 "NAT: Share %@" = "NAT : partager %@";
+"Native Touch" = "Interaction tactile native";
 "Network" = "Réseau";
 "Network Attachment" = "Connexion réseau";
 "Network Bridge (%@)" = "Pont réseau (%@)";

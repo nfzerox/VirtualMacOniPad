@@ -1,3 +1,4 @@
+#import "VZAppIdentity.h"
 // Compatibility hook loaded into Ventura's iOS-stamped
 // com.apple.Virtualization.Installation helper.
 //
@@ -15,7 +16,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#define DEFAULT_INSTALLATION_EP_FILE "/tmp/installation_ep.txt"
+#define DEFAULT_INSTALLATION_EP_FILE VZ_HOST_STATE_ROOT "/installation_ep.txt"
 #define XPC_ENDPOINT_PORT_OFF 0x18
 
 typedef void *xpc_object_t;
@@ -39,7 +40,7 @@ extern size_t confstr(int name, char *buffer, size_t length);
 
 static void installation_log(const char *message)
 {
-    FILE *file = fopen("/tmp/installationhook.log", "a");
+    FILE *file = fopen(VZ_HOST_STATE_ROOT "/installationhook.log", "a");
     if (!file)
         return;
     fchmod(fileno(file), 0666);
@@ -135,7 +136,7 @@ static void installation_xpc_main(void (*handler)(xpc_object_t))
             handler(event);
         } else {
             char *description = xpc_copy_description(event);
-            FILE *file = fopen("/tmp/installationhook.log", "a");
+            FILE *file = fopen(VZ_HOST_STATE_ROOT "/installationhook.log", "a");
             if (file) {
                 fprintf(file, "[installationhook] listener event: %s\n",
                         description ?: "(unknown)");
@@ -181,7 +182,7 @@ static size_t installation_confstr(int name, char *buffer, size_t length)
     // temp selectors. The Ventura helper treats that as fatal before it can
     // accept its XPC peer.
     if (name == 65537 || name == 65538) {
-        static const char path[] = "/tmp/";
+        static const char path[] = VZ_HOST_STATE_ROOT "/";
         size_t required = sizeof(path);
         if (buffer && length) {
             size_t copied = required < length ? required : length;

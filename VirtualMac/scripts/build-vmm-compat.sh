@@ -26,9 +26,13 @@ xcrun --sdk iphoneos clang \
     -install_name "@rpath/LaunchServicesCompat.dylib" \
     "$VZ_REPO_ROOT/vz/host/lsshim.m" \
     "$VZ_REPO_ROOT/vz/host/vmmhook.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchBackend.m" \
+    "$VZ_REPO_ROOT/vz/host/VZGPUCompatibilityBootstrap.m" \
     "$VZ_REPO_ROOT/vz/host/pvg_trace.m" \
     -o "$OUTPUT"
 ldid -S"$ENTITLEMENTS" "$OUTPUT"
+
+VZ_GPU_COMPAT_OUTPUT="$(dirname "$OUTPUT")/libVMMGPUCompatibility.dylib" bash "$SCRIPT_DIR/build-gpu-compat.sh"
 
 echo "VMM compatibility library built: $OUTPUT"
 echo "CDHash: $(ldid -h "$OUTPUT" | sed -n 's/^CDHash=//p')"
