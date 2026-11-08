@@ -31,7 +31,7 @@ app_build="$(plutil -extract CFBundleVersion raw \
     "$VZ_BUILD_ROOT/ipad-app/VirtualMac.app/Info.plist")"
 [[ "$app_build" == "$commit_count" ]] ||
     die "app build $app_build does not match repository build $commit_count; rebuild the app"
-RELEASE_VERSION="${VZ_RELEASE_VERSION:-1.2.3}"
+RELEASE_VERSION="${VZ_RELEASE_VERSION:-1.2.4}"
 if [[ -n "${VZ_PACKAGE_VERSION:-}" ]]; then
     VERSION="$VZ_PACKAGE_VERSION"
 else

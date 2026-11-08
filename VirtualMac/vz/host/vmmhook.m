@@ -58,6 +58,7 @@ extern xo_t xpc_dictionary_get_value(xo_t, const char *);
 extern void xpc_dictionary_set_bool(xo_t, const char *, bool);
 extern void xpc_dictionary_set_uint64(xo_t, const char *, uint64_t);
 extern char *xpc_copy_description(xo_t);
+extern const char *xpc_connection_get_name(xo_t);
 extern char  _xpc_type_connection[]; // XPC_TYPE_CONNECTION
 extern char  _xpc_type_dictionary[]; // XPC_TYPE_DICTIONARY
 extern char  _xpc_type_error[];      // XPC_TYPE_ERROR
@@ -1118,7 +1119,63 @@ static void trace_xpc_message(const char *operation, xo_t connection,
         free(description);
 }
 
+// iPadOS loads Apple's BTAudioHALPlugin (an AudioServerPlugIn) into this
+// process with the HAL. bluetoothd rejects the extracted VMM's signing
+// identity and interrupts every connection right after the plugin's
+// registration message, and the plugin reconnects immediately, so the pair
+// spins: about 40% of a core in bluetoothd, 25% in launchd and more in
+// this process for as long as a VM with audio runs (VirtualMacOniPad#71).
+// A mach-service connection is only looked up and established by its first
+// message. Once the service has rejected several consecutive connections
+// without delivering a single message, stop forwarding the plugin's sends to
+// it: its newest connection then stays idle and the loop ends. A plugin that
+// bluetoothd accepts never trips this. Bluetooth audio routing through this
+// plugin cannot work for the VMM either way.
+#define BT_AUDIO_HAL_SERVICE "com.apple.BTAudioHALPlugin.xpc"
+#define BT_AUDIO_REJECTION_LIMIT 8
+static uint32_t bt_audio_consecutive_rejections;
+static bool bt_audio_quarantined;
+static uint64_t bt_audio_dropped_sends;
+
+static bool is_bt_audio_hal_connection(xo_t connection) {
+    if (!connection)
+        return false;
+    const char *name = xpc_connection_get_name(connection);
+    return name && strcmp(name, BT_AUDIO_HAL_SERVICE) == 0;
+}
+
+static void note_bt_audio_event(xo_t connection, xo_t event) {
+    if (!is_bt_audio_hal_connection(connection))
+        return;
+    if (!event || xpc_get_type(event) != (void *)_xpc_type_error) {
+        __atomic_store_n(&bt_audio_consecutive_rejections, 0,
+                         __ATOMIC_RELAXED);
+        return;
+    }
+    uint32_t rejections = __atomic_add_fetch(
+        &bt_audio_consecutive_rejections, 1, __ATOMIC_RELAXED);
+    if (rejections == BT_AUDIO_REJECTION_LIMIT &&
+        !__atomic_exchange_n(&bt_audio_quarantined, true, __ATOMIC_ACQ_REL))
+        logf_("[vmmhook] %s rejected %u consecutive connections; "
+              "stopping BTAudioHALPlugin reconnect loop",
+              BT_AUDIO_HAL_SERVICE, rejections);
+}
+
+static bool bt_audio_send_suppressed(xo_t connection) {
+    if (!__atomic_load_n(&bt_audio_quarantined, __ATOMIC_ACQUIRE) ||
+        !is_bt_audio_hal_connection(connection))
+        return false;
+    uint64_t dropped = __atomic_add_fetch(&bt_audio_dropped_sends, 1,
+                                          __ATOMIC_RELAXED);
+    if (dropped <= 4)
+        logf_("[vmmhook] withheld BTAudioHALPlugin message #%llu",
+              (unsigned long long)dropped);
+    return true;
+}
+
 static void vmm_xpc_connection_send_message(xo_t connection, xo_t message) {
+    if (bt_audio_send_suppressed(connection))
+        return;
     if (fake_usb_hci_enabled() &&
         connection == fake_usb_location_reply_connection &&
         message && xpc_get_type(message) == (void *)_xpc_type_dictionary) {
@@ -1159,6 +1216,7 @@ static void vmm_xpc_connection_set_event_handler(
         if (fake_usb_hci_enabled() && name &&
             strcmp(name, "get_usb_controller_location_id") == 0)
             fake_usb_location_reply_connection = connection;
+        note_bt_audio_event(connection, event);
         handler(event);
         count_processed_xpc(name);
     });

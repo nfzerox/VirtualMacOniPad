@@ -64,7 +64,13 @@ static NSString *VML(NSString *key)
 
 - (void)publishReady
 {
-    if (!self.readyToken.length || !self.statusItem.button || !self.statusItem.menu)
+    // The marker acknowledges that this process is running and has applied
+    // the host configuration. It must not depend on AppKit having produced a
+    // status-item button: on some Aqua boots the menu extra is alive and has
+    // applied its policy while the button is still nil, and this is only
+    // published once. Withholding it makes the host retry provisioning every
+    // 10 seconds for the whole session.
+    if (!self.readyToken.length)
         return;
     NSString *temporary = [VMReadyPath stringByAppendingFormat:@".%d", getpid()];
     NSData *data = [self.readyToken dataUsingEncoding:NSUTF8StringEncoding];
