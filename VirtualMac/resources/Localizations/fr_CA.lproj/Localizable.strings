@@ -156,6 +156,7 @@
 "Name" = "Nom";
 "Name Already Used" = "Nom déjà utilisé";
 "NAT: Share %@" = "NAT : partager %@";
+"Native Touch" = "Interaction tactile native";
 "Network" = "Réseau";
 "Network Attachment" = "Connexion réseau";
 "Network Bridge (%@)" = "Pont réseau (%@)";

@@ -156,6 +156,7 @@
 "Name" = "Naziv";
 "Name Already Used" = "Naziv se već koristi";
 "NAT: Share %@" = "NAT: Dijeli %@";
+"Native Touch" = "Izvorni dodir";
 "Network" = "Mreža";
 "Network Attachment" = "Mrežna veza";
 "Network Bridge (%@)" = "Mrežni most (%@)";

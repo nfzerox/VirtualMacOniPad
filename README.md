@@ -102,3 +102,7 @@ This project would not be possible without years of prior research by talented d
 [dsce](https://github.com/moraea/dsce) proved that loadable x86_64 framework libraries could be extracted from the dyld shared cache. [DyldExtractor](https://github.com/arandomdev/dyldextractor) formed the basis of our [first ever loadable arm64e framework extractor](VirtualMac/vz/uncache.py). [MacWSBootingGuide](https://github.com/khanhduytran0/MacWSBootingGuide) and [iOS-run-macOS-executables-tools](https://worthdoingbadly.com/macappsios/) proved that macOS system frameworks could be restamped and patched to work on iPadOS.
 
 [HvDecompile](https://worthdoingbadly.com/hv/) and [UTM](https://github.com/utmapp/UTM) laid the groundwork for running Windows and Linux VMs with full Hypervisor performance on iPad, while [reims-vgpu](https://github.com/steelbrain/reims-vgpu) proved that accelerated macOS guests on a foreign host were possible with paravirtualized graphics acceleration. [ipsw](https://github.com/blacktop/ipsw) provides essential firmware and dyld shared cache analysis tools, and [VirtualBuddy](https://github.com/insidegui/VirtualBuddy) provides an invaluable reference for Apple's macOS virtualization and restore APIs.
+
+## Experimental native touch
+
+An optional Native Touch setting sends finger contacts directly to a supported macOS guest. See [implementation, runtime requirements and validation scope](docs/experimental-native-touch.md). It is disabled by default and independent of graphics protocol changes.

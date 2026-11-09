@@ -156,6 +156,7 @@
 "Name" = "Tên";
 "Name Already Used" = "Tên đã được sử dụng";
 "NAT: Share %@" = "NAT: Chia sẻ %@";
+"Native Touch" = "Cảm ứng gốc";
 "Network" = "Mạng";
 "Network Attachment" = "Kết nối mạng";
 "Network Bridge (%@)" = "Cầu nối mạng (%@)";

@@ -1,4 +1,5 @@
 #import "VZVMLibraryViewController.h"
+#import "VZNativeTouchIdentity.h"
 #import "VZAppSettings.h"
 #import "VZSettingsViewController.h"
 #import "VZNewVMViewController.h"
@@ -355,6 +356,7 @@ NSDictionary *VZVMDefaultOptions(void)
         VZBootRecoveryKey: @NO,
         VZSharedDirectoriesKey: @[],
         VZPointingDeviceKey: @"MacTrackpad",
+        VZNativeTouchEnabledKey: @NO,
         VZKeyboardDeviceKey: @"MacKeyboard",
         VZApplePencilPressureTiltEnabledKey: @NO,
         VZVirtualMacGuestToolsEnabledKey: @YES,
@@ -841,7 +843,7 @@ void VZRemovePaths(NSArray<NSString *> *paths)
     if (section == 2)
         return self.bundlePath ? 4 : 3;
     if (section == 3)
-        return 3;
+        return self.bundlePath ? 4 : 3;
     if (section == 4)
         return [VZDisplaySelectionForOptions(self.options)
                    isEqualToString:@"Custom"]
@@ -866,6 +868,8 @@ void VZRemovePaths(NSArray<NSString *> *paths)
  titleForFooterInSection:(NSInteger)section
 {
     (void)tableView;
+    if (section == 3 && self.bundlePath)
+        return [NSString stringWithFormat:@"macOS 27.2 · %@", VZL(@"Experimental")];
     if (section == 0 && !self.bundlePath)
         return VZL(@"Storage size can’t be changed later. If you need additional storage in the future, set a larger size now.");
     return nil;
@@ -979,6 +983,15 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         cell.detailTextLabel.text =
             [self.options[VZPointingDeviceKey] isEqualToString:@"USBMouse"]
             ? VZL(@"USB Mouse") : VZL(@"Mac Trackpad");
+    } else if (indexPath.section == 3 && indexPath.row == 3) {
+        cell.textLabel.text = VZL(@"Native Touch");
+        UISwitch *toggle = [[[UISwitch alloc] init] autorelease];
+        toggle.on = [self.options[VZNativeTouchEnabledKey] boolValue];
+        [toggle addTarget:self action:@selector(nativeTouchChanged:)
+            forControlEvents:UIControlEventValueChanged];
+        cell.accessoryView = toggle;
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     } else if (indexPath.section == 3) {
         NSString *fullTitle = VZL(@"Apple Pencil Pressure and Tilt");
         CGFloat available = MAX(CGRectGetWidth(tableView.bounds) - 147.0,
@@ -1524,6 +1537,11 @@ void VZRemovePaths(NSArray<NSString *> *paths)
         [self setGuestToolsSwitchOn:YES openGLOn:YES animated:YES];
     }
     self.options[keys[sender.tag]] = @(sender.on);
+}
+
+- (void)nativeTouchChanged:(UISwitch *)sender
+{
+    self.options[VZNativeTouchEnabledKey] = @(sender.on);
 }
 
 - (void)pencilRelayChanged:(UISwitch *)sender

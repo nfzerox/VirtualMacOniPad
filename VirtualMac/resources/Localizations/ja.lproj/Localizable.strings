@@ -156,6 +156,7 @@
 "Name" = "名前";
 "Name Already Used" = "その名前は使用されています";
 "NAT: Share %@" = "NAT：%@を共有";
+"Native Touch" = "ネイティブタッチ";
 "Network" = "ネットワーク";
 "Network Attachment" = "ネットワーク接続";
 "Network Bridge (%@)" = "ネットワークブリッジ（%@）";
