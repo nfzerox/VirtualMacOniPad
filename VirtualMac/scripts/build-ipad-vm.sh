@@ -284,6 +284,7 @@ xcrun --sdk iphoneos clang \
     -install_name "@rpath/LaunchServicesCompat.dylib" \
     "$VZ_REPO_ROOT/vz/host/lsshim.m" \
     "$VZ_REPO_ROOT/vz/host/vmmhook.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchBackend.m" \
     "$VZ_REPO_ROOT/vz/host/pvg_trace.m" \
     -o "$VMM_FRAMEWORKS/LaunchServicesCompat.dylib"
 xcrun --sdk iphoneos clang \
@@ -466,6 +467,7 @@ xcrun --sdk iphoneos clang \
     -install_name "@rpath/LaunchServicesCompat.dylib" \
     "$VZ_REPO_ROOT/vz/host/lsshim.m" \
     "$VZ_REPO_ROOT/vz/host/vmmhook.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchBackend.m" \
     "$VZ_REPO_ROOT/vz/host/pvg_trace.m" \
     -o "$VMM_HOOK_IPADOS14"
 ldid -ILaunchServicesCompat.dylib \

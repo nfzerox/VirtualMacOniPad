@@ -122,6 +122,9 @@ xcrun --sdk iphoneos clang \
     "$VZ_REPO_ROOT/vz/host/VZSettingsViewController.m" \
     "$VZ_REPO_ROOT/vz/host/VZTrackpadScrollBridge.m" \
     "$VZ_REPO_ROOT/vz/host/VZVMLibraryViewController.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchIdentity.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchContacts.m" \
+    "$VZ_REPO_ROOT/vz/host/VZNativeTouchInput.m" \
     "$VZ_REPO_ROOT/vz/host/VirtualMacApp.m" \
     -o "$BIN"
 xcrun --sdk iphoneos clang \

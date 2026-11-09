@@ -156,6 +156,7 @@
 "Name" = "Nimi";
 "Name Already Used" = "Nimi on jo käytössä";
 "NAT: Share %@" = "NAT: Jaa %@";
+"Native Touch" = "Natiivi kosketus";
 "Network" = "Verkko";
 "Network Attachment" = "Verkkoliitäntä";
 "Network Bridge (%@)" = "Verkkosilta (%@)";

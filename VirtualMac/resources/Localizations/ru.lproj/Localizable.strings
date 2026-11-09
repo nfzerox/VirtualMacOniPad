@@ -156,6 +156,7 @@
 "Name" = "Имя";
 "Name Already Used" = "Имя уже используется";
 "NAT: Share %@" = "NAT: общий доступ через %@";
+"Native Touch" = "Нативный сенсорный ввод";
 "Network" = "Сеть";
 "Network Attachment" = "Сетевое подключение";
 "Network Bridge (%@)" = "Сетевой мост (%@)";

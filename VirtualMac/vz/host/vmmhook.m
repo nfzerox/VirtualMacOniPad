@@ -3012,7 +3012,9 @@ __attribute__((constructor)) static void hook_init(void) {
     if (s) { int n = atoi(s); if (n > 0) { logf_("[vmmhook] sleeping %ds for lldb attach", n); sleep(n); } }
 }
 
+extern void VZNativeTouchBackendInstall(bool required);
 void vmm_xpc_main(void (*handler)(xo_t)) {
+    VZNativeTouchBackendInstall(true);
     // VMM = listener, matching VZ's host-sends-first model: create an anonymous
     // xpc listener (no launchd check-in needed) whose event handler is the VMM's real connection
     // handler, then PUBLISH our endpoint's mach port name to a file. The host (which has
